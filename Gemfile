@@ -21,7 +21,7 @@ gem "tailwindcss-rails"
 gem "bcrypt", "~> 3.1.7"
 
 # Pagination
-gem "pagy", "~> 43.6"
+gem "pagy", "~> 43.7"
 
 # Locale data (validation messages, dates) for zh-CN
 gem "rails-i18n", "~> 8.0"
