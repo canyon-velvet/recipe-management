@@ -40,7 +40,7 @@ gem "redis", "~> 6.0"
 gem "ssrf_filter", "~> 1.6"
 
 # Claude cleans imported recipes (official Anthropic SDK)
-gem "anthropic", "~> 1.76"
+gem "anthropic", "~> 1.78"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
