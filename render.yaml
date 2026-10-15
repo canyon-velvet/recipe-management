@@ -1,0 +1,83 @@
+# Render Blueprint: everything the app runs on in production (see README, "Deploy"). Render creates these from the
+# repo when you set up the Blueprint, and keeps them in sync with this file. Plans and regions are Render's
+# (https://render.com/docs/blueprint-spec); a region can't be changed once created.
+#
+# RAILS_MASTER_KEY is the contents of config/credentials/production.key: it unlocks production's own credentials,
+# config/credentials/production.yml.enc (secret_key_base, the Anthropic key), not development's. Both services need
+# it, and Render asks for each when the Blueprint is created (sync: false). It can't come from an environment group:
+# Render ignores sync: false there.
+
+services:
+  - type: web
+    name: recipe-management-web
+    runtime: docker
+    plan: 0.5c-512mb
+    region: ohio
+    healthCheckPath: /up
+    # Before each deploy goes live: create or migrate the database, and seed the tags. db/seeds.rb can run every time:
+    # it adds no users in production, and leaves what users changed alone.
+    preDeployCommand: ./bin/rails db:prepare db:seed
+    envVars:
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: recipe-management-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: recipe-management-redis
+          property: connectionString
+      # The rate limits' counters; must be set, or they'd look for Redis on localhost and not count at all.
+      - key: REDIS_CACHE_URL
+        fromService:
+          type: keyvalue
+          name: recipe-management-redis
+          property: connectionString
+      # Thruster takes Render's traffic on its port (PORT, 10000) and runs Puma behind it on 3000, so nothing needs
+      # port 80.
+      - key: THRUSTER_HTTP_PORT
+        value: 10000
+
+  # Sidekiq: imports and the assistant's replies. It needs the same secrets and Redis as the web service: it calls
+  # Claude, counts imports, and signs the live updates it sends.
+  - type: worker
+    name: recipe-management-worker
+    runtime: docker
+    plan: 0.5c-512mb
+    region: ohio
+    dockerCommand: bundle exec sidekiq
+    envVars:
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: recipe-management-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: recipe-management-redis
+          property: connectionString
+      - key: REDIS_CACHE_URL
+        fromService:
+          type: keyvalue
+          name: recipe-management-redis
+          property: connectionString
+
+  - type: keyvalue
+    name: recipe-management-redis
+    plan: 256mb
+    region: ohio
+    # Sidekiq's queued jobs must never be dropped to make room.
+    maxmemoryPolicy: noeviction
+    # Reachable only from the app's own services on Render.
+    ipAllowList: []
+
+databases:
+  - name: recipe-management-db
+    plan: 0.1c-256mb
+    region: ohio
+    # Reachable only from the app's own services on Render.
+    ipAllowList: []

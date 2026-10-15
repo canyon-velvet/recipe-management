@@ -25,13 +25,14 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # config.assume_ssl = true
+  config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = true
 
-  # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  # Skip http-to-https redirect for the default health check endpoint. HSTS covers this host only: with a custom domain
+  # (APP_HOSTS) at the domain's root, every subdomain would otherwise be https-only for two years.
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } }, hsts: { subdomains: false } }
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]
@@ -47,7 +48,8 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
 
   # Replace the default in-process memory cache store with a durable alternative.
-  # Cache in its own Redis database (1), apart from Sidekiq's jobs (0).
+  # Cache in its own Redis database (1), apart from Sidekiq's jobs (0). On Render both share one database (a Blueprint
+  # can't add the /1), kept apart by the namespace; it only holds rate-limit counters, which expire.
   config.cache_store = :redis_cache_store, {
     url: ENV.fetch("REDIS_CACHE_URL", "redis://localhost:6379/1"),
     namespace: "recipe_management:#{Rails.env}",
@@ -71,12 +73,11 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
-  # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  #
+  # Enable DNS rebinding protection and other `Host` header attacks. Render always sets RENDER_EXTERNAL_HOSTNAME (the
+  # *.onrender.com address); APP_HOSTS adds others, comma-separated, such as a custom domain. (With neither, the list
+  # would be empty, which turns the protection off.)
+  config.hosts = [ ENV["RENDER_EXTERNAL_HOSTNAME"], *ENV.fetch("APP_HOSTS", "").split(",").map(&:strip) ].compact_blank
+
   # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end
