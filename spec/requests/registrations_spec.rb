@@ -42,6 +42,16 @@ RSpec.describe "Signing up", type: :request do
     expect(invite.reload.used_at).to be_nil
   end
 
+  it "sends someone already logged in home, without using up the invite" do
+    post login_path, params: { username: create(:user).username, password: "password" }
+
+    get register_path(invite_token: invite.token)
+    expect(response).to redirect_to(root_path)
+
+    expect { post register_path, params: { invite_token: invite.token, user: account } }.not_to change(User, :count)
+    expect(invite.reload.used_at).to be_nil
+  end
+
   it "has no sign-up link on the login page" do
     get login_path
 

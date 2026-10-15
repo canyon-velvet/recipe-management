@@ -3,6 +3,8 @@ class RegistrationsController < ApplicationController
   skip_before_action :authenticate_user!, only: [ :new, :create ]
   rate_limit to: 5, within: 1.hour, only: :create,
              with: -> { redirect_to register_path(invite_token: params[:invite_token]), alert: t("flash.rate_limited") }
+  # Someone logged in who opens an invite link would use it up and be switched to a new account.
+  before_action -> { redirect_to root_path if logged_in? }
   before_action :set_invite
 
   def new
