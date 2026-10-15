@@ -43,6 +43,9 @@ class FetchPageService
 
     raise Error.new(:blocked, "HTTP #{response.code}") if BLOCKED_STATUSES.include?(response.code.to_i)
     raise Error.new(:fetch_failed, "HTTP #{response.code}") unless response.is_a?(Net::HTTPSuccess)
+    # A server that compresses the page anyway sends bytes that can't be read as a page (see HEADERS).
+    encoding = response["content-encoding"].to_s.downcase
+    raise Error.new(:fetch_failed, "page sent compressed (#{encoding})") unless encoding.in?([ "", "identity" ])
 
     html = to_utf8(body, response["content-type"])
     raise Error.new(:blocked, "challenge page") if challenge_page?(html)

@@ -46,4 +46,12 @@ RSpec.describe StartImportService do
     expect(start(text: "a" * Draft::MAX_SOURCE_TEXT)).to be_success
     expect(user.drafts.count).to eq 1
   end
+
+  it "counts a line break as one character, as the paste box does, though browsers send two" do
+    allow(CleanRecipeService).to receive(:available?).and_return(true)
+    text = ("a" * 99 + "\r\n") * 200 # 20,000 characters in the box, 20,200 as sent
+
+    expect(start(text: text)).to be_success
+    expect(user.drafts.sole.source_text).not_to include("\r")
+  end
 end

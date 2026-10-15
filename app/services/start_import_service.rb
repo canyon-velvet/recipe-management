@@ -14,7 +14,8 @@ class StartImportService
   def initialize(user:, url: nil, text: nil)
     @user = user
     @url = RecipeLink.normalize(url)
-    @text = text.to_s.strip.presence
+    # Browsers send line breaks as \r\n; as \n, the text is as long as the paste box counted it.
+    @text = text.to_s.gsub("\r\n", "\n").strip.presence
   end
 
   def call
