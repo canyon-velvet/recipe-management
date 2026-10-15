@@ -1,6 +1,8 @@
 <%# locals: (form:, field:, label:, rows: 6, min_height: "156px", help: nil, class: nil) %>
 <div class="field <%= binding.local_variable_get(:class) %>" data-controller="markdown-preview"
-     data-markdown-preview-empty-text-value="<%= t(".empty_preview") %>">
+     data-markdown-preview-empty-text-value="<%= t(".empty_preview") %>"
+     data-markdown-preview-failed-text-value="<%= t(".preview_failed") %>"
+     data-markdown-preview-url-value="<%= markdown_preview_path %>">
   <%= form.label field, label, class: "form-label" %>
   <div class="md-tab-bar">
     <button type="button" class="md-tab tab-active" data-markdown-preview-target="writeTab" data-action="markdown-preview#showWrite"><%= t(".write") %></button>

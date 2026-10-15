@@ -4,26 +4,26 @@
 # See the Securing Rails Applications Guide for more information:
 # https://guides.rubyonrails.org/security.html#content-security-policy-header
 
-# Rails.application.configure do
-#   config.content_security_policy do |policy|
-#     policy.default_src :self, :https
-#     policy.font_src    :self, :https, :data
-#     policy.img_src     :self, :https, :data
-#     policy.object_src  :none
-#     policy.script_src  :self, :https
-#     policy.style_src   :self, :https
-#     # Specify URI for violation reports
-#     # policy.report_uri "/csp-violation-report-endpoint"
-#   end
-#
-#   # Generate session nonces for permitted importmap, inline scripts, and inline styles.
-#   config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
-#   config.content_security_policy_nonce_directives = %w(script-src style-src)
-#
-#   # Automatically add `nonce` to `javascript_tag`, `javascript_include_tag`, and `stylesheet_link_tag`
-#   # if the corresponding directives are specified in `content_security_policy_nonce_directives`.
-#   # config.content_security_policy_nonce_auto = true
-#
-#   # Report violations without enforcing the policy.
-#   # config.content_security_policy_report_only = true
-# end
+# Everything the app loads is its own (scripts, styles and fonts are vendored), so the page may only run its own scripts
+# and load its own images. Any HTML that slips into a page can't run or send data elsewhere.
+Rails.application.configure do
+  config.content_security_policy do |policy|
+    policy.default_src :self
+    policy.script_src  :self
+    # Inline style attributes are used in a few views and by Tom Select; styles can't run code.
+    policy.style_src   :self, :unsafe_inline
+    policy.img_src     :self, :data
+    policy.connect_src :self # includes the Action Cable websocket
+    policy.object_src  :none
+    policy.base_uri    :self
+    policy.form_action :self
+    policy.frame_ancestors :none
+  end
+
+  # A nonce lets the importmap's inline script run. A new one per request: the session id (Rails' example) is empty on
+  # a first visit, which would block the importmap. Turbo ignores nonces when it merges the <head>, so the importmap
+  # isn't reloaded. Don't put inline <script>s in pages: after a Turbo visit they'd carry a nonce the page doesn't
+  # accept. Only for scripts: a nonce in style-src would switch off 'unsafe-inline'.
+  config.content_security_policy_nonce_generator = ->(_request) { SecureRandom.base64(16) }
+  config.content_security_policy_nonce_directives = %w[script-src]
+end

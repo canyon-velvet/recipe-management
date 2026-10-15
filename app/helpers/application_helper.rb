@@ -1,8 +1,14 @@
 module ApplicationHelper
+  # Shows each image as its alt text. Text can come from imported pages or the assistant, and an image would load from
+  # someone else's server as soon as it's shown, with whatever its address carries.
+  class MarkdownWithoutImages < Redcarpet::Render::HTML
+    def image(_link, _title, alt_text) = ERB::Util.html_escape(alt_text.to_s)
+  end
+
   def render_markdown(text)
     return "" if text.blank?
 
-    renderer = Redcarpet::Render::HTML.new(
+    renderer = MarkdownWithoutImages.new(
       filter_html: true,
       safe_links_only: true,
       hard_wrap: true,

@@ -156,6 +156,7 @@ zh-CN:
     markdown_editor:
       empty_preview: "无内容可预览"
       preview: "预览"
+      preview_failed: "预览加载失败，请重试。"
       write: "编辑"
     navbar:
       home: "首页"

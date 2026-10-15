@@ -21,6 +21,15 @@ RSpec.configure do |config|
     driven_by :playwright, screen_size: screen.values,
                            options: { locale: "en-US", record_video_size: screen, slowMo: slow_mo }
 
+    # Chromium reports anything the Content Security Policy blocks on the console; every browser spec then fails, so
+    # the policy is checked against each page the specs visit.
+    @csp_violations = []
+    page.driver.with_playwright_page do |playwright_page|
+      playwright_page.on("console", ->(message) {
+        @csp_violations << message.text if message.text.include?("Content Security Policy")
+      })
+    end
+
     # The driver outlives each spec, so a spec that doesn't record clears the last one's callback.
     video = example.metadata[:video]
     if ENV["RECORD_VIDEO"] && video
@@ -28,6 +37,10 @@ RSpec.configure do |config|
     else
       page.driver.on_save_screenrecord
     end
+  end
+
+  config.after(type: :system) do
+    expect(@csp_violations).to be_empty, "Blocked by the Content Security Policy:\n#{@csp_violations.join("\n")}"
   end
 
   # The test env turns CSRF protection off, which also drops the csrf-token meta tag that the app's JavaScript
