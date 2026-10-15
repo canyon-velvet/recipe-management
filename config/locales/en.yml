@@ -156,6 +156,7 @@ en:
     markdown_editor:
       empty_preview: "Nothing to preview"
       preview: "Preview"
+      preview_failed: "Couldn't load the preview. Try again."
       write: "Write"
     navbar:
       home: "Home"

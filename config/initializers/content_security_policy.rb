@@ -21,8 +21,9 @@ Rails.application.configure do
   end
 
   # A nonce lets the importmap's inline script run. A new one per request: the session id (Rails' example) is empty on
-  # a first visit, which would block the importmap. Turbo ignores nonces when it compares pages, so they can differ.
-  # Only for scripts: a nonce in style-src would switch off 'unsafe-inline'.
+  # a first visit, which would block the importmap. Turbo ignores nonces when it merges the <head>, so the importmap
+  # isn't reloaded. Don't put inline <script>s in pages: after a Turbo visit they'd carry a nonce the page doesn't
+  # accept. Only for scripts: a nonce in style-src would switch off 'unsafe-inline'.
   config.content_security_policy_nonce_generator = ->(_request) { SecureRandom.base64(16) }
   config.content_security_policy_nonce_directives = %w[script-src]
 end
