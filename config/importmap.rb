@@ -5,7 +5,6 @@ pin "@hotwired/turbo-rails", to: "turbo.min.js"
 pin "@hotwired/stimulus", to: "stimulus.min.js"
 pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
 pin_all_from "app/javascript/controllers", under: "controllers"
-pin "marked", to: "marked.esm.js"
 # Tom Select and its deps are vendored from jsDelivr's bundled +esm builds (see the file headers):
 # jspm's build, which `bin/importmap pin/update` downloads, is split into files it doesn't vendor.
 pin "tom-select" # @2.6.2

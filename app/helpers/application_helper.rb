@@ -2,8 +2,11 @@ module ApplicationHelper
   def render_markdown(text)
     return "" if text.blank?
 
+    # No images: text can come from imported pages or the assistant, and an image would load from someone else's
+    # server as soon as it's shown, with whatever its address carries.
     renderer = Redcarpet::Render::HTML.new(
       filter_html: true,
+      no_images: true,
       safe_links_only: true,
       hard_wrap: true,
       link_attributes: { target: "_blank", rel: "noopener" }

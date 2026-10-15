@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   resources :recipes do
     get :search, on: :collection
   end
+  # The Preview tab of a markdown field, rendered as it will be shown
+  resource :markdown_preview, only: [ :create ]
 
   # Ingredients & Sources (AJAX search + inline create)
   resources :ingredients, only: [ :create ] do

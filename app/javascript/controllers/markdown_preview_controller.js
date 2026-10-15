@@ -1,9 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
-import { marked } from "marked"
 
 export default class extends Controller {
   static targets = ["input", "preview", "writeTab", "previewTab"]
-  static values = { emptyText: String }
+  static values = { emptyText: String, url: String }
 
   connect() {
     this.showWrite()
@@ -16,7 +15,7 @@ export default class extends Controller {
     this.previewTabTarget.classList.remove("tab-active")
   }
 
-  showPreview() {
+  async showPreview() {
     const text = this.inputTarget.value
     if (text.trim() === "") {
       const empty = document.createElement("p")
@@ -24,7 +23,18 @@ export default class extends Controller {
       empty.textContent = this.emptyTextValue
       this.previewTarget.replaceChildren(empty)
     } else {
-      this.previewTarget.innerHTML = marked(text, { breaks: true, gfm: true })
+      // Rendered by the server, which filters out HTML. redirect: "error" keeps a login page (after the session
+      // expired) out of the preview.
+      const response = await fetch(this.urlValue, {
+        method: "POST",
+        headers: {
+          "Accept": "text/html",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: new URLSearchParams({ text }),
+        redirect: "error"
+      })
+      if (response.ok) this.previewTarget.innerHTML = await response.text()
     }
     this.inputTarget.classList.add("hidden")
     this.previewTarget.classList.remove("hidden")
