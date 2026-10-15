@@ -47,3 +47,7 @@
 /.claude/*
 !/.claude/CLAUDE.md
 !/.claude/agents/
+
+# Ignore key files for decrypting credentials and more.
+/config/credentials/*.key
+
