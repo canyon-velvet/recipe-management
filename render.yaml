@@ -2,9 +2,10 @@
 # repo when you set up the Blueprint, and keeps them in sync with this file. Plans and regions are Render's
 # (https://render.com/docs/blueprint-spec); a region can't be changed once created.
 #
-# RAILS_MASTER_KEY is the contents of config/master.key: it unlocks config/credentials.yml.enc (secret_key_base, the
-# Anthropic key). Both services need it, and Render asks for each when the Blueprint is created (sync: false). It
-# can't come from an environment group: Render ignores sync: false there.
+# RAILS_MASTER_KEY is the contents of config/credentials/production.key: it unlocks production's own credentials,
+# config/credentials/production.yml.enc (secret_key_base, the Anthropic key), not development's. Both services need
+# it, and Render asks for each when the Blueprint is created (sync: false). It can't come from an environment group:
+# Render ignores sync: false there.
 
 services:
   - type: web

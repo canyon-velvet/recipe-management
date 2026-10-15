@@ -65,7 +65,9 @@ The smallest paid plans come to about $30 a month, plus Claude usage.
 
 1. In Render, choose **New → Blueprint** and pick this repository.
 2. It asks for `RAILS_MASTER_KEY` twice, for the web service and the worker: paste the contents of
-   `config/master.key` into both. That file is never committed; keep it safe.
+   `config/credentials/production.key` into both. Production has its own credentials
+   (`config/credentials/production.yml.enc`, edited with `bin/rails credentials:edit --environment production`), apart
+   from development's `config/master.key`. Key files are never committed; keep them in a password manager.
 3. Once the first deploy is live, open the web service's **Shell**, run `bin/rails console`, and create your admin
    account. The password is typed at a hidden prompt, so it isn't kept in the console's history:
    ```ruby
