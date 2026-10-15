@@ -52,4 +52,28 @@ turns a week of meals into a shopping list.
 The interface is in English and Simplified Chinese, and the 🌐 button switches between them.
 I built this for my own household, where we cook from both Chinese and American recipes.
 
+## Deploy
+
+It runs on [Render](https://render.com), described in [`render.yaml`](render.yaml):
+
+- **Web service** (Docker): Thruster in front of Puma.
+- **Background worker**: Sidekiq, which runs imports and the assistant's replies.
+- **Postgres** and **Key Value** (Redis): for jobs, live updates and rate limits. Both are reachable only from the
+  services.
+
+The smallest paid plans come to about $30 a month, plus Claude usage.
+
+1. In Render, choose **New → Blueprint** and pick this repository.
+2. When it asks for `RAILS_MASTER_KEY`, paste the contents of `config/master.key`. That file is never committed; keep
+   it safe.
+3. Once the first deploy is live, open the web service's **Shell**, run `bin/rails console`, and create your admin
+   account:
+   ```ruby
+   User.create!(username: "me", password: "a long password", admin: true)
+   ```
+4. Log in, then invite people from the account menu → **Invites**. Signing up is by invite link only.
+
+To use your own domain, add it in Render, then set `APP_HOSTS` on the web service (comma-separated) so the app
+accepts it.
+
 Built with Ruby on Rails.
