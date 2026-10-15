@@ -64,12 +64,12 @@ It runs on [Render](https://render.com), described in [`render.yaml`](render.yam
 The smallest paid plans come to about $30 a month, plus Claude usage.
 
 1. In Render, choose **New → Blueprint** and pick this repository.
-2. When it asks for `RAILS_MASTER_KEY`, paste the contents of `config/master.key`. That file is never committed; keep
-   it safe.
+2. It asks for `RAILS_MASTER_KEY` twice, for the web service and the worker: paste the contents of
+   `config/master.key` into both. That file is never committed; keep it safe.
 3. Once the first deploy is live, open the web service's **Shell**, run `bin/rails console`, and create your admin
-   account:
+   account. The password is typed at a hidden prompt, so it isn't kept in the console's history:
    ```ruby
-   User.create!(username: "me", password: "a long password", admin: true)
+   User.create!(username: "me", password: IO.console.getpass("Password: "), admin: true)
    ```
 4. Log in, then invite people from the account menu → **Invites**. Signing up is by invite link only.
 

@@ -22,8 +22,11 @@ if Rails.env.development?
 end
 
 # Aisles are per user; new users get the defaults on sign-up. Display names live in config/locales under `aisles`.
-User.find_each { |user| Aisle.create_defaults_for(user) }
-puts "Ensured default aisles for #{User.count} users"
+# Only users with no aisles at all get them here: the seeds run on every deploy, and must not bring back a default
+# aisle someone deleted.
+users = User.where.missing(:aisles)
+puts "Added default aisles for #{users.count} users"
+users.find_each { |user| Aisle.create_defaults_for(user) }
 
 # Sample drafts for the admin, one per status, so the Draft box can be tried before the importer exists.
 if Rails.env.development?
