@@ -18,7 +18,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    session.delete(:user_id)
+    reset_session_keeping_locale
     redirect_to login_path, notice: t("flash.logged_out")
   end
 end

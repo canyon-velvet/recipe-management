@@ -1,0 +1,15 @@
+@layer components {
+  /* Invites page: a note box and button to create a link */
+  .invite-form {
+    @apply flex items-center gap-2;
+  }
+
+  /* An invite and what became of it */
+  .invite-card {
+    @apply rounded-xl border border-gray-200 bg-white p-4;
+  }
+  /* Its link, with a Copy button */
+  .invite-link {
+    @apply mt-3 flex items-center gap-2;
+  }
+}

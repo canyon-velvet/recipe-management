@@ -15,5 +15,6 @@
 @import "./components/steps.css";
 @import "./components/aisles.css";
 @import "./components/drafts.css";
+@import "./components/invites.css";
 @import "./components/preferences.css";
 @import "./components/assistant.css";

@@ -18,6 +18,7 @@
       <%= t("aisle_editor.title") %>
     </button>
     <% if current_user.admin? %>
+      <%= link_to t(".invites"), invites_path, class: "account-menu-item", role: "menuitem" %>
       <%= link_to t(".background_jobs"), sidekiq_path, data: { turbo: false },
                   class: "account-menu-item", role: "menuitem" %>
     <% end %>
