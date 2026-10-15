@@ -25,4 +25,13 @@ RSpec.describe Draft do
         .with([ user, :assistant ], targets: ".assistant-draft-#{draft.id}")
     end
   end
+
+  it "takes pasted text up to the length of a page's text" do
+    draft = build(:user).drafts.build(source_text: "a" * Draft::MAX_SOURCE_TEXT)
+    expect(draft).to be_valid
+
+    draft.source_text += "a"
+    expect(draft).not_to be_valid
+    expect(draft.errors.of_kind?(:source_text, :too_long)).to be true
+  end
 end

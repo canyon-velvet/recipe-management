@@ -22,6 +22,16 @@ RSpec.describe Assistant::Tools::ImportRecipe do
     expect(user.drafts.sole.source_url).to eq link
   end
 
+  it "shares the hourly import limit with the import form, and says so" do
+    allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
+    stub_const("StartImportService::HOURLY_LIMIT", 1)
+    StartImportService.new(user: user, url: "https://example.com/from-the-form").call
+
+    expect(tool.call({ url: link }))
+      .to eq(result: "not_started", reason: I18n.t("imports.errors.rate_limited"))
+    expect(user.drafts.where(source_url: link)).to be_empty
+  end
+
   it "only imports links the user sent" do
     expect(tool.call({ url: "https://example.com/somewhere-else" }))
       .to eq(error: "Only links in the user's latest message can be imported.")
