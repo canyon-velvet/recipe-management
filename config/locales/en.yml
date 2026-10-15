@@ -12,7 +12,6 @@ en:
     save: "Save"
 
   flash:
-    import_rate_limited: "You've imported a lot this hour. Please try again later."
     import_started: "Importing… the recipe will wait in your Draft box."
     admin_required: "Admin access required."
     draft_discarded: "Draft discarded."
@@ -371,6 +370,8 @@ en:
       blank: "Add a recipe link or paste the recipe text."
       invalid_link: "That doesn't look like a web link (http or https)."
       needs_claude: "Pasted text can't be read without Claude (no Anthropic API key is set up)."
+      rate_limited: "You've imported a lot this hour. Please try again later."
+      too_long: "The pasted text is too long. Paste just the ingredients and steps."
     new:
       hint: "Paste a link to a recipe page. It's read in the background and waits in your Draft box for you to review."
       link: "Recipe link"

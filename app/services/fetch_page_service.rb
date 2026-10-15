@@ -8,7 +8,10 @@ class FetchPageService
   MAX_REDIRECTS = 3
   HTTP_OPTIONS = { open_timeout: 5, read_timeout: 10 }.freeze
   # A plain agent: some sites behind Cloudflare challenge browser-like agents that don't run JavaScript.
-  HEADERS = { "User-Agent" => "RecipeManager/1.0 (recipe import)", "Accept" => "text/html,application/xhtml+xml" }.freeze
+  # Uncompressed: a compressed page is unpacked a chunk at a time, and one small chunk could unpack to far more than
+  # MAX_BYTES before the size check sees it.
+  HEADERS = { "User-Agent" => "RecipeManager/1.0 (recipe import)", "Accept" => "text/html,application/xhtml+xml",
+              "Accept-Encoding" => "identity" }.freeze
   BLOCKED_STATUSES = [ 401, 403, 429, 503 ].freeze
   # Bot checks often come back as a normal 200 page; they're small and carry one of these markers.
   CHALLENGE_MARKERS = [ "请滑动完成验证", "安全验证", "captcha", "challenge-platform", "verify you are human" ].freeze
@@ -50,7 +53,7 @@ class FetchPageService
   rescue TooSlow
     raise Error.new(:fetch_failed, "page took longer than #{MAX_SECONDS} s")
   rescue SsrfFilter::Error, SocketError, SystemCallError, IOError, Timeout::Error, OpenSSL::SSL::SSLError,
-         Net::HTTPBadResponse, Net::ProtocolError, URI::InvalidURIError, Zlib::Error => e
+         Net::HTTPBadResponse, Net::ProtocolError, URI::InvalidURIError => e
     raise Error.new(:fetch_failed, "#{e.class}: #{e.message}")
   end
 

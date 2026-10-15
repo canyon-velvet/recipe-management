@@ -24,7 +24,7 @@
       <% if @can_paste %>
         <p class="help-text mb-2"><%= t(".paste_hint") %></p>
         <%= f.text_area :text, value: @text, rows: 12, class: "form-textarea", autofocus: @paste,
-                        placeholder: t(".paste_placeholder") %>
+                        maxlength: Draft::MAX_SOURCE_TEXT, placeholder: t(".paste_placeholder") %>
       <% else %>
         <p class="help-text"><%= t(".paste_needs_claude") %></p>
       <% end %>

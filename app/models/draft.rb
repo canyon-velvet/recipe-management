@@ -10,12 +10,16 @@
 class Draft < ApplicationRecord
   include DraftBoxBroadcasts
 
+  # Pasted text is sent to Claude, so it gets the same cap as a page's text.
+  MAX_SOURCE_TEXT = ExtractRecipeService::MAX_TEXT_CHARS
+
   belongs_to :user
 
   enum :status, { reading: "reading", ready: "ready", failed: "failed" }, validate: true
 
   validates :source_url, http_url: true, allow_blank: true
   validates :source_url, uniqueness: { scope: :user_id }, allow_nil: true
+  validates :source_text, length: { maximum: MAX_SOURCE_TEXT }
   validate :data_must_be_an_object
 
   normalizes :source_url, with: ->(url) { RecipeLink.normalize(url) }
