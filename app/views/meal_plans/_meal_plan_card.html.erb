@@ -11,6 +11,7 @@
 
     <div class="flex-none pointer-events-auto relative z-20">
       <%= render "shared/kebab_menu", items: [
+        { label: t("meal_plans.show.grocery_list"), url: meal_plan_grocery_list_path(meal_plan) },
         { label: t("actions.delete"), url: meal_plan_path(meal_plan), data: { turbo_method: :delete, turbo_confirm: t(".confirm_delete") }, class: "text-red-600" }
       ] %>
     </div>
