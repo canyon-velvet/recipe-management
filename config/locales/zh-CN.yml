@@ -16,6 +16,9 @@ zh-CN:
     admin_required: "需要管理员权限"
     draft_discarded: "草稿已丢弃"
     invalid_login: "用户名或密码错误"
+    invite_created: "邀请链接已创建，复制后发给对方"
+    invite_deleted: "邀请已删除，链接已失效"
+    invite_used: "已使用的邀请无法删除"
     logged_in: "登录成功"
     logged_out: "已退出登录"
     login_required: "请先登录"
@@ -79,6 +82,8 @@ zh-CN:
       ingredient:
         aisle: "货架区"
         name: "名称"
+      invite:
+        note: "给谁"
       meal_plan:
         end_date: "结束日期"
         name: "名称"
@@ -142,6 +147,7 @@ zh-CN:
       background_jobs: "后台任务"
       draft_box: "草稿箱"
       drafts_need_attention: "有草稿需要处理"
+      invites: "邀请"
       logout: "退出"
       preferences: "饮食偏好"
     hero:
@@ -384,14 +390,34 @@ zh-CN:
 
   sessions:
     new:
-      no_account: "还没有账号？"
-      register: "注册"
       submit: "登录"
       title: "登录"
 
   registrations:
+    invite_only:
+      body: "注册需要邀请链接。如果你有链接，它可能已被使用或已过期，请向对方要一个新的。"
+      login: "登录"
+      title: "仅限受邀注册"
     new:
       have_account: "已有账号？"
       login: "登录"
       submit: "注册"
       title: "注册"
+
+  invites:
+    index:
+      create: "创建邀请链接"
+      empty: "还没有邀请。"
+      note_placeholder: "给谁（可选）"
+      subtitle: "注册需要邀请。每个链接只能用一次，%{days} 天内有效。"
+      title: "邀请"
+    invite:
+      confirm_delete: "删除这个邀请？链接将失效。"
+      copied: "已复制"
+      copy: "复制"
+      deleted_account: "已删除的账号"
+      expired: "已过期"
+      expires: "%{time}后过期"
+      link: "邀请链接"
+      untitled: "邀请"
+      used: "%{username} 已使用（%{time}前）"

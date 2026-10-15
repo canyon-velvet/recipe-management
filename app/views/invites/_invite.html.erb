@@ -1,0 +1,33 @@
+<%# locals: (invite:) %>
+<%# An invite and what became of it. Until it's used or expires, its link can be copied to send; until it's used, it
+    can be deleted, which stops the link working. %>
+<li id="<%= dom_id(invite) %>" class="invite-card">
+  <div class="flex items-start justify-between gap-4">
+    <div class="min-w-0">
+      <h3 class="font-semibold text-gray-900 truncate"><%= invite.note.presence || t(".untitled") %></h3>
+      <p class="text-sm text-gray-500 mt-1">
+        <% if invite.used? %>
+          <%= t(".used", username: invite.used_by&.username || t(".deleted_account"),
+                        time: time_ago_in_words(invite.used_at)) %>
+        <% elsif invite.usable? %>
+          <%= t(".expires", time: distance_of_time_in_words(Time.current, invite.expires_at)) %>
+        <% else %>
+          <%= t(".expired") %>
+        <% end %>
+      </p>
+    </div>
+    <% unless invite.used? %>
+      <%= button_to t("actions.delete"), invite_path(invite), method: :delete, class: "btn-cancel btn-sm flex-none",
+                    form: { data: { turbo_confirm: t(".confirm_delete") } } %>
+    <% end %>
+  </div>
+
+  <% if invite.usable? %>
+    <div class="invite-link" data-controller="clipboard" data-clipboard-copied-text-value="<%= t(".copied") %>">
+      <input type="text" readonly value="<%= register_url(invite_token: invite.token) %>" class="form-input"
+             data-clipboard-target="source" aria-label="<%= t(".link") %>">
+      <button type="button" class="btn-secondary btn-sm flex-none" data-clipboard-target="button"
+              data-action="clipboard#copy"><%= t(".copy") %></button>
+    </div>
+  <% end %>
+</li>

@@ -31,12 +31,17 @@ class ApplicationController < ActionController::Base
     assistant_available? && cookies[:assistant_open] == "1"
   end
 
-  # Starts a fresh session to prevent session fixation, keeping the chosen language.
+  # Starts a fresh session to prevent session fixation.
   def log_in(user)
+    reset_session_keeping_locale
+    session[:user_id] = user.id
+  end
+
+  # A new session, with nothing from the old one but the chosen language.
+  def reset_session_keeping_locale
     locale = session[:locale]
     reset_session
     session[:locale] = locale
-    session[:user_id] = user.id
   end
 
   def authenticate_user!

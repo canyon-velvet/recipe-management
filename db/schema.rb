@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_07_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_15_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -75,6 +75,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_120000) do
     t.index "user_id, lower((name)::text)", name: "index_ingredients_on_user_id_and_lowercase_name", unique: true
     t.index ["aisle_id"], name: "index_ingredients_on_aisle_id"
     t.index ["user_id"], name: "index_ingredients_on_user_id"
+  end
+
+  create_table "invites", force: :cascade do |t|
+    t.string "token", null: false
+    t.bigint "created_by_id", null: false
+    t.bigint "used_by_id"
+    t.datetime "used_at"
+    t.datetime "expires_at", null: false
+    t.string "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_invites_on_created_by_id"
+    t.index ["token"], name: "index_invites_on_token", unique: true
+    t.index ["used_by_id"], name: "index_invites_on_used_by_id"
   end
 
   create_table "meal_plans", force: :cascade do |t|
@@ -254,6 +268,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_120000) do
   add_foreign_key "grocery_lists", "meal_plans"
   add_foreign_key "ingredients", "aisles"
   add_foreign_key "ingredients", "users"
+  add_foreign_key "invites", "users", column: "created_by_id", on_delete: :cascade
+  add_foreign_key "invites", "users", column: "used_by_id", on_delete: :nullify
   add_foreign_key "meal_plans", "users"
   add_foreign_key "meal_slot_recipes", "meal_slots"
   add_foreign_key "meal_slot_recipes", "recipes"

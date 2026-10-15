@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   delete "logout", to: "sessions#destroy"
   get "register", to: "registrations#new"
   post "register", to: "registrations#create"
+  resources :invites, only: [ :index, :create, :destroy ]
 
   # Language switcher
   resource :locale, only: [ :update ]

@@ -16,6 +16,9 @@ en:
     admin_required: "Admin access required."
     draft_discarded: "Draft discarded."
     invalid_login: "Incorrect username or password."
+    invite_created: "Invite link created. Copy it and send it to the person."
+    invite_deleted: "Invite deleted. Its link no longer works."
+    invite_used: "A used invite can't be deleted."
     logged_in: "Logged in."
     logged_out: "Logged out."
     login_required: "Please log in first."
@@ -79,6 +82,8 @@ en:
       ingredient:
         aisle: "Aisle"
         name: "Name"
+      invite:
+        note: "Who it's for"
       meal_plan:
         end_date: "End date"
         name: "Name"
@@ -142,6 +147,7 @@ en:
       background_jobs: "Background jobs"
       draft_box: "Draft box"
       drafts_need_attention: "Some drafts need your attention"
+      invites: "Invites"
       logout: "Log out"
       preferences: "Preferences"
     hero:
@@ -386,14 +392,34 @@ en:
 
   sessions:
     new:
-      no_account: "Don't have an account? "
-      register: "Sign up"
       submit: "Log in"
       title: "Log in"
 
   registrations:
+    invite_only:
+      body: "You need an invite link to sign up. If you have one, it may have been used or have expired: ask for a new one."
+      login: "Log in"
+      title: "Sign-up is by invitation"
     new:
       have_account: "Already have an account? "
       login: "Log in"
       submit: "Sign up"
       title: "Sign up"
+
+  invites:
+    index:
+      create: "Create invite link"
+      empty: "No invites yet."
+      note_placeholder: "Who it's for (optional)"
+      subtitle: "Sign-up is by invitation. Each link works once, for %{days} days."
+      title: "Invites"
+    invite:
+      confirm_delete: "Delete this invite? Its link will stop working."
+      copied: "Copied"
+      copy: "Copy"
+      deleted_account: "a deleted account"
+      expired: "Expired"
+      expires: "Expires in %{time}"
+      link: "Invite link"
+      untitled: "Invite"
+      used: "Used by %{username}, %{time} ago"
