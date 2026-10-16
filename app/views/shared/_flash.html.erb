@@ -1,5 +1,16 @@
-<% flash.each do |type, message| %>
-  <div class="<%= type == 'notice' ? 'bg-green-50 border-green-300 text-green-700' : 'bg-red-50 border-red-300 text-red-700' %> border rounded-md p-3 mb-4">
-    <%= message %>
+<%# What happened after an action: a notice (✓), or an alert (⚠) when something went wrong. Each stays until it's closed
+    or the next page. %>
+<% if flash.any? %>
+  <div class="flash-list">
+    <% flash.each do |type, message| %>
+      <% alert = type.to_s != "notice" %>
+      <div class="flash <%= alert ? "flash--alert" : "flash--notice" %>" role="<%= alert ? "alert" : "status" %>"
+           data-controller="flash">
+        <span class="flash-icon" aria-hidden="true"><%= alert ? "⚠" : "✓" %></span>
+        <p class="flash-message"><%= message %></p>
+        <button type="button" class="flash-close" data-action="flash#dismiss"
+                aria-label="<%= t("actions.close") %>">&times;</button>
+      </div>
+    <% end %>
   </div>
 <% end %>

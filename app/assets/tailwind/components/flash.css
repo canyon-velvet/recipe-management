@@ -1,0 +1,23 @@
+@layer components {
+  /* Notices after an action ("Recipe saved."), at the top of the page: one of the app's cream cards, with a brown edge
+     and ✓, or a rose edge and ⚠ when something went wrong. */
+  .flash-list {
+    @apply mx-auto mb-5 max-w-4xl space-y-2;
+  }
+  .flash {
+    @apply flex items-center gap-3 rounded-xl border border-l-4 border-gray-200 bg-sectionbackground px-4 py-3;
+  }
+  .flash--notice { @apply border-l-sectiontext-light; }
+  .flash--alert  { @apply border-l-rose-700; }
+  .flash-icon {
+    @apply text-lg leading-none;
+  }
+  .flash--notice .flash-icon { @apply text-sectiontext; }
+  .flash--alert .flash-icon  { @apply text-rose-700; }
+  .flash-message {
+    @apply flex-1 text-sm text-gray-800;
+  }
+  .flash-close {
+    @apply text-gray-400 hover:text-gray-600 cursor-pointer;
+  }
+}
