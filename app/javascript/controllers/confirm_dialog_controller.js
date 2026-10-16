@@ -25,13 +25,15 @@ export default class extends Controller {
     this.answer(false)
   }
 
-  // Esc closes the dialog without an answer: that's a no.
+  // Esc closes the dialog without an answer: that's a no. The close event comes a moment later, so one from an
+  // earlier question that arrives after a new one has opened is ignored.
   closed() {
-    this.answer(false)
+    if (!this.element.open) this.answer(false)
   }
 
+  // A click outside is a no, but not the second click of a double-click on Delete, which lands outside too.
   backdropClose(event) {
-    if (event.target === this.element) this.cancel()
+    if (event.target === this.element && event.detail < 2) this.cancel()
   }
 
   answer(value) {
