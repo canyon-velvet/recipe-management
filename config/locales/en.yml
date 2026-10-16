@@ -212,12 +212,16 @@ en:
       search: "Search ingredients..."
       unit: "Unit"
     index:
-      banner_alt: "All recipes"
-      banner_title: "Start your day with good food"
+      count:
+        one: "%{count} recipe"
+        other: "%{count} recipes"
       empty: "No recipes match your search."
       import_recipe: "Import recipe"
+      matching: "matching “%{query}”"
       new_recipe: "New recipe"
+      search_and_filter: "Search & filter"
       search_placeholder: "Search recipes"
+      title: "All recipes"
     new:
       review_hint: "Check what was read, then save. Ingredients and sources marked New are created when you save."
       review_title: "Review draft"

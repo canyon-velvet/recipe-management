@@ -12,7 +12,7 @@ class RecipesController < ApplicationController
                           .order(updated_at: :desc)
     @pagy, @recipes = pagy(recipes)
     @tags_by_kind = Tag.by_kind
-    @used_tag_ids = Tag.ids_used_by(current_user)
+    @tag_counts = Tag.recipe_counts_for(current_user)
   end
 
   def search

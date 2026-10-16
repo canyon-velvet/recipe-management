@@ -1,40 +1,37 @@
 <%# locals: (recipe:) %>
-<div class="relative group rounded-xl bg-white shadow-lg">
-  <%= link_to "", recipe_path(recipe), class: "absolute inset-0 block z-0", "aria-label": recipe.name %>
+<%# The whole card links to the recipe (the link lies under the content); only the ⋮ menu takes its own clicks. %>
+<div class="recipe-card">
+  <%= link_to "", recipe_path(recipe), class: "recipe-card-link", "aria-label": recipe.name %>
 
-  <div class="relative z-10 grid grid-cols-4 gap-0 pointer-events-none">
-    <!-- Left 3/4 -->
-    <div class="col-span-3 p-4">
-      <div class="flex items-center gap-1">
-        <h3 class="flex-1 min-w-0 text-base md:text-lg font-semibold leading-tight truncate">
-          <%= recipe.name %>
-        </h3>
-        <div class="flex-none pointer-events-auto relative z-20">
-          <%= render "shared/kebab_menu", items: [
-            { label: t("actions.edit"), url: edit_recipe_path(recipe) },
-            { label: t("actions.delete"), url: recipe_path(recipe), data: { turbo_method: :delete, turbo_confirm: t("recipes.confirm_delete") }, class: "text-red-600" }
-          ] %>
-        </div>
-      </div>
-
-      <div class="mt-1">
-        <%= render "shared/tag_badges", tags: recipe.tags, limit: 3 %>
-      </div>
-
-      <% if recipe.source %>
-        <p class="mt-2 text-xs text-gray-500 truncate"><%= recipe.source.name %></p>
-      <% end %>
-    </div>
-
-    <!-- Right 1/4 icon -->
-    <div class="col-span-1 flex items-center justify-center bg-gray-50 rounded-tr-xl rounded-br-xl">
-      <% if (icon = recipe.card_icon) %>
-        <span class="recipe-card-icon" aria-hidden="true"><%= icon %></span>
-      <% else %>
-        <%= image_tag "icons/recipe-placeholder.svg", alt: "", class: "w-12 h-12 object-contain", loading: "lazy" %>
-      <% end %>
-    </div>
+  <div class="recipe-card-art">
+    <% if (icon = recipe.card_icon) %>
+      <span class="recipe-card-icon" aria-hidden="true"><%= icon %></span>
+    <% else %>
+      <%= image_tag "icons/recipe-placeholder.svg", alt: "", class: "w-16 h-16 object-contain", loading: "lazy" %>
+    <% end %>
   </div>
 
-  <div class="absolute inset-0 rounded-xl ring-0 group-hover:ring-1 group-hover:ring-gray-800 transition pointer-events-none"></div>
+  <div class="recipe-card-body">
+    <div class="recipe-card-heading">
+      <h3 class="recipe-card-title"><%= recipe.name %></h3>
+      <div class="recipe-card-menu">
+        <%= render "shared/kebab_menu", items: [
+          { label: t("actions.edit"), url: edit_recipe_path(recipe) },
+          { label: t("actions.delete"), url: recipe_path(recipe), data: { turbo_method: :delete, turbo_confirm: t("recipes.confirm_delete") }, class: "text-red-600" }
+        ] %>
+      </div>
+    </div>
+
+    <p class="recipe-card-summary"><%= recipe_summary(recipe) %></p>
+
+    <p class="recipe-card-facts">
+      <% if recipe.total_minutes %>
+        <span><span aria-hidden="true">⏱</span> <%= duration_label(recipe.total_minutes) %></span>
+      <% end %>
+      <% if recipe.servings %>
+        <span><span aria-hidden="true">👥</span><span class="sr-only"><%= t("recipes.facts.servings") %></span> <%= recipe.servings %></span>
+      <% end %>
+      <span class="recipe-card-tags"><%= recipe.tags.first(2).map(&:name).join(" · ") %></span>
+    </p>
+  </div>
 </div>

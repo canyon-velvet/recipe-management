@@ -209,12 +209,14 @@ zh-CN:
       search: "搜索食材..."
       unit: "单位"
     index:
-      banner_alt: "所有菜谱"
-      banner_title: "用美食开启美好的一天"
+      count: "%{count} 道菜谱"
       empty: "没有找到符合条件的菜谱。"
       import_recipe: "导入菜谱"
+      matching: "匹配“%{query}”"
       new_recipe: "新建菜谱"
+      search_and_filter: "搜索和筛选"
       search_placeholder: "搜索菜谱"
+      title: "全部菜谱"
     new:
       review_hint: "确认读取的内容后保存。标记为“新”的食材和来源会在保存时创建。"
       review_title: "审阅草稿"

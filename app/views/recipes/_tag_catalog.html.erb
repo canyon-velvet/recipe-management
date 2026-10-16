@@ -1,29 +1,33 @@
-<%# locals: (tags_by_kind:, used_tag_ids:, selected:, query:) %>
-<%# One tag at a time. Kinds are collapsible; the selected tag's kind starts open. Tags none of the user's recipes
-    have are dimmed and not links. Switching tags keeps the search text and goes back to page 1. %>
-<nav class="tag-catalog" aria-label="<%= t(".label") %>">
-  <%= link_to t(".all_recipes"), recipes_path(q: query.presence),
+<%# locals: (tags_by_kind:, tag_counts:, selected:, query:) %>
+<%# One tag at a time, grouped by kind, each with its emoji and how many recipes have it. Tags none of the user's
+    recipes have are dimmed and not links. Switching tags keeps the search text (the search box updates the links as
+    you type) and goes back to page 1. %>
+<nav class="tag-catalog" aria-label="<%= t(".label") %>" data-action="click->search-form#cancelSearch">
+  <%= link_to recipes_path(q: query.presence),
               class: "tag-catalog-link #{'tag-catalog-link--selected' unless selected}",
-              aria: { current: ("page" unless selected) } %>
+              aria: { current: ("page" unless selected) }, data: { search_form_target: "link" } do %>
+    <span aria-hidden="true">📚</span><span class="tag-catalog-name"><%= t(".all_recipes") %></span>
+  <% end %>
 
   <% tags_by_kind.each do |kind, kind_tags| %>
-    <%= tag.details class: "tag-catalog-group", open: selected&.kind == kind do %>
-      <summary class="tag-catalog-kind"><%= Tag.kind_name(kind) %></summary>
-      <ul class="tag-catalog-tags">
-        <% kind_tags.each do |catalog_tag| %>
-          <li>
-            <% chosen = catalog_tag == selected %>
-            <%# The selected tag stays selectable-looking even if none of the user's recipes have it. %>
-            <% if chosen || used_tag_ids.include?(catalog_tag.id) %>
-              <%= link_to catalog_tag.name, recipes_path(tag: catalog_tag.key, q: query.presence),
-                          class: "tag-catalog-link #{'tag-catalog-link--selected' if chosen}",
-                          aria: { current: ("page" if chosen) } %>
-            <% else %>
-              <span class="tag-catalog-link tag-catalog-link--empty"><%= catalog_tag.name %></span>
-            <% end %>
-          </li>
+    <p class="tag-catalog-kind"><%= Tag.kind_name(kind) %></p>
+    <% kind_tags.each do |catalog_tag| %>
+      <% chosen = catalog_tag == selected %>
+      <%# The selected tag stays selectable-looking even if none of the user's recipes have it. %>
+      <% if chosen || tag_counts.key?(catalog_tag.id) %>
+        <%= link_to recipes_path(tag: catalog_tag.key, q: query.presence),
+                    class: "tag-catalog-link #{'tag-catalog-link--selected' if chosen}",
+                    aria: { current: ("page" if chosen) }, data: { search_form_target: "link" } do %>
+          <span aria-hidden="true"><%= catalog_tag.icon %></span>
+          <span class="tag-catalog-name"><%= catalog_tag.name %></span>
+          <span class="tag-catalog-count"><%= tag_counts[catalog_tag.id] %></span>
         <% end %>
-      </ul>
+      <% else %>
+        <span class="tag-catalog-link tag-catalog-link--empty">
+          <span class="opacity-50" aria-hidden="true"><%= catalog_tag.icon %></span>
+          <span class="tag-catalog-name"><%= catalog_tag.name %></span>
+        </span>
+      <% end %>
     <% end %>
   <% end %>
 </nav>
