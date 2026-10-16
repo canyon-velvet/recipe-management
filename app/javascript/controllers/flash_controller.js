@@ -1,8 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
-// A notice under the navbar. One that something worked fades away by itself, but not while the pointer or the keyboard
-// is on it (being read, or about to be closed): then it goes a little after they leave. One about a problem stays
-// until its × is clicked, so it isn't missed.
+// A notice at the top of the window. One that something worked fades away by itself, but not while the pointer or
+// the keyboard is on it (being read, or about to be closed): then it goes a little after they leave. One about a
+// problem stays until its × is clicked, so it isn't missed.
 export default class extends Controller {
   static values = { autoHide: Boolean }
 

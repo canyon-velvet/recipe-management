@@ -43,15 +43,14 @@ RSpec.describe "Notices after an action", type: :system do
     expect(page).to have_no_css(".flash")
   end
 
-  it "stays under the navbar's menus on a narrow screen, where they overlap" do
-    page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: 768, height: 800) }
+  it "ends above where the navbar's menus open, so an open menu isn't covered" do
     log_in_as user
     expect(page).to have_css(".flash--notice", text: "Logged in.")
-
     find(".account-toggle").click
-    click_link "Preferences" # would hit the notice if it were on top
 
-    expect(page).to have_css("h1", text: "Preferences")
+    notice_bottom = page.evaluate_script("document.querySelector('.flash').getBoundingClientRect().bottom")
+    menu_top = page.evaluate_script("document.querySelector('.account-menu').getBoundingClientRect().top")
+    expect(notice_bottom).to be < menu_top
   end
 
   it "keeps a notice while the pointer is on it, and fades it once the pointer leaves" do
