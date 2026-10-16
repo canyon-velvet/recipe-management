@@ -10,13 +10,7 @@ class MealSlotRecipesController < ApplicationController
 
     if @meal_slot_recipe.save
       SyncGroceryListService.new(@meal_slot.meal_plan).call
-      respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.update(
-          "meal_slot_#{@meal_slot.id}",
-          partial: "meal_plans/meal_slot_cell",
-          locals: { meal_slot: @meal_slot.reload }
-        )}
-      end
+      render_meal_slots(@meal_slot.meal_plan, @meal_slot.id)
     else
       head :unprocessable_entity
     end
@@ -26,14 +20,7 @@ class MealSlotRecipesController < ApplicationController
     meal_slot = @meal_slot_recipe.meal_slot
     @meal_slot_recipe.destroy
     SyncGroceryListService.new(meal_slot.meal_plan).call
-
-    respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.update(
-        "meal_slot_#{meal_slot.id}",
-        partial: "meal_plans/meal_slot_cell",
-        locals: { meal_slot: meal_slot.reload }
-      )}
-    end
+    render_meal_slots(meal_slot.meal_plan, meal_slot.id)
   end
 
   def update
@@ -48,24 +35,23 @@ class MealSlotRecipesController < ApplicationController
     linked.update_all(add_to_grocery_list: @meal_slot_recipe.add_to_grocery_list)
     SyncGroceryListService.new(meal_plan).call
 
-    # Collect unique slot IDs to avoid duplicate stream replacements
-    slot_ids = linked.pluck(:meal_slot_id).uniq
-    slots = MealSlot.includes(meal_slot_recipes: :recipe).where(id: slot_ids)
+    render_meal_slots(meal_plan, linked.pluck(:meal_slot_id).uniq)
+  end
 
+  private
+
+  # Redraws the changed meals, and the page's header for its counts of recipes planned and items to buy
+  def render_meal_slots(meal_plan, slot_ids)
+    slots = MealSlot.includes(meal_slot_recipes: { recipe: :tags }).where(id: slot_ids)
     streams = slots.map do |slot|
-      turbo_stream.update(
-        "meal_slot_#{slot.id}",
-        partial: "meal_plans/meal_slot_cell",
-        locals: { meal_slot: slot }
-      )
+      turbo_stream.update("meal_slot_#{slot.id}", partial: "meal_plans/meal_slot_cell", locals: { meal_slot: slot })
     end
+    streams << turbo_stream.update("meal_plan_header", partial: "meal_plans/header", locals: { meal_plan: meal_plan })
 
     respond_to do |format|
       format.turbo_stream { render turbo_stream: streams }
     end
   end
-
-  private
 
   def set_meal_slot
     @meal_slot = MealSlot.find(params[:meal_slot_id])

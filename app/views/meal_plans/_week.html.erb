@@ -1,0 +1,44 @@
+<%# locals: (meal_plan:, grid:) %>
+<%# The week, written once in day order: on a phone a card per day with its four meals. From lg the cards dissolve
+    (display: contents) and each day's heading and meals are placed in a week × meal grid by column (the day) and row
+    (the meal), with the meals' names down the first column. Each meal's Turbo frame exists once, so adding, removing
+    or ticking a recipe redraws it in either layout. %>
+<% today = (Date.current - meal_plan.start_date).to_i %>
+<%# Grid placements, written out in full so Tailwind generates them %>
+<% columns = %w[lg:col-start-2 lg:col-start-3 lg:col-start-4 lg:col-start-5 lg:col-start-6 lg:col-start-7 lg:col-start-8] %>
+<% rows = %w[lg:row-start-2 lg:row-start-3 lg:row-start-4 lg:row-start-5] %>
+
+<div class="meal-week">
+  <div class="meal-week-grid">
+    <div class="meal-week-corner"></div>
+    <% MealPlan::MEAL_TYPES.each_index do |meal_type| %>
+      <div class="meal-week-meal-name <%= rows[meal_type] %>"><%= meal_type_label(meal_type) %></div>
+    <% end %>
+
+    <% MealPlan::DAYS_OF_WEEK.each_index do |day| %>
+      <% date = meal_plan.start_date + day %>
+      <section class="meal-day <%= 'meal-day--today' if day == today %>">
+        <h2 class="meal-day-heading <%= columns[day] %>">
+          <span class="meal-day-name"><%= day_label(day) %></span>
+          <span class="meal-day-month-day"><%= l(date, format: :month_day) %></span>
+          <span class="meal-day-number"><%= date.day %></span>
+          <% if day == today %>
+            <span class="meal-day-today"><%= t(".today") %></span>
+          <% end %>
+        </h2>
+
+        <% MealPlan::MEAL_TYPES.each_index do |meal_type| %>
+          <% slot = grid.dig(day, meal_type) %>
+          <div class="meal-slot <%= columns[day] %> <%= rows[meal_type] %>">
+            <span class="meal-slot-name"><%= meal_type_label(meal_type) %></span>
+            <% if slot %>
+              <turbo-frame id="meal_slot_<%= slot.id %>">
+                <%= render "meal_plans/meal_slot_cell", meal_slot: slot %>
+              </turbo-frame>
+            <% end %>
+          </div>
+        <% end %>
+      </section>
+    <% end %>
+  </div>
+</div>

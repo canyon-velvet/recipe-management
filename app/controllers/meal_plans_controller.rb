@@ -7,7 +7,7 @@ class MealPlansController < ApplicationController
   end
 
   def show
-    slots = @meal_plan.meal_slots.includes(meal_slot_recipes: :recipe)
+    slots = @meal_plan.meal_slots.includes(meal_slot_recipes: { recipe: :tags })
     @grid = {}
     day_map = MealPlan::DAYS_OF_WEEK.each_with_index.to_h
     meal_map = MealPlan::MEAL_TYPES.each_with_index.to_h

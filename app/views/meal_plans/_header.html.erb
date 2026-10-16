@@ -1,0 +1,19 @@
+<%# locals: (meal_plan:) %>
+<%# Back to the plans, the plan's name, its week and how many recipes are planned, and the grocery list with how many
+    items are left to buy. %>
+<div class="meal-plan-header">
+  <div>
+    <%= link_to meal_plans_path, class: "meal-plan-back" do %>
+      <span aria-hidden="true">←</span> <%= t(".all_meal_plans") %>
+    <% end %>
+    <h1 class="meal-plan-title"><%= meal_plan.display_name %></h1>
+    <p class="meal-plan-summary">
+      <%= l(meal_plan.start_date, format: :month_day) %> – <%= l(meal_plan.end_date, format: :month_day_year) %>
+      · <%= t("meal_plans.meal_plan_card.recipe_count", count: meal_plan.assigned_recipe_count) %>
+    </p>
+  </div>
+  <%= link_to meal_plan_grocery_list_path(meal_plan), class: "btn-pill-primary btn-pill-sm gap-2" do %>
+    <span aria-hidden="true">🛒</span> <%= t("meal_plans.show.grocery_list") %>
+    <span class="meal-plan-to-buy"><%= t(".to_buy", count: meal_plan.grocery_list.to_buy_count) %></span>
+  <% end %>
+</div>
