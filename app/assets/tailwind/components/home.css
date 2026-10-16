@@ -1,6 +1,6 @@
 @layer components {
   /* The home page's hero: a cream band, wall to wall, with the intro on the left and the photo on the right (stacked
-     on a phone). It meets the navbar, which takes the same cream on this page (navbar.css), so they read as one. */
+     on a phone). It meets the navbar, which is the same cream, so they read as one. */
   .home-hero {
     @apply -mt-6 bg-sectionbackground;
   }

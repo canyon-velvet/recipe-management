@@ -33,7 +33,7 @@ RSpec.describe "Home page", type: :request do
     stats = Nokogiri::HTML(response.body).css(".home-stat-value").map { |value| value.text.squish }
     expect(stats).to eq [ "3", "2 dishes", "2" ]
     expect(response.body).to include(recipe_path(recipes[0]), "+1")
-    # A phone's status bar matches the cream navbar
+    # A phone's status bar matches the cream navbar (on every page)
     expect(response.body).to include(%(<meta name="theme-color" content="#F7F2ED">))
   end
 

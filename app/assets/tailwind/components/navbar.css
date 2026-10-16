@@ -1,10 +1,13 @@
 @layer components {
+  /* The bar is cream with brown text and icons, like the pages' cream sections. Once the page scrolls, a faint line
+     (the scrolled controller) parts it from what passes under it. */
   header {
-    @apply flex flex-row w-full bg-background h-20 items-center sticky top-0 z-30;
+    @apply flex flex-row w-full bg-sectionbackground h-20 items-center sticky top-0 z-30;
   }
+  header.is-scrolled { box-shadow: 0 1px 0 rgb(120 95 64 / 0.15); }
 
   header .logo-text {
-    @apply flex text-white font-semibold text-base tracking-widest uppercase whitespace-nowrap;
+    @apply flex text-sectiontext font-semibold text-base tracking-widest uppercase whitespace-nowrap;
     font-family: "Montserrat", sans-serif;
   }
 
@@ -25,7 +28,7 @@
   header .topnav-icon    { @apply fill-white opacity-70 text-inherit inline; }
 
   .nav-link {
-    @apply block text-white font-light hover:font-medium px-2 py-1 text-base whitespace-nowrap;
+    @apply block text-sectiontext font-light hover:font-medium px-2 py-1 text-base whitespace-nowrap;
     text-decoration: none;
   }
 
@@ -57,8 +60,7 @@
   /* The username, cut short when long (all of it shows on hover); or, in the compact bar, the icon in its place.
      Before the compact rules below, which override these at the same specificity. */
   .account-name { @apply max-w-48 truncate; }
-  /* The icon file is drawn in brown (for the home page's cream bar, below); white everywhere else */
-  .account-icon { @apply hidden w-5 h-5; filter: brightness(0) invert(1); }
+  .account-icon { @apply hidden w-5 h-5; }
 
   /* Compact, where the bar is short of room: tighter ends, and a person icon for the username (screen readers still
      read the name). On a phone; and between md and xl beside the open assistant panel, which covers the right of the
@@ -78,7 +80,7 @@
   }
 
   .navbar-menu-toggle {
-    @apply flex items-center text-white opacity-80 hover:opacity-100 p-1 rounded;
+    @apply flex items-center text-sectiontext hover:text-gray-900 p-1 rounded;
   }
   .navbar-menu-list {
     @apply absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-40 py-1;
@@ -94,7 +96,7 @@
 
   /* Language switcher */
   .locale-toggle {
-    @apply flex items-center gap-1 text-white text-sm font-light opacity-80 hover:opacity-100 px-2 py-1 rounded;
+    @apply flex items-center gap-1 text-sectiontext text-sm font-light hover:text-gray-900 px-2 py-1 rounded;
   }
 
   .locale-menu {
@@ -109,7 +111,7 @@
 
   /* Account menu */
   .account-toggle {
-    @apply flex items-center gap-1 text-white text-sm font-light opacity-80 hover:opacity-100 px-2 py-1 rounded;
+    @apply flex items-center gap-1 text-sectiontext text-sm font-light hover:text-gray-900 px-2 py-1 rounded;
   }
 
   .account-menu {
@@ -119,16 +121,4 @@
   .account-menu-item {
     @apply block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50;
   }
-
-  /* On the home page the bar takes the hero's cream, with brown text and icons, so the two read as one surface.
-     Once the page scrolls, a faint line (the scrolled controller) parts the bar from what passes under it. */
-  .home-page header                 { @apply bg-sectionbackground; }
-  .home-page header.is-scrolled     { box-shadow: 0 1px 0 rgb(120 95 64 / 0.15); }
-  .home-page header .logo-text,
-  .home-page .nav-link,
-  .home-page .assistant-toggle,
-  .home-page .locale-toggle,
-  .home-page .account-toggle,
-  .home-page .navbar-menu-toggle    { @apply text-sectiontext; }
-  .home-page .account-icon          { filter: none; }
 }
