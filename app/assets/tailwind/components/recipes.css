@@ -44,7 +44,8 @@
   .tag-catalog-name  { @apply flex-1; }
   .tag-catalog-count { @apply text-xs text-gray-400; }
 
-  /* A recipe card: its emoji on cream, then the name with the ⋮ menu, a line or two of description, and the facts.
+  /* A recipe card, all white: its emoji above a hairline (white, not cream, so the cards stand apart from the home
+     page's cream hero), then the name with the ⋮ menu, a line or two of description, and the facts.
      The whole card is a link (.recipe-card-link, under the content); the card under the pointer or with its menu open
      sits above its neighbours, so the menu isn't covered. */
   .recipe-card {
@@ -52,7 +53,7 @@
            hover:z-10 hover:shadow-xl focus-within:z-10;
   }
   .recipe-card-link    { @apply absolute inset-0 z-0 rounded-3xl; }
-  .recipe-card-art     { @apply flex h-36 items-center justify-center rounded-t-3xl bg-sectionbackground; }
+  .recipe-card-art     { @apply flex h-36 items-center justify-center border-b border-sectiontext/10; }
   .recipe-card-body    { @apply pointer-events-none relative p-5; }
   .recipe-card-heading { @apply flex items-start gap-1; }
   .recipe-card-title   { @apply min-w-0 flex-1 truncate text-lg font-semibold text-gray-900; }
