@@ -1,49 +1,45 @@
-<% if current_page?(root_path) %>
-  <%= render "shared/hero" %>
-<% else %>
-  <!-- Banner -->
-  <section class="full-bleed h-40 md:h-56 overflow-hidden -mt-6">
-    <%= image_tag "banner.jpg", alt: t(".banner_alt"), class: "w-full h-full object-cover" %>
-    <div class="absolute inset-0 bg-black/10"></div>
-    <div class="absolute inset-0 flex items-center justify-start ml-8">
-      <h1 class="text-white text-2xl md:text-3xl font-bold tracking-wide"><%= t(".banner_title") %></h1>
-    </div>
-  </section>
+<!-- Banner -->
+<section class="full-bleed h-40 md:h-56 overflow-hidden -mt-6">
+  <%= image_tag "banner.jpg", alt: t(".banner_alt"), class: "w-full h-full object-cover" %>
+  <div class="absolute inset-0 bg-black/10"></div>
+  <div class="absolute inset-0 flex items-center justify-start ml-8">
+    <h1 class="text-white text-2xl md:text-3xl font-bold tracking-wide"><%= t(".banner_title") %></h1>
+  </div>
+</section>
 
-  <!-- Search and actions, above both the catalog and the list -->
-  <section class="recipes-toolbar" data-controller="search-form">
-    <%= form_with url: recipes_path, method: :get, data: { search_form_target: "form" }, class: "w-full md:w-80" do |f| %>
-      <%# Searching keeps the selected tag. %>
-      <%= hidden_field_tag :tag, @selected_tag.key if @selected_tag %>
-      <%= f.text_field :q, value: params[:q], placeholder: t(".search_placeholder"),
-            data: { action: "input->search-form#submitLater" }, class: "form-input" %>
+<!-- Search and actions, above both the catalog and the list -->
+<section class="recipes-toolbar" data-controller="search-form">
+  <%= form_with url: recipes_path, method: :get, data: { search_form_target: "form" }, class: "w-full md:w-80" do |f| %>
+    <%# Searching keeps the selected tag. %>
+    <%= hidden_field_tag :tag, @selected_tag.key if @selected_tag %>
+    <%= f.text_field :q, value: params[:q], placeholder: t(".search_placeholder"),
+          data: { action: "input->search-form#submitLater" }, class: "form-input" %>
+  <% end %>
+
+  <div class="flex gap-2">
+    <%= link_to t(".import_recipe"), new_import_path, class: "btn-secondary flex-shrink-0" %>
+    <%= link_to t(".new_recipe"), new_recipe_path, class: "btn-primary flex-shrink-0" %>
+  </div>
+</section>
+
+<div class="flex flex-col md:flex-row gap-8 pt-6 pb-10">
+  <aside class="recipes-sidebar">
+    <%= render "recipes/tag_catalog", tags_by_kind: @tags_by_kind, used_tag_ids: @used_tag_ids,
+                                      selected: @selected_tag, query: params[:q] %>
+  </aside>
+
+  <!-- Recipe Cards -->
+  <section class="flex-1 min-w-0">
+    <% if @recipes.any? %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @recipes.each do |recipe| %>
+          <%= render "recipes/recipe_card", recipe: recipe %>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-center text-gray-500 py-16"><%= t(".empty") %></p>
     <% end %>
 
-    <div class="flex gap-2">
-      <%= link_to t(".import_recipe"), new_import_path, class: "btn-secondary flex-shrink-0" %>
-      <%= link_to t(".new_recipe"), new_recipe_path, class: "btn-primary flex-shrink-0" %>
-    </div>
+    <%= render "shared/pagination", pagy: @pagy %>
   </section>
-
-  <div class="flex flex-col md:flex-row gap-8 pt-6 pb-10">
-    <aside class="recipes-sidebar">
-      <%= render "recipes/tag_catalog", tags_by_kind: @tags_by_kind, used_tag_ids: @used_tag_ids,
-                                        selected: @selected_tag, query: params[:q] %>
-    </aside>
-
-    <!-- Recipe Cards -->
-    <section class="flex-1 min-w-0">
-      <% if @recipes.any? %>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <% @recipes.each do |recipe| %>
-            <%= render "recipes/recipe_card", recipe: recipe %>
-          <% end %>
-        </div>
-      <% else %>
-        <p class="text-center text-gray-500 py-16"><%= t(".empty") %></p>
-      <% end %>
-
-      <%= render "shared/pagination", pagy: @pagy %>
-    </section>
-  </div>
-<% end %>
+</div>

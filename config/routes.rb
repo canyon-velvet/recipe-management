@@ -75,5 +75,5 @@ Rails.application.routes.draw do
 
   get "manifest" => "pwa#manifest", as: :pwa_manifest, format: false, defaults: { format: :json }
 
-  root "recipes#index"
+  root "home#show"
 end

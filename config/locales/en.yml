@@ -144,6 +144,32 @@ en:
             recipe_id:
               already_in_slot: "is already in this slot"
 
+  home:
+    intro:
+      eyebrow: "Your home kitchen"
+      # One entry per phrase: a line only breaks between phrases, or inside one too long for it
+      title:
+        - "Every recipe you love, in one place."
+      lead: "Plan the week, and the grocery list writes itself."
+      browse_recipes: "Browse recipes"
+      import_recipe: "Import from a link"
+      ask_assistant: "Ask the assistant"
+    stats:
+      recipes: "Recipes"
+      this_week: "This week"
+      dishes:
+        one: "dish"
+        other: "dishes"
+      to_buy: "To buy"
+    photo:
+      image_alt: "A fried egg on toast for breakfast"
+      tonight: "Tonight"
+      more: "+%{count}"
+      nothing_planned: "Nothing planned yet"
+      plan_the_week: "Plan the week →"
+    recent_recipes:
+      title: "Recently updated"
+      all_recipes: "All recipes →"
   shared:
     account_menu:
       background_jobs: "Background jobs"
@@ -152,12 +178,6 @@ en:
       invites: "Invites"
       logout: "Log out"
       preferences: "Preferences"
-    hero:
-      browse_recipes: "Browse recipes"
-      image_alt: "Home meal planning"
-      tagline:
-        - "Keep your recipes in one place, plan the week,"
-        - "and get your grocery list made for you."
     locale_switcher:
       label: "Language"
     markdown_editor:

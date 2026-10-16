@@ -1,0 +1,20 @@
+<%# locals: (meal_plan:) %>
+<%# The photo fills a 4:5 box, so the page is laid out before it downloads, whatever the photo's size. %>
+<% dinners = meal_plan ? meal_plan.recipes_for(Date.current, :dinner) : [] %>
+<div class="home-photo">
+  <%= image_tag "egg.jpg", alt: t(".image_alt"), class: "home-photo-image" %>
+
+  <div class="home-tonight">
+    <p class="home-tonight-label"><%= t(".tonight") %></p>
+    <% if dinners.any? %>
+      <%= link_to dinners.first.name, recipe_path(dinners.first), class: "home-tonight-recipe" %>
+      <% if dinners.size > 1 %>
+        <span class="home-tonight-more"><%= t(".more", count: dinners.size - 1) %></span>
+      <% end %>
+    <% else %>
+      <p class="home-tonight-recipe"><%= t(".nothing_planned") %></p>
+      <%= link_to t(".plan_the_week"), meal_plan ? meal_plan_path(meal_plan) : new_meal_plan_path,
+            class: "home-tonight-link" %>
+    <% end %>
+  </div>
+</div>

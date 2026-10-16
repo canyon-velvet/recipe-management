@@ -1,0 +1,22 @@
+<%# locals: (recipe_count:, meal_plan:) %>
+<div>
+  <p class="home-eyebrow"><%= t(".eyebrow") %></p>
+  <h1 class="home-title">
+    <% t(".title").each do |phrase| %>
+      <span class="inline-block"><%= phrase %></span>
+    <% end %>
+  </h1>
+  <p class="home-lead"><%= t(".lead") %></p>
+
+  <div class="home-actions">
+    <%= link_to t(".browse_recipes"), recipes_path, class: "btn-pill-primary" %>
+    <%= link_to t(".import_recipe"), new_import_path, class: "btn-pill-secondary" %>
+    <% if assistant_available? %>
+      <button type="button" class="btn-pill-ghost" data-assistant-panel-target="toggle"
+              data-action="assistant-panel#toggle" aria-controls="<%= assistant_panel_id %>"
+              aria-expanded="<%= assistant_open? %>">✦ <%= t(".ask_assistant") %></button>
+    <% end %>
+  </div>
+
+  <%= render "home/stats", recipe_count: recipe_count, meal_plan: meal_plan %>
+</div>

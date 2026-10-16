@@ -25,4 +25,18 @@
 
   .btn-sm { @apply px-3 py-1.5 text-sm; }
   .btn-lg { @apply px-5 py-3 text-base; }
+
+  /* Large rounded buttons for a page's main calls to action (the home page) */
+  .btn-pill-primary {
+    @apply inline-flex items-center rounded-full px-6 py-3 font-medium bg-sectiontext text-white shadow-lg
+           hover:bg-gray-900 transition;
+  }
+  .btn-pill-secondary {
+    @apply inline-flex items-center rounded-full px-6 py-3 font-medium border border-sectiontext/30 text-sectiontext
+           hover:bg-white transition;
+  }
+  .btn-pill-ghost {
+    @apply inline-flex items-center rounded-full px-4 py-3 font-medium text-sectiontext hover:bg-white transition
+           cursor-pointer;
+  }
 }

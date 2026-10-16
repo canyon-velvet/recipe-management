@@ -1,0 +1,17 @@
+<%# locals: (recipe_count:, meal_plan:) %>
+<%# This week's numbers come from this week's plan; without one there's nothing planned or to buy. %>
+<dl class="home-stats">
+  <div>
+    <dt class="home-stat-label"><%= t(".recipes") %></dt>
+    <dd class="home-stat-value"><%= recipe_count %></dd>
+  </div>
+  <div>
+    <dt class="home-stat-label"><%= t(".this_week") %></dt>
+    <% planned = meal_plan ? meal_plan.assigned_recipe_count : 0 %>
+    <dd class="home-stat-value"><%= planned %> <span class="home-stat-unit"><%= t(".dishes", count: planned) %></span></dd>
+  </div>
+  <div>
+    <dt class="home-stat-label"><%= t(".to_buy") %></dt>
+    <dd class="home-stat-value"><%= meal_plan ? meal_plan.grocery_list.to_buy_count : "–" %></dd>
+  </div>
+</dl>

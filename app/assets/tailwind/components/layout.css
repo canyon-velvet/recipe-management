@@ -1,19 +1,8 @@
 @layer components {
-  /* Home page headline: white on a photo that may not reach the line ends, so a close dark shadow for crisp
-     edges plus a soft wide one keeps it readable over both the image and the light page. */
-  .hero-tagline {
-    @apply text-white text-4xl font-bold tracking-widest text-center;
-    text-shadow: 0 2px 4px rgb(0 0 0 / 0.6), 0 0 18px rgb(0 0 0 / 0.45);
-  }
-
   /* As wide as the window (less the open assistant panel), centred on the page whatever its container */
   .full-bleed {
     @apply relative left-1/2 -translate-x-1/2;
     width: calc(100vw - var(--assistant-width, 0px));
-  }
-  /* The hero tagline's box is twice the photo's width; it mustn't run under the open assistant panel */
-  .hero-tagline-box {
-    max-width: calc(100vw - var(--assistant-width, 0px) - 2.5rem);
   }
 
   /* The bordered, tinted card used for recipe sections, recipe facts and meal plan cards */
