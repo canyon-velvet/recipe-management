@@ -11,8 +11,10 @@
     left: calc((100% - var(--assistant-width, 0px)) / 2);
     max-width: calc(100% - var(--assistant-width, 0px) - 2rem);
   }
-  /* From lg the navbar has room between the logo and its buttons: they hang from the top of the window over it
-     (above it, z-40). Shorter than the navbar, so a one-line notice ends above the menus that open below its buttons. */
+  /* From lg they hang from the top of the window over the navbar (above it, z-40), between the logo and the buttons,
+     where the links are folded into ☰ (the navbar folds them when they don't have room). A long notice can still
+     touch the logo or a link for the few seconds it shows. Shorter than the navbar, so a one-line notice ends above
+     the menus that open below its buttons. */
   @media (width >= 64rem) {
     .flash-list {
       @apply top-0 z-40;
