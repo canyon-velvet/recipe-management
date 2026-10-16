@@ -1,7 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input"]
+  static targets = ["input", "field", "other"]
+
+  // The date is shown, and sent, only while "Other…" is chosen
+  toggle() {
+    const other = this.otherTarget.checked
+    this.fieldTarget.hidden = !other
+    this.inputTarget.disabled = !other
+  }
 
   snap() {
     const value = this.inputTarget.value

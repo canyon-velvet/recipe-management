@@ -8,6 +8,10 @@ module MealPlansHelper
   end
 
   def format_week_range(meal_plan)
-    "#{meal_plan.start_date.strftime('%m/%d')} - #{meal_plan.end_date.strftime('%m/%d')}"
+    format_week_of(meal_plan.start_date)
+  end
+
+  def format_week_of(monday)
+    "#{monday.strftime('%m/%d')} - #{(monday + 6.days).strftime('%m/%d')}"
   end
 end

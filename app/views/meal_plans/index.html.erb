@@ -1,11 +1,17 @@
-<section class="meal-plans-page">
+<%# Not cached: Back after creating a plan shows it in the list, and the pop-up's weeks without it %>
+<% content_for :head do %>
+  <meta name="turbo-cache-control" content="no-cache">
+<% end %>
+<section class="meal-plans-page" data-controller="modal">
   <div class="meal-plans-header">
     <div>
       <p class="home-eyebrow"><%= t(".eyebrow") %></p>
       <h1 class="meal-plans-title"><%= t(".title") %></h1>
     </div>
-    <%= link_to "＋ #{t('.new_meal_plan')}", new_meal_plan_path, class: "btn-pill-primary btn-pill-sm" %>
+    <%= link_to "＋ #{t('.new_meal_plan')}", new_meal_plan_path, class: "btn-pill-primary btn-pill-sm",
+          data: { action: "modal#open:prevent" } %>
   </div>
+  <%= render "new_dialog" %>
 
   <% if @meal_plans.any? %>
     <%# Grouped by the month each week starts in, newest first %>

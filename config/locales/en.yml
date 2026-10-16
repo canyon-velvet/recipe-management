@@ -297,9 +297,15 @@ en:
       create: "Create"
       name: "Name (optional)"
       name_placeholder: "e.g. Week 1"
+      other: "Other…"
+      pick_a_date: "Pick a date"
+      planned: "Already planned"
       title: "New meal plan"
       week: "Week"
       week_help: "Snaps to the Monday of the week you pick."
+      week_labels: [ "This week", "Next week", "In 2 weeks" ]
+    new_dialog:
+      loading: "Loading…"
     show:
       grocery_list: "Grocery list"
       no_recipes_found: "No recipes found"
