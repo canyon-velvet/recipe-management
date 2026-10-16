@@ -1,6 +1,6 @@
 # Recipe Manager
 
-[![CI](https://github.com/canyon-velvet/recipe_management/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/canyon-velvet/recipe_management/actions/workflows/ci.yml)
+[![CI](https://github.com/canyon-velvet/recipe-management/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/canyon-velvet/recipe_management/actions/workflows/ci.yml)
 [![Ruby 3.4](https://img.shields.io/badge/Ruby-3.4-CC342D?logo=ruby&logoColor=white)](https://www.ruby-lang.org)
 [![Rails 8.1](https://img.shields.io/badge/Rails-8.1-D30001?logo=rubyonrails&logoColor=white)](https://rubyonrails.org)
 [![Hotwire](https://img.shields.io/badge/Hotwire-Turbo%20%2B%20Stimulus-5CD8E5?logo=hotwire&logoColor=white)](https://hotwired.dev)
@@ -11,20 +11,6 @@ It's deployed on Render.
 
 One place for all the recipes I've saved, an assistant that helps me pick what to cook from them, and a weekly
 meal plan that writes my grocery list for me.
-
-**Plan the week and get the grocery list**
-
-[plan_the_week.webm](https://github.com/user-attachments/assets/da4b664c-0192-4e9a-9674-ef3162c98058)
-
-
-**Import a recipe from a link**
-
-[import_recipe.webm](https://github.com/user-attachments/assets/4f91e8ca-434b-446f-8be3-c96b4ce65d06)
-
-
-**Ask the assistant: cooking questions, recipe ideas, imports and preferences**
-
-[ask_the_assistant.webm](https://github.com/user-attachments/assets/f5f040cc-9a88-4b27-b643-746247334c4e)
 
 
 ## The problem
