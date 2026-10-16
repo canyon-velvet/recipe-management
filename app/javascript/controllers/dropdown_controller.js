@@ -1,11 +1,13 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["menu"]
+  // button (optional): the toggle, which then tells screen readers whether the menu is open (aria-expanded)
+  static targets = ["menu", "button"]
 
   // The click carries on to the window, so any other open dropdown closes (its #close sees a click outside it)
   toggle() {
     this.menuTarget.classList.toggle("hidden")
+    this.#syncButton()
   }
 
   close(event) {
@@ -16,5 +18,12 @@ export default class extends Controller {
 
   hide() {
     this.menuTarget.classList.add("hidden")
+    this.#syncButton()
+  }
+
+  #syncButton() {
+    if (this.hasButtonTarget) {
+      this.buttonTarget.setAttribute("aria-expanded", !this.menuTarget.classList.contains("hidden"))
+    }
   }
 }

@@ -20,4 +20,18 @@ RSpec.describe RecipesHelper, type: :helper do
       end
     end
   end
+
+  describe "#recipe_summary" do
+    it "gives the description as one line of plain text" do
+      recipe = build(:recipe, description: "**Salt** & pepper,\n\nthen <b>more</b>.")
+
+      expect(helper.recipe_summary(recipe)).to eq "Salt & pepper, then more."
+    end
+
+    it "falls back to where the recipe is from" do
+      recipe = build(:recipe, description: "")
+
+      expect(helper.recipe_summary(recipe)).to eq recipe.source.name
+    end
+  end
 end

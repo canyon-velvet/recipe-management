@@ -30,4 +30,18 @@ RSpec.describe Tag do
       expect { expect { load Rails.root.join("db/seeds.rb") }.to output.to_stdout }.not_to change(Tag, :count)
     end
   end
+
+  describe ".recipe_counts_for" do
+    it "counts the user's own recipes with each tag, and leaves out tags they don't use" do
+      user = create(:user)
+      chinese = create(:tag, key: "chinese", kind: "cuisine")
+      soup = create(:tag, key: "soup", kind: "meal")
+      create(:tag, key: "italian", kind: "cuisine")
+      create_list(:recipe, 2, user: user, tags: [ chinese ])
+      create(:recipe, user: user, tags: [ chinese, soup ])
+      create(:recipe, tags: [ soup ]) # someone else's
+
+      expect(Tag.recipe_counts_for(user)).to eq(chinese.id => 3, soup.id => 1)
+    end
+  end
 end

@@ -30,6 +30,7 @@ class Tag < ApplicationRecord
   # { "meal" => [tags…], "cuisine" => […], … } in display order, for the recipe catalog.
   def self.by_kind = ordered.group_by(&:kind)
 
-  # Ids of the tags on any of the user's recipes; the catalog dims the rest.
-  def self.ids_used_by(user) = RecipeTag.where(recipe_id: user.recipes.select(:id)).distinct.pluck(:tag_id).to_set
+  # { tag_id => how many of the user's recipes have it }, for the tags they use; the catalog shows the counts and dims
+  # the rest.
+  def self.recipe_counts_for(user) = RecipeTag.where(recipe_id: user.recipes.select(:id)).group(:tag_id).count
 end

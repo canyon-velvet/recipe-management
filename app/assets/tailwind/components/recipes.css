@@ -1,36 +1,63 @@
 @layer components {
-  /* Recipe list: search + Import/New above a dividing line, then the catalog beside the cards */
-  .recipes-toolbar {
-    @apply flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-6 border-b border-gray-200;
+  /* Recipe list: the catalog in a sticky panel on the left; the heading and the cards on the right. On a phone the
+     catalog folds behind "Search & filter" between the heading and the cards (order). The heading and the cards sit
+     in a display: contents Turbo frame, so they are grid items of the page. */
+  .recipes-page    { @apply grid gap-6 py-4 md:grid-cols-[15rem_1fr] md:gap-x-8; }
+  .recipes-header  { @apply flex flex-wrap items-end justify-between gap-4 md:col-start-2 md:row-start-1; }
+  .recipes-title   { @apply text-3xl font-bold tracking-tight text-gray-900; }
+  .recipes-count   { @apply mt-1 text-sm text-gray-500; }
+  .recipes-actions { @apply flex gap-2; }
+  .recipes-filter-toggle {
+    @apply order-1 w-full cursor-pointer rounded-3xl border border-gray-200 bg-white px-5 py-3 text-left font-medium
+           text-gray-800 md:hidden;
   }
+  /* Hidden on a phone until "Search & filter" opens it: the element's own hidden md:block, as utilities beat these */
   .recipes-sidebar {
-    /* Scrolls on its own when open panels make it taller than the window, so no tag is out of reach */
-    @apply md:w-56 md:flex-none md:sticky md:top-24 md:self-start md:max-h-[calc(100vh-7rem)] md:overflow-y-auto;
+    @apply order-1 self-start rounded-3xl border border-gray-200 bg-white p-4
+           md:order-none md:col-start-1 md:row-span-2 md:row-start-1
+           md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] md:overflow-y-auto;
   }
+  .recipes-search {
+    @apply w-full rounded-xl border-0 bg-gray-100 px-3 py-2 text-sm focus:ring-2 focus:ring-sectiontext/30;
+  }
+  .recipes-results { @apply order-2 min-w-0 md:order-none md:col-start-2 md:row-start-2; }
+  .recipes-grid    { @apply grid gap-6 sm:grid-cols-2 xl:grid-cols-3; }
+  .recipes-empty   { @apply py-16 text-center text-gray-500; }
 
-  /* Tag catalog: collapsible kinds with their tags, one selectable at a time */
-  .tag-catalog {
-    @apply flex flex-col gap-1 text-base;
-  }
-  .tag-catalog-group {
-    @apply border-b border-gray-100 py-1;
-  }
+  /* Tag catalog: each kind's tags with emoji and counts, one selectable at a time */
+  .tag-catalog { @apply mt-3 flex flex-col; }
   .tag-catalog-kind {
-    @apply cursor-pointer select-none rounded-md px-3 py-2 text-lg font-semibold text-gray-800 hover:bg-gray-100;
-  }
-  .tag-catalog-tags {
-    @apply flex flex-col pl-3 pb-1;
+    @apply mt-4 mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400;
   }
   .tag-catalog-link {
-    @apply block rounded-md px-3 py-1.5 text-gray-700 hover:bg-gray-100;
+    @apply flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50;
   }
   .tag-catalog-link--selected {
-    @apply bg-sectiontext-light font-semibold text-white hover:bg-sectiontext-light;
+    @apply bg-background font-medium text-gray-900 hover:bg-background;
   }
   /* A tag none of the user's recipes have: shown, but dimmed and not a link */
   .tag-catalog-link--empty {
     @apply text-gray-300 hover:bg-transparent cursor-default;
   }
+  .tag-catalog-name  { @apply flex-1; }
+  .tag-catalog-count { @apply text-xs text-gray-400; }
+
+  /* A recipe card: its emoji on cream, then the name with the ⋮ menu, a line or two of description, and the facts.
+     The whole card is a link (.recipe-card-link, under the content); the card under the pointer or with its menu open
+     sits above its neighbours, so the menu isn't covered. */
+  .recipe-card {
+    @apply relative rounded-3xl bg-white shadow-sm ring-1 ring-gray-100 transition-shadow
+           hover:z-10 hover:shadow-xl focus-within:z-10;
+  }
+  .recipe-card-link    { @apply absolute inset-0 z-0 rounded-3xl; }
+  .recipe-card-art     { @apply flex h-36 items-center justify-center rounded-t-3xl bg-sectionbackground; }
+  .recipe-card-body    { @apply pointer-events-none relative p-5; }
+  .recipe-card-heading { @apply flex items-start gap-1; }
+  .recipe-card-title   { @apply min-w-0 flex-1 truncate text-lg font-semibold text-gray-900; }
+  .recipe-card-menu    { @apply pointer-events-auto relative z-20 -mr-2 flex-none; }
+  .recipe-card-summary { @apply mt-1 line-clamp-2 min-h-10 text-sm text-gray-500; }
+  .recipe-card-facts   { @apply mt-4 flex gap-4 text-xs text-gray-500; }
+  .recipe-card-tags    { @apply ml-auto truncate; }
 
   /* Servings and times: four small number fields side by side in the form */
   .recipe-count-fields {

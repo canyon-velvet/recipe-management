@@ -10,6 +10,12 @@ module RecipesHelper
     facts
   end
 
+  # The description as plain text for a card (it's markdown), or else where the recipe is from. Unescaped, so the view
+  # escapes it once: "Salt & pepper", not "Salt &amp; pepper".
+  def recipe_summary(recipe)
+    CGI.unescapeHTML(strip_tags(render_markdown(recipe.description))).squish.presence || recipe.source.name
+  end
+
   # 45 → "45 min", 75 → "1 hr 15 min", 120 → "2 hr"
   def duration_label(minutes)
     hours, rest = minutes.divmod(60)

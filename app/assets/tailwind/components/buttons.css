@@ -39,4 +39,6 @@
     @apply inline-flex items-center rounded-full px-4 py-3 font-medium text-sectiontext hover:bg-white transition
            cursor-pointer;
   }
+  /* A smaller pill, for a page's heading */
+  .btn-pill-sm { @apply px-5 py-2 text-sm; }
 }
