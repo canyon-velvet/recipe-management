@@ -3,13 +3,14 @@ require "rails_helper"
 RSpec.describe "Notices after an action", type: :system do
   let(:user) { create(:user) }
 
-  it "floats a notice over the top of the page, and fades it away by itself" do
+  it "hangs a notice from the top of the window, over the navbar, and fades it away by itself" do
     log_in_as user
 
     notice = find(".flash--notice[role='status']", text: "Logged in.")
     expect(notice).to have_css(".flash-icon", text: "✓")
     # Over the page, not in it: nothing below moves down to make room
     expect(page.evaluate_script("getComputedStyle(document.querySelector('.flash-list')).position")).to eq "fixed"
+    expect(page.evaluate_script("document.querySelector('.flash').getBoundingClientRect().top")).to eq 0
 
     using_wait_time(7) { expect(page).to have_no_css(".flash") }
   end
