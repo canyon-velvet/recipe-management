@@ -73,5 +73,7 @@ Rails.application.routes.draw do
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
+  get "manifest" => "pwa#manifest", as: :pwa_manifest, format: false, defaults: { format: :json }
+
   root "recipes#index"
 end
