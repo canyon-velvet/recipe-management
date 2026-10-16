@@ -21,7 +21,8 @@ RSpec.describe "Assistant panel", type: :system do
     end
     expect(page).to have_css("body.assistant-open")
 
-    # Moving to another page keeps the panel and the chat
+    # Moving to another page keeps the panel and the chat. (Beside the open panel the navbar's links are in ☰.)
+    click_button "Menu"
     click_link "All Recipes"
     expect(page).to have_css(".assistant-panel", text: "Dinner for 4?")
     expect(page).to have_css("body.assistant-open")
@@ -63,6 +64,7 @@ RSpec.describe "Assistant panel", type: :system do
   it "covers the page instead of squeezing it on a medium screen" do
     page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: 1024, height: 800) }
     log_in_as user
+    click_button "Menu" # the navbar's links are folded at this width
     click_link "All Recipes"
     click_button "Open assistant"
 

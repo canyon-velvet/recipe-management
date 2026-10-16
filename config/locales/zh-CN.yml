@@ -168,6 +168,8 @@ zh-CN:
       login: "登录"
       meal_plans: "餐计划"
       recipes: "所有菜谱"
+    navbar_menu:
+      label: "菜单"
 
   recipes:
     confirm_delete: "确定要删除这个菜谱吗？"

@@ -4,7 +4,7 @@
   }
 
   header .logo-text {
-    @apply flex text-white font-semibold text-base tracking-widest uppercase;
+    @apply flex text-white font-semibold text-base tracking-widest uppercase whitespace-nowrap;
     font-family: "Montserrat", sans-serif;
   }
 
@@ -30,6 +30,66 @@
   }
 
   .nav-link.active { @apply font-semibold; }
+
+  /* When the links don't have room (a window narrower than xl, or narrower than 2xl beside the open assistant panel,
+     which takes 400px), they and the language switcher fold into ☰. From lg, the middle of the bar is then free, which
+     is where notices hang from the top of the window (flash.css). */
+  .navbar-links,
+  .navbar-locale {
+    @apply hidden xl:block;
+  }
+  .navbar-menu {
+    @apply relative ml-1 xl:hidden;
+  }
+  @media (width >= 80rem) and (width < 96rem) {
+    .assistant-open .navbar-links,
+    .assistant-open .navbar-locale {
+      @apply hidden;
+    }
+    .assistant-open .navbar-menu {
+      @apply block;
+    }
+  }
+
+  /* The two ends of the bar: the name, and the buttons (✦, 🌐, account, ☰) */
+  .navbar-brand   { @apply flex items-center px-6; }
+  .navbar-actions { @apply flex items-center px-6 ml-auto; }
+  /* The username, cut short when long (all of it shows on hover); or, in the compact bar, the icon in its place.
+     Before the compact rules below, which override these at the same specificity. */
+  .account-name { @apply max-w-48 truncate; }
+  .account-icon { @apply hidden w-5 h-5; }
+
+  /* Compact, where the bar is short of room: tighter ends, and a person icon for the username (screen readers still
+     read the name). On a phone; and between md and xl beside the open assistant panel, which covers the right of the
+     page there, navbar included (there's no room to share), so the navbar's items move left of it to stay in reach. */
+  @media (width < 40rem) {
+    .navbar-brand   { @apply px-3; }
+    .navbar-actions { @apply px-2; }
+    .account-name   { @apply sr-only; }
+    .account-icon   { @apply block; }
+  }
+  @media (width >= 48rem) and (width < 80rem) {
+    .assistant-open header                 { padding-right: var(--assistant-panel-width); }
+    .assistant-open .navbar-brand          { @apply px-3; }
+    .assistant-open .navbar-actions        { @apply px-2; }
+    .assistant-open .account-name          { @apply sr-only; }
+    .assistant-open .account-icon          { @apply block; }
+  }
+
+  .navbar-menu-toggle {
+    @apply flex items-center text-white opacity-80 hover:opacity-100 p-1 rounded;
+  }
+  .navbar-menu-list {
+    @apply absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-40 py-1;
+  }
+  .navbar-menu-item {
+    @apply block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50;
+  }
+  .navbar-menu-item--active { @apply font-semibold text-sectiontext; }
+  /* "Language", above the language buttons */
+  .navbar-menu-heading {
+    @apply mt-1 border-t border-gray-100 px-4 pt-2 pb-1 text-xs uppercase tracking-wide text-gray-400;
+  }
 
   /* Language switcher */
   .locale-toggle {

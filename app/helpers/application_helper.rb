@@ -24,6 +24,14 @@ module ApplicationHelper
     markdown.render(text).html_safe
   end
 
+  # The navbar's links, as [label, path]: in the bar on a wide page, in ☰ when it's folded.
+  def navbar_links
+    links = [ [ t("shared.navbar.home"), root_path ] ]
+    return links unless logged_in?
+
+    links + [ [ t("shared.navbar.recipes"), recipes_path ], [ t("shared.navbar.meal_plans"), meal_plans_path ] ]
+  end
+
   # Stimulus controllers on <body>, for what any page can open: the Edit-aisles pop-up and the assistant panel.
   def body_controllers
     return unless logged_in?

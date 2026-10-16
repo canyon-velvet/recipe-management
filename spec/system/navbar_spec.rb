@@ -1,0 +1,75 @@
+require "rails_helper"
+
+RSpec.describe "The navbar", type: :system do
+  let(:user) { create(:user) }
+
+  def resize(width) = page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: width, height: 800) }
+
+  it "shows its links on a wide window" do
+    log_in_as user
+
+    expect(page).to have_link("Meal Plans")
+    expect(page).to have_no_button("Menu")
+  end
+
+  it "folds its links and the language switcher into ☰ on a narrower window" do
+    resize(1024)
+    log_in_as user
+
+    expect(page).to have_no_link("Meal Plans")
+    expect(page).to have_no_button("Language")
+
+    click_button "Menu"
+    click_link "Meal Plans"
+    expect(page).to have_css("h1", text: "Meal Plans")
+
+    click_button "Menu"
+    click_button "中文"
+    expect(page).to have_button("菜单") # the page is now in Chinese
+  end
+
+  it "fits a phone's width, even with a long username" do
+    allow(CleanRecipeService).to receive(:available?).and_return(true) # ✦ shows too
+    resize(360)
+    log_in_as create(:user, username: "a_rather_long_username_for_a_phone")
+
+    expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 360
+  end
+
+  [ 768, 1024 ].each do |width|
+    it "keeps ☰ in reach beside the open assistant panel at #{width}px, where the panel covers the page" do
+      allow(CleanRecipeService).to receive(:available?).and_return(true)
+      resize(width)
+      log_in_as create(:user, username: "a_rather_long_username")
+      click_button "Open assistant"
+
+      click_button "Menu"
+      click_link "Meal Plans"
+      expect(page).to have_css("h1", text: "Meal Plans")
+      expect(page).to have_css(".assistant-panel")
+    end
+  end
+
+  it "keeps the username for screen readers where an icon shows instead" do
+    resize(360)
+    log_in_as create(:user, username: "home_cook")
+
+    expect(page).to have_button("home_cook")
+    expect(page).to have_css(".account-icon", visible: true)
+    # The name is screen-reader-only: in the page, but a 1px clipped box
+    expect(page.evaluate_script("document.querySelector('.account-name').getBoundingClientRect().width")).to be <= 1
+  end
+
+  it "folds them beside the open assistant panel, which leaves the links too little room" do
+    allow(CleanRecipeService).to receive(:available?).and_return(true)
+    log_in_as user
+    expect(page).to have_link("Meal Plans")
+
+    click_button "Open assistant"
+    expect(page).to have_no_link("Meal Plans")
+    expect(page).to have_button("Menu")
+
+    within(".assistant-panel") { click_button "Close assistant" }
+    expect(page).to have_link("Meal Plans")
+  end
+end

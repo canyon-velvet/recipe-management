@@ -1,37 +1,34 @@
 <header>
-  <div class="flex items-center px-6">
+  <div class="navbar-brand">
     <span class="logo-text"><%= t("app_name") %></span>
   </div>
 
-  <nav class="relative">
+  <%# The links and the language switcher fold into ☰ (shared/navbar_menu) when there isn't room for them. %>
+  <nav class="navbar-links relative">
     <div class="flex flex-grow">
       <div class="topnav-item-container">
-        <div class="topnav-item">
-          <%= link_to t(".home"), root_path, class: "nav-link #{'active' if current_page?(root_path)}" %>
-        </div>
-        <% if logged_in? %>
+        <% navbar_links.each do |label, path| %>
+          <% current = current_page?(path) %>
           <div class="topnav-item">
-            <%= link_to t(".recipes"), recipes_path, class: "nav-link #{'active' if current_page?(recipes_path)}" %>
-          </div>
-          <div class="topnav-item">
-            <%= link_to t(".meal_plans"), meal_plans_path, class: "nav-link #{'active' if current_page?(meal_plans_path)}" %>
+            <%= link_to label, path, class: "nav-link #{'active' if current}", aria: { current: ("page" if current) } %>
           </div>
         <% end %>
       </div>
     </div>
   </nav>
 
-  <div class="flex items-center px-6 ml-auto">
+  <div class="navbar-actions">
     <% if assistant_available? %>
       <button type="button" class="assistant-toggle" data-assistant-panel-target="toggle"
               data-action="assistant-panel#toggle" aria-controls="<%= assistant_panel_id %>"
               aria-expanded="<%= assistant_open? %>" aria-label="<%= t("assistant.open") %>">✦</button>
     <% end %>
-    <%= render "shared/locale_switcher" %>
+    <div class="navbar-locale"><%= render "shared/locale_switcher" %></div>
     <% if logged_in? %>
       <%= render "shared/account_menu" %>
     <% else %>
       <%= link_to t(".login"), login_path, class: "nav-link" %>
     <% end %>
+    <%= render "shared/navbar_menu" %>
   </div>
 </header>

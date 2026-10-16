@@ -1,0 +1,10 @@
+<%# A button per language; the current one is marked. In the 🌐 menu, and in ☰ when the navbar is folded. %>
+<% I18n.available_locales.each do |locale| %>
+  <%= button_to t("locale_name", locale: locale), locale_path,
+        method: :patch,
+        params: { locale: locale },
+        lang: locale,
+        aria: { current: locale == I18n.locale },
+        class: "locale-option #{'locale-option--active' if locale == I18n.locale}",
+        form: { data: { turbo: false } } %>
+<% end %>
