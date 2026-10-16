@@ -143,6 +143,30 @@ zh-CN:
             recipe_id:
               already_in_slot: "已在此时段中"
 
+  home:
+    intro:
+      eyebrow: "你的家庭厨房"
+      title:
+        - "你喜欢的每一道菜，"
+        - "都在这里。"
+      lead: "安排好一周的饭菜，购物清单自动生成。"
+      browse_recipes: "浏览菜谱"
+      import_recipe: "从链接导入"
+      ask_assistant: "问问助手"
+    stats:
+      recipes: "菜谱"
+      this_week: "本周"
+      dishes: "道菜"
+      to_buy: "待买"
+    photo:
+      image_alt: "早餐：吐司上的煎蛋"
+      tonight: "今晚"
+      more: "+%{count}"
+      nothing_planned: "还没有安排"
+      plan_the_week: "安排这一周 →"
+    recent_recipes:
+      title: "最近更新"
+      all_recipes: "全部菜谱 →"
   shared:
     account_menu:
       background_jobs: "后台任务"
@@ -151,12 +175,6 @@ zh-CN:
       invites: "邀请"
       logout: "退出"
       preferences: "饮食偏好"
-    hero:
-      browse_recipes: "浏览菜谱"
-      image_alt: "家庭餐食计划"
-      tagline:
-        - "轻松管理食谱，规划每日餐单，"
-        - "生成购物清单，让家庭用餐更简单。"
     locale_switcher:
       label: "语言"
     markdown_editor:

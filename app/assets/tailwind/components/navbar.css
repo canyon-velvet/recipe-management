@@ -57,7 +57,8 @@
   /* The username, cut short when long (all of it shows on hover); or, in the compact bar, the icon in its place.
      Before the compact rules below, which override these at the same specificity. */
   .account-name { @apply max-w-48 truncate; }
-  .account-icon { @apply hidden w-5 h-5; }
+  /* The icon file is drawn in brown (for the home page's cream bar, below); white everywhere else */
+  .account-icon { @apply hidden w-5 h-5; filter: brightness(0) invert(1); }
 
   /* Compact, where the bar is short of room: tighter ends, and a person icon for the username (screen readers still
      read the name). On a phone; and between md and xl beside the open assistant panel, which covers the right of the
@@ -118,4 +119,16 @@
   .account-menu-item {
     @apply block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50;
   }
+
+  /* On the home page the bar takes the hero's cream, with brown text and icons, so the two read as one surface.
+     Once the page scrolls, a faint line (the scrolled controller) parts the bar from what passes under it. */
+  .home-page header                 { @apply bg-sectionbackground; }
+  .home-page header.is-scrolled     { box-shadow: 0 1px 0 rgb(120 95 64 / 0.15); }
+  .home-page header .logo-text,
+  .home-page .nav-link,
+  .home-page .assistant-toggle,
+  .home-page .locale-toggle,
+  .home-page .account-toggle,
+  .home-page .navbar-menu-toggle    { @apply text-sectiontext; }
+  .home-page .account-icon          { filter: none; }
 }

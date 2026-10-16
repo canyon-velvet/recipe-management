@@ -1,0 +1,13 @@
+<%# The navbar takes the hero's cream on this page only (navbar.css) %>
+<% content_for :body_class, "home-page" %>
+<% content_for :theme_color, "#F7F2ED" %>
+
+<section class="home-hero full-bleed">
+  <div class="home-hero-inner">
+    <%= render "home/intro", recipe_count: @recipe_count, meal_plan: @meal_plan %>
+    <%= render "home/photo", meal_plan: @meal_plan %>
+  </div>
+</section>
+
+<%# A new account has no recipes yet: the buttons above are the way in %>
+<%= render "home/recent_recipes", recipes: @recent_recipes if @recent_recipes.any? %>

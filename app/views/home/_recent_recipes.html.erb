@@ -1,0 +1,12 @@
+<%# locals: (recipes:) %>
+<section class="home-recent">
+  <div class="home-section-header">
+    <h2 class="home-section-title"><%= t(".title") %></h2>
+    <%= link_to t(".all_recipes"), recipes_path, class: "home-section-link" %>
+  </div>
+  <div class="home-recent-grid">
+    <% recipes.each do |recipe| %>
+      <%= render "recipes/recipe_card", recipe: recipe %>
+    <% end %>
+  </div>
+</section>
