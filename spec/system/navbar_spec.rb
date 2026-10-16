@@ -28,6 +28,26 @@ RSpec.describe "The navbar", type: :system do
     expect(page).to have_button("菜单") # the page is now in Chinese
   end
 
+  it "fits a phone's width, even with a long username" do
+    allow(CleanRecipeService).to receive(:available?).and_return(true) # ✦ shows too
+    resize(360)
+    log_in_as create(:user, username: "a_rather_long_username_for_a_phone")
+
+    expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 360
+  end
+
+  it "keeps ☰ in reach beside the open assistant panel on a medium window, where the panel covers the page" do
+    allow(CleanRecipeService).to receive(:available?).and_return(true)
+    resize(1024)
+    log_in_as user
+    click_button "Open assistant"
+
+    click_button "Menu"
+    click_link "Meal Plans"
+    expect(page).to have_css("h1", text: "Meal Plans")
+    expect(page).to have_css(".assistant-panel")
+  end
+
   it "folds them beside the open assistant panel, which leaves the links too little room" do
     allow(CleanRecipeService).to receive(:available?).and_return(true)
     log_in_as user

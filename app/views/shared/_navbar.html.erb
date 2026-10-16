@@ -1,5 +1,5 @@
 <header>
-  <div class="flex items-center px-6">
+  <div class="flex items-center px-3 sm:px-6">
     <span class="logo-text"><%= t("app_name") %></span>
   </div>
 
@@ -7,22 +7,16 @@
   <nav class="navbar-links relative">
     <div class="flex flex-grow">
       <div class="topnav-item-container">
-        <div class="topnav-item">
-          <%= link_to t(".home"), root_path, class: "nav-link #{'active' if current_page?(root_path)}" %>
-        </div>
-        <% if logged_in? %>
+        <% navbar_links.each do |label, path| %>
           <div class="topnav-item">
-            <%= link_to t(".recipes"), recipes_path, class: "nav-link #{'active' if current_page?(recipes_path)}" %>
-          </div>
-          <div class="topnav-item">
-            <%= link_to t(".meal_plans"), meal_plans_path, class: "nav-link #{'active' if current_page?(meal_plans_path)}" %>
+            <%= link_to label, path, class: "nav-link #{'active' if current_page?(path)}" %>
           </div>
         <% end %>
       </div>
     </div>
   </nav>
 
-  <div class="flex items-center px-6 ml-auto">
+  <div class="flex items-center px-2 sm:px-6 ml-auto">
     <% if assistant_available? %>
       <button type="button" class="assistant-toggle" data-assistant-panel-target="toggle"
               data-action="assistant-panel#toggle" aria-controls="<%= assistant_panel_id %>"
