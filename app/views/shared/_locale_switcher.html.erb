@@ -8,14 +8,6 @@
   </button>
 
   <div data-dropdown-target="menu" class="locale-menu hidden">
-    <% I18n.available_locales.each do |locale| %>
-      <%= button_to t("locale_name", locale: locale), locale_path,
-            method: :patch,
-            params: { locale: locale },
-            lang: locale,
-            aria: { current: locale == I18n.locale },
-            class: "locale-option #{'locale-option--active' if locale == I18n.locale}",
-            form: { data: { turbo: false } } %>
-    <% end %>
+    <%= render "shared/locale_options" %>
   </div>
 </div>

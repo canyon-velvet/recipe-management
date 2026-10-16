@@ -3,7 +3,8 @@
     <span class="logo-text"><%= t("app_name") %></span>
   </div>
 
-  <nav class="relative">
+  <%# The links and the language switcher fold into ☰ (shared/navbar_menu) when there isn't room for them. %>
+  <nav class="navbar-links relative">
     <div class="flex flex-grow">
       <div class="topnav-item-container">
         <div class="topnav-item">
@@ -27,11 +28,12 @@
               data-action="assistant-panel#toggle" aria-controls="<%= assistant_panel_id %>"
               aria-expanded="<%= assistant_open? %>" aria-label="<%= t("assistant.open") %>">✦</button>
     <% end %>
-    <%= render "shared/locale_switcher" %>
+    <div class="navbar-locale"><%= render "shared/locale_switcher" %></div>
     <% if logged_in? %>
       <%= render "shared/account_menu" %>
     <% else %>
       <%= link_to t(".login"), login_path, class: "nav-link" %>
     <% end %>
+    <%= render "shared/navbar_menu" %>
   </div>
 </header>

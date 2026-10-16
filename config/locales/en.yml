@@ -168,6 +168,8 @@ en:
       login: "Log in"
       meal_plans: "Meal Plans"
       recipes: "All Recipes"
+    navbar_menu:
+      label: "Menu"
 
   recipes:
     confirm_delete: "Delete this recipe?"

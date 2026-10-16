@@ -4,7 +4,7 @@
   }
 
   header .logo-text {
-    @apply flex text-white font-semibold text-base tracking-widest uppercase;
+    @apply flex text-white font-semibold text-base tracking-widest uppercase whitespace-nowrap;
     font-family: "Montserrat", sans-serif;
   }
 
@@ -30,6 +30,41 @@
   }
 
   .nav-link.active { @apply font-semibold; }
+
+  /* When the links don't have room (a window narrower than xl, or narrower than 2xl beside the open assistant panel,
+     which takes 400px), they and the language switcher fold into ☰. Their middle of the bar is then free, which is
+     where notices hang from the top of the window. */
+  .navbar-links,
+  .navbar-locale {
+    @apply hidden xl:block;
+  }
+  .navbar-menu {
+    @apply relative ml-1 xl:hidden;
+  }
+  @media (width >= 80rem) and (width < 96rem) {
+    .assistant-open .navbar-links,
+    .assistant-open .navbar-locale {
+      @apply hidden;
+    }
+    .assistant-open .navbar-menu {
+      @apply block;
+    }
+  }
+
+  .navbar-menu-toggle {
+    @apply flex items-center text-white opacity-80 hover:opacity-100 p-1 rounded;
+  }
+  .navbar-menu-list {
+    @apply absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-40 py-1;
+  }
+  .navbar-menu-item {
+    @apply block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50;
+  }
+  .navbar-menu-item--active { @apply font-semibold text-sectiontext; }
+  /* "Language", above the language buttons */
+  .navbar-menu-heading {
+    @apply mt-1 border-t border-gray-100 px-4 pt-2 pb-1 text-xs uppercase tracking-wide text-gray-400;
+  }
 
   /* Language switcher */
   .locale-toggle {
