@@ -1,6 +1,7 @@
 class MealPlan < ApplicationRecord
   DAYS_OF_WEEK = %w[monday tuesday wednesday thursday friday saturday sunday].freeze
   MEAL_TYPES = %w[breakfast lunch dinner snack].freeze
+  MEALS_PER_WEEK = DAYS_OF_WEEK.size * MEAL_TYPES.size
 
   belongs_to :user
   has_many :meal_slots, dependent: :destroy
@@ -25,6 +26,14 @@ class MealPlan < ApplicationRecord
   def assigned_recipe_count
     MealSlotRecipe.joins(:meal_slot).where(meal_slots: { meal_plan_id: id }).count
   end
+
+  # The meals with at least one recipe, out of MEALS_PER_WEEK
+  def planned_meal_count
+    meal_slots.joins(:meal_slot_recipes).distinct.count
+  end
+
+  def this_week? = start_date == Date.current.beginning_of_week(:monday)
+  def next_week? = start_date == Date.current.next_week(:monday)
 
   # The recipes planned for one meal on a date in this plan's week, e.g. today's dinner; none outside the week
   def recipes_for(date, meal_type)

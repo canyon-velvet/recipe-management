@@ -1,19 +1,38 @@
 <%# locals: (meal_plan:) %>
-<div class="section-card relative hover:shadow-md transition-shadow">
-  <%= link_to "", meal_plan_path(meal_plan), class: "absolute inset-0 block z-0", "aria-label": meal_plan.display_name %>
+<%# The whole row links to the week (the link lies under the content); the grocery list and ⋮ take their own clicks. %>
+<% planned = meal_plan.planned_meal_count %>
+<div class="meal-plan-row <%= 'meal-plan-row--current' if meal_plan.this_week? %>">
+  <%= link_to "", meal_plan_path(meal_plan), class: "meal-plan-row-link", "aria-label": meal_plan.display_name %>
 
-  <div class="relative z-10 flex items-start justify-between pointer-events-none">
-    <div>
-      <h3 class="font-semibold text-gray-900"><%= meal_plan.display_name %></h3>
-      <p class="text-sm text-gray-500 mt-1"><%= format_week_range(meal_plan) %></p>
-      <p class="text-xs text-gray-400 mt-2"><%= t(".recipe_count", count: meal_plan.assigned_recipe_count) %></p>
-    </div>
+  <div class="meal-plan-date">
+    <span class="meal-plan-date-month"><%= l(meal_plan.start_date, format: "%b") %></span>
+    <span class="meal-plan-date-day"><%= meal_plan.start_date.day %></span>
+  </div>
 
-    <div class="flex-none pointer-events-auto relative z-20">
-      <%= render "shared/kebab_menu", items: [
-        { label: t("meal_plans.show.grocery_list"), url: meal_plan_grocery_list_path(meal_plan) },
-        { label: t("actions.delete"), url: meal_plan_path(meal_plan), data: { turbo_method: :delete, turbo_confirm: t(".confirm_delete") }, class: "text-red-600" }
-      ] %>
+  <div class="meal-plan-body">
+    <div class="meal-plan-heading">
+      <h3 class="meal-plan-name"><%= meal_plan.display_name %></h3>
+      <% if meal_plan.this_week? %>
+        <span class="meal-plan-badge meal-plan-badge--current"><%= t(".this_week") %></span>
+      <% elsif meal_plan.next_week? %>
+        <span class="meal-plan-badge"><%= t(".next_week") %></span>
+      <% end %>
     </div>
+    <p class="meal-plan-facts">
+      <%= format_week_range(meal_plan) %> · <%= t(".recipe_count", count: meal_plan.assigned_recipe_count) %>
+    </p>
+    <div class="meal-plan-meter">
+      <progress class="meal-plan-meter-bar" max="<%= MealPlan::MEALS_PER_WEEK %>" value="<%= planned %>"
+                aria-hidden="true"></progress>
+      <span class="meal-plan-meter-label"><%= t(".planned_meals", planned: planned, total: MealPlan::MEALS_PER_WEEK) %></span>
+    </div>
+  </div>
+
+  <div class="meal-plan-actions">
+    <%= link_to t("meal_plans.show.grocery_list"), meal_plan_grocery_list_path(meal_plan),
+          class: "btn-pill-secondary btn-pill-sm" %>
+    <%= render "shared/kebab_menu", items: [
+      { label: t("actions.delete"), url: meal_plan_path(meal_plan), data: { turbo_method: :delete, turbo_confirm: t(".confirm_delete") }, class: "text-red-600" }
+    ] %>
   </div>
 </div>

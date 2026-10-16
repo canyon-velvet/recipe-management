@@ -1,0 +1,49 @@
+@layer components {
+  /* Meal plan list: the weeks newest first, grouped by month under "—— OCTOBER 2026 ——" (.recipe-section-heading) */
+  .meal-plans-page   { @apply mx-auto max-w-3xl py-10; }
+  .meal-plans-header { @apply flex flex-wrap items-end justify-between gap-4; }
+  .meal-plans-title  { @apply mt-2 text-4xl font-bold tracking-tight text-gray-900; }
+  .meal-plans-month  { @apply mt-12; }
+  .meal-plans-list   { @apply mt-5 flex flex-col gap-3; }
+  .meal-plans-empty  { @apply py-16 text-center text-gray-500; }
+
+  /* A week's row, all white: the Monday's date in a cream tile, the name and how full the week is, then the grocery
+     list and the ⋮ menu (below the rest on a phone). This week's row is outlined. As with a recipe card, the whole row
+     is a link (.meal-plan-row-link, under the content), and the row under the pointer or with its menu open sits
+     above its neighbours, so the menu isn't covered. */
+  .meal-plan-row {
+    @apply relative flex flex-wrap items-center gap-5 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-gray-100
+           transition-shadow hover:z-10 hover:shadow-xl focus-within:z-10;
+  }
+  .meal-plan-row--current { @apply shadow-xl shadow-sectiontext/15 ring-2 ring-sectiontext-light; }
+  .meal-plan-row-link     { @apply absolute inset-0 z-0 rounded-3xl; }
+
+  .meal-plan-date {
+    @apply pointer-events-none relative flex size-16 flex-none flex-col items-center justify-center rounded-2xl
+           bg-sectionbackground;
+  }
+  .meal-plan-date-month { @apply text-[11px] font-semibold uppercase tracking-widest text-sectiontext; }
+  .meal-plan-date-day   { @apply text-2xl font-bold leading-tight text-gray-900; }
+
+  .meal-plan-body    { @apply pointer-events-none relative min-w-0 flex-[1_1_14rem]; }
+  .meal-plan-heading { @apply flex flex-wrap items-center gap-2; }
+  .meal-plan-name    { @apply min-w-0 truncate text-lg font-semibold text-gray-900; }
+  .meal-plan-badge {
+    @apply rounded-full bg-sectionbackground px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider
+           text-sectiontext;
+  }
+  .meal-plan-badge--current { @apply bg-sectiontext text-white; }
+  .meal-plan-facts { @apply mt-1 text-sm text-gray-500; }
+
+  /* How many of the week's meals have a recipe: a thin bar, then "14 of 28 meals" */
+  .meal-plan-meter       { @apply mt-2.5 flex items-center gap-2.5; }
+  .meal-plan-meter-label { @apply text-xs text-gray-500; }
+  .meal-plan-meter-bar {
+    @apply h-1.5 max-w-60 flex-1 appearance-none overflow-hidden rounded-full border-0 bg-sectiontext/10;
+  }
+  .meal-plan-meter-bar::-webkit-progress-bar   { @apply bg-transparent; }
+  .meal-plan-meter-bar::-webkit-progress-value { @apply rounded-full bg-sectiontext-light; }
+  .meal-plan-meter-bar::-moz-progress-bar      { @apply rounded-full bg-sectiontext-light; }
+
+  .meal-plan-actions { @apply pointer-events-auto relative z-20 flex flex-none items-center gap-1; }
+}

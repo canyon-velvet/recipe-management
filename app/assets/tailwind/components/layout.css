@@ -5,7 +5,7 @@
     width: calc(100vw - var(--assistant-width, 0px));
   }
 
-  /* The bordered, tinted card used for recipe sections, recipe facts and meal plan cards */
+  /* The bordered, tinted card used for recipe sections and recipe facts */
   .section-card {
     @apply rounded-xl border border-gray-200 bg-sectionbackground p-5;
   }
