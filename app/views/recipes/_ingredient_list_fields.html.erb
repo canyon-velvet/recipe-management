@@ -1,0 +1,25 @@
+<%# locals: (form:, recipe:, aisles:) %>
+<%# The recipe's ingredient rows (one empty to start), + Add ingredient, and the pop-up that creates a new ingredient. %>
+<div data-controller="nested-form inline-create"
+     data-inline-create-create-url-value="<%= ingredients_path %>"
+     data-inline-create-error-text-value="<%= t("recipes.form.save_failed") %>">
+  <div data-nested-form-target="container" class="space-y-3">
+    <% ingredients = recipe.recipe_ingredients.any? ? recipe.recipe_ingredients : [ recipe.recipe_ingredients.build ] %>
+    <%= form.fields_for :recipe_ingredients, ingredients do |ri_form| %>
+      <%= render "recipes/ingredient_row", form: ri_form, aisles: aisles %>
+    <% end %>
+  </div>
+
+  <!-- Template for new rows -->
+  <template data-nested-form-target="template">
+    <%= form.fields_for :recipe_ingredients, RecipeIngredient.new, child_index: "NEW_RECORD" do |ri_form| %>
+      <%= render "recipes/ingredient_row", form: ri_form %>
+    <% end %>
+  </template>
+
+  <button type="button" data-action="nested-form#add" class="btn-secondary btn-sm mt-3">
+    <%= t("recipes.form.add_ingredient") %>
+  </button>
+
+  <%= render "recipes/ingredient_modal", aisles: aisles %>
+</div>

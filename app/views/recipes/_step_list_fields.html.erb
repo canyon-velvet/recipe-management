@@ -1,0 +1,20 @@
+<%# locals: (form:, recipe:) %>
+<%# The recipe's step rows (one empty to start), which can be moved up and down, and + Add step. %>
+<div data-controller="nested-form step-list">
+  <div data-nested-form-target="container" class="space-y-3">
+    <% steps = recipe.steps.any? ? recipe.steps : [ recipe.steps.build ] %>
+    <%= form.fields_for :steps, steps do |step_form| %>
+      <%= render "recipes/step_fields", form: step_form %>
+    <% end %>
+  </div>
+
+  <template data-nested-form-target="template">
+    <%= form.fields_for :steps, RecipeStep.new, child_index: "NEW_RECORD" do |step_form| %>
+      <%= render "recipes/step_fields", form: step_form %>
+    <% end %>
+  </template>
+
+  <button type="button" data-action="nested-form#add" class="btn-secondary btn-sm mt-3">
+    <%= t("recipes.form.add_step") %>
+  </button>
+</div>

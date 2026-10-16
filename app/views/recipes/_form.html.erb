@@ -1,123 +1,42 @@
 <%# locals: (recipe:, aisles:, tags:, draft: nil) %>
-
-<%= form_with model: recipe, class: "space-y-6" do |f| %>
+<%# The recipe's content (name, description, ingredients, method) in cards on the left; Save and the details (tags,
+    servings and times, source, link) in a sidebar on the right that stays in view. On a narrow screen the sidebar
+    comes after the content. %>
+<%= form_with model: recipe, class: "recipe-form" do |f| %>
   <%= hidden_field_tag :draft_id, draft.id if draft %>
 
-  <% if recipe.errors.any? %>
-    <div class="bg-red-50 border border-red-300 text-red-700 rounded-md p-3">
-      <ul class="list-disc list-inside text-sm">
-        <% recipe.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
+  <div class="recipe-form-main">
+    <%= render "recipes/form_errors", recipe: recipe %>
+
+    <section class="recipe-form-card">
+      <div class="field">
+        <%= f.label :name, class: "form-label" %>
+        <%= f.text_field :name, class: "form-input", autofocus: true %>
+      </div>
+      <%= render "shared/markdown_editor", form: f, field: :description, label: Recipe.human_attribute_name(:description),
+            rows: 6, min_height: "156px" %>
+    </section>
+
+    <section class="recipe-form-card">
+      <h2 class="recipe-form-card-title"><%= t(".ingredients") %></h2>
+      <%= render "recipes/ingredient_list_fields", form: f, recipe: recipe, aisles: aisles %>
+    </section>
+
+    <section class="recipe-form-card">
+      <h2 class="recipe-form-card-title"><%= t(".method") %></h2>
+      <%= render "recipes/step_list_fields", form: f, recipe: recipe %>
+    </section>
+  </div>
+
+  <aside class="recipe-form-details">
+    <%= render "recipes/form_actions", form: f, recipe: recipe, draft: draft %>
+    <h2 class="recipe-form-details-heading"><%= t(".details") %></h2>
+    <%= render "recipes/tag_picker", form: f, tags: tags %>
+    <%= render "recipes/count_fields", form: f %>
+    <%= render "recipes/source_field", form: f, recipe: recipe %>
+    <div class="field">
+      <%= f.label :source_url, class: "form-label" %>
+      <%= f.url_field :source_url, class: "form-input", placeholder: "https://..." %>
     </div>
-  <% end %>
-
-  <!-- Name -->
-  <div class="field">
-    <%= f.label :name, class: "form-label" %>
-    <%= f.text_field :name, class: "form-input", autofocus: true %>
-  </div>
-
-  <!-- Tags -->
-  <%= render "recipes/tag_picker", form: f, tags: tags %>
-
-  <!-- Servings and times (optional) -->
-  <%= render "recipes/count_fields", form: f %>
-
-  <!-- Description (markdown) -->
-  <%= render "shared/markdown_editor", form: f, field: :description, label: Recipe.human_attribute_name(:description),
-        rows: 6, min_height: "156px" %>
-
-  <!-- Ingredients -->
-  <div class="field"
-       data-controller="nested-form inline-create"
-       data-inline-create-create-url-value="<%= ingredients_path %>"
-       data-inline-create-error-text-value="<%= t(".save_failed") %>">
-    <label class="form-label"><%= t(".ingredients") %></label>
-
-    <div data-nested-form-target="container" class="space-y-3">
-      <% ingredients = recipe.recipe_ingredients.any? ? recipe.recipe_ingredients : [recipe.recipe_ingredients.build] %>
-      <%= f.fields_for :recipe_ingredients, ingredients do |ri_form| %>
-        <%= render "recipes/ingredient_row", form: ri_form, aisles: aisles %>
-      <% end %>
-    </div>
-
-    <!-- Template for new rows -->
-    <template data-nested-form-target="template">
-      <%= f.fields_for :recipe_ingredients, RecipeIngredient.new, child_index: "NEW_RECORD" do |ri_form| %>
-        <%= render "recipes/ingredient_row", form: ri_form %>
-      <% end %>
-    </template>
-
-    <button type="button" data-action="nested-form#add" class="btn-secondary btn-sm mt-3">
-      <%= t(".add_ingredient") %>
-    </button>
-
-    <%= render "recipes/ingredient_modal", aisles: aisles %>
-  </div>
-
-  <!-- Steps -->
-  <div class="field pt-4" data-controller="nested-form step-list">
-    <span class="form-label"><%= Recipe.human_attribute_name(:steps) %></span>
-
-    <div data-nested-form-target="container" class="space-y-3">
-      <% steps = recipe.steps.any? ? recipe.steps : [recipe.steps.build] %>
-      <%= f.fields_for :steps, steps do |step_form| %>
-        <%= render "recipes/step_fields", form: step_form %>
-      <% end %>
-    </div>
-
-    <template data-nested-form-target="template">
-      <%= f.fields_for :steps, RecipeStep.new, child_index: "NEW_RECORD" do |step_form| %>
-        <%= render "recipes/step_fields", form: step_form %>
-      <% end %>
-    </template>
-
-    <button type="button" data-action="nested-form#add" class="btn-secondary btn-sm mt-3">
-      <%= t(".add_step") %>
-    </button>
-  </div>
-
-  <!-- Source (searchable dropdown + create modal) -->
-  <div class="field pt-4"
-       data-controller="inline-create"
-       data-inline-create-create-url-value="<%= sources_path %>"
-       data-inline-create-error-text-value="<%= t(".save_failed") %>">
-    <%= f.label :source_id, Recipe.human_attribute_name(:source), class: "form-label" %>
-
-    <div class="relative"
-         data-controller="autocomplete"
-         data-autocomplete-url-value="<%= search_sources_path %>"
-         data-autocomplete-create-label-value="<%= t(".create_source") %>"
-         data-action="autocomplete:requestCreate->inline-create#openModal">
-      <%= f.hidden_field :source_id, data: { autocomplete_target: "hiddenField" } %>
-      <%# A draft's source the user doesn't have yet is submitted by name and created on save. %>
-      <%= tag.input type: "text", name: ("recipe[new_source_name]" if recipe.new_source?),
-                    value: recipe.source&.name || recipe.new_source_name,
-                    placeholder: t(".search_source"), class: "form-input", autocomplete: "off",
-                    data: { autocomplete_target: "input",
-                            action: "input->autocomplete#onInput click@window->autocomplete#outside" } %>
-      <ul data-autocomplete-target="list" class="autocomplete-list hidden"></ul>
-    </div>
-
-    <% if recipe.new_source? %>
-      <span class="new-badge mt-1"><%= t(".new_badge") %></span>
-    <% end %>
-
-    <%= render "recipes/source_modal" %>
-  </div>
-
-  <!-- Link to the original recipe page -->
-  <div class="field">
-    <%= f.label :source_url, class: "form-label" %>
-    <%= f.url_field :source_url, class: "form-input", placeholder: "https://..." %>
-  </div>
-
-  <!-- Submit -->
-  <div class="flex items-center gap-3 pt-4">
-    <%= f.submit recipe.persisted? ? t(".update") : t(".create"), class: "btn-primary" %>
-    <%= link_to t("actions.cancel"), (draft && drafts_path) || (recipe.persisted? ? recipe_path(recipe) : recipes_path),
-                class: "btn-cancel" %>
-  </div>
+  </aside>
 <% end %>
