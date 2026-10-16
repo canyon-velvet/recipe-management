@@ -1,5 +1,12 @@
 # Recipe Manager
 
+[![CI](https://github.com/canyon-velvet/recipe_management/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/canyon-velvet/recipe_management/actions/workflows/ci.yml)
+[![Ruby 3.4](https://img.shields.io/badge/Ruby-3.4-CC342D?logo=ruby&logoColor=white)](https://www.ruby-lang.org)
+[![Rails 8.1](https://img.shields.io/badge/Rails-8.1-D30001?logo=rubyonrails&logoColor=white)](https://rubyonrails.org)
+[![Hotwire](https://img.shields.io/badge/Hotwire-Turbo%20%2B%20Stimulus-5CD8E5?logo=hotwire&logoColor=white)](https://hotwired.dev)
+[![LLM: Claude](https://img.shields.io/badge/LLM-Claude-D97757?logo=claude&logoColor=white)](https://www.anthropic.com/claude)
+[![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7?logo=render&logoColor=white)](https://recipe-management-web-72dj.onrender.com)
+
 It's deployed on Render.
 
 One place for all the recipes I've saved, an assistant that helps me pick what to cook from them, and a weekly
