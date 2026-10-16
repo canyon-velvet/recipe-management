@@ -7,8 +7,8 @@
     <meta name="application-name" content="<%= t("app_name") %>">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="<%= t("short_app_name") %>">
-    <%# The phone's status bar, in the navbar's colour (the home page's is cream) %>
-    <meta name="theme-color" content="<%= content_for(:theme_color) || "#DECCC0" %>">
+    <%# The phone's status bar, in the navbar's cream %>
+    <meta name="theme-color" content="#F7F2ED">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -26,7 +26,7 @@
   </head>
 
   <%# The Edit-aisles pop-up can be opened from any page (account menu, grocery list), and so can the assistant. %>
-  <%= tag.body class: [ "bg-gray-50 min-h-screen", ("assistant-open" if assistant_open?), content_for(:body_class) ],
+  <%= tag.body class: [ "bg-gray-50 min-h-screen", ("assistant-open" if assistant_open?) ],
                data: { controller: body_controllers } do %>
     <%= render "shared/navbar" %>
 

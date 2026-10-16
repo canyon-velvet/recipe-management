@@ -35,7 +35,7 @@
     @apply flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50;
   }
   .tag-catalog-link--selected {
-    @apply bg-background font-medium text-gray-900 hover:bg-background;
+    @apply bg-sectionbackground font-medium text-gray-900 hover:bg-sectionbackground;
   }
   /* A tag none of the user's recipes have: shown, but dimmed and not a link */
   .tag-catalog-link--empty {

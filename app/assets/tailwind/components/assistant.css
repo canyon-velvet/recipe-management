@@ -14,7 +14,7 @@
 
   /* The ✦ button in the navbar */
   .assistant-toggle {
-    @apply mr-2 flex h-8 w-8 items-center justify-center rounded text-lg text-white opacity-80 hover:opacity-100;
+    @apply mr-2 flex h-8 w-8 items-center justify-center rounded text-lg text-sectiontext hover:text-gray-900;
   }
 
   /* The side panel: full height on the right. On wide screens the page narrows beside it, like VS Code's chat;
