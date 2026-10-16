@@ -13,6 +13,18 @@ RSpec.describe "Notices after an action", type: :system do
     expect(page).to have_no_css(".flash")
   end
 
+  it "doesn't show an old notice again on Back" do
+    log_in_as user
+    expect(page).to have_css(".flash", text: "Logged in.")
+
+    click_link "Meal Plans"
+    expect(page).to have_no_css(".flash")
+    page.go_back
+
+    expect(page).to have_current_path(root_path)
+    expect(page).to have_no_css(".flash")
+  end
+
   it "shows a problem as an alert" do
     visit login_path
     fill_in "Username", with: user.username

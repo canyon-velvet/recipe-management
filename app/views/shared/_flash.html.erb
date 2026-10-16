@@ -1,7 +1,7 @@
 <%# What happened after an action: a notice (✓), or an alert (⚠) when something went wrong. Each stays until it's closed
-    or the next page. %>
+    or the next page. Left out of Turbo's cached copy of the page, so going Back doesn't show it again. %>
 <% if flash.any? %>
-  <div class="flash-list">
+  <div class="flash-list" data-turbo-temporary>
     <% flash.each do |type, message| %>
       <% alert = type.to_s != "notice" %>
       <div class="flash <%= alert ? "flash--alert" : "flash--notice" %>" role="<%= alert ? "alert" : "status" %>"
