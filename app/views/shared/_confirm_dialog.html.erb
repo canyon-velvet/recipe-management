@@ -1,0 +1,15 @@
+<%# "Are you sure?" for every link and button with data-turbo-confirm (deleting a recipe, discarding a draft…), in the
+    app's own pop-up instead of the browser's box. Turbo asks it through confirm_dialog_controller.js. %>
+<dialog data-controller="confirm-dialog"
+        data-action="click->confirm-dialog#backdropClose close->confirm-dialog#closed"
+        class="w-full max-w-md rounded-xl p-0 backdrop:bg-black/40" aria-labelledby="confirm_dialog_message">
+  <div class="modal-panel">
+    <p id="confirm_dialog_message" class="modal-title" data-confirm-dialog-target="message"></p>
+    <div class="flex justify-end gap-2">
+      <button type="button" class="btn-cancel" data-action="confirm-dialog#cancel" autofocus>
+        <%= t("actions.cancel") %>
+      </button>
+      <button type="button" class="btn-delete" data-action="confirm-dialog#confirm"><%= t("actions.delete") %></button>
+    </div>
+  </div>
+</dialog>

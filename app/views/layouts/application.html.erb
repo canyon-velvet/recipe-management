@@ -30,6 +30,8 @@
       <%= yield %>
     </main>
 
+    <%= render "shared/confirm_dialog" %>
+
     <% if logged_in? %>
       <%= render "aisles/editor_dialog" %>
       <%# Live Draft box updates (cards, menu count, "ready" toasts) on this user's own signed stream. %>
