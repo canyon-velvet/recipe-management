@@ -55,6 +55,9 @@ RSpec.describe "The navbar", type: :system do
     log_in_as create(:user, username: "home_cook")
 
     expect(page).to have_button("home_cook")
+    expect(page).to have_css(".account-icon", visible: true)
+    # The name is screen-reader-only: in the page, but a 1px clipped box
+    expect(page.evaluate_script("document.querySelector('.account-name').getBoundingClientRect().width")).to be <= 1
   end
 
   it "folds them beside the open assistant panel, which leaves the links too little room" do
