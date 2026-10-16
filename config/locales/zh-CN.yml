@@ -1,5 +1,6 @@
 zh-CN:
   app_name: "食谱管理"
+  short_app_name: "食谱管理"
   locale_name: "中文"
 
   actions:

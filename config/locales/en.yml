@@ -1,5 +1,7 @@
 en:
   app_name: "Recipe Manager"
+  # Under the icon on a phone's home screen, where a longer name is cut off
+  short_app_name: "Recipes"
   locale_name: "English"
 
   actions:
