@@ -1,4 +1,4 @@
-# [Recipe Manager](https://recipe-management-web-72dj.onrender.com/recipes)
+# Recipe Manager
 
 It's deployed on Render.
 
