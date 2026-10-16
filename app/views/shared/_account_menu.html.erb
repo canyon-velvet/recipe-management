@@ -2,12 +2,7 @@
   <button type="button" data-action="click->dropdown#toggle click@window->dropdown#close"
           class="account-toggle" aria-haspopup="menu">
     <%# Where the navbar is short of room, a person icon stands in for the name (navbar.css) %>
-    <svg class="account-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
-         aria-hidden="true">
-      <path stroke-linecap="round" stroke-linejoin="round"
-            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z
-               M4.5 20.1a7.5 7.5 0 0 1 15 0A17.9 17.9 0 0 1 12 21.75c-2.68 0-5.22-.58-7.5-1.65Z"/>
-    </svg>
+    <%= image_tag "icons/account.svg", alt: "", class: "account-icon" %>
     <span class="account-name" title="<%= current_user.username %>"><%= current_user.username %></span>
     <%= render "drafts/attention_dot", counts: draft_counts %>
     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
