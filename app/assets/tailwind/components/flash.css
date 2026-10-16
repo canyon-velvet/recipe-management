@@ -1,11 +1,12 @@
 @layer components {
   /* Notices after an action ("Recipe saved."): the app's cream cards, with a brown edge and ✓, or a rose edge and ⚠
      when something went wrong. They float just under the navbar, centred on the page (beside the open assistant
-     panel), over whatever is there, so nothing on the page moves. */
+     panel), over whatever is there, so nothing on the page moves. Below the navbar's menus (z-30), so an open menu
+     isn't covered. For a fixed element 100% is the window without its scrollbar, so the centre matches the page's. */
   .flash-list {
-    @apply pointer-events-none fixed top-24 z-40 flex w-[36rem] -translate-x-1/2 flex-col gap-2;
-    left: calc((100vw - var(--assistant-width, 0px)) / 2);
-    max-width: calc(100vw - var(--assistant-width, 0px) - 2rem);
+    @apply pointer-events-none fixed top-24 z-20 flex w-[36rem] -translate-x-1/2 flex-col gap-2;
+    left: calc((100% - var(--assistant-width, 0px)) / 2);
+    max-width: calc(100% - var(--assistant-width, 0px) - 2rem);
   }
   .flash {
     @apply pointer-events-auto flex items-center gap-3 rounded-xl border border-l-4 border-gray-200

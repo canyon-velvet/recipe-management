@@ -14,13 +14,6 @@ RSpec.describe "Notices after an action", type: :system do
     using_wait_time(7) { expect(page).to have_no_css(".flash") }
   end
 
-  it "closes a notice sooner with its ×" do
-    log_in_as user
-
-    within(".flash", text: "Logged in.") { click_button "Close" }
-    expect(page).to have_no_css(".flash")
-  end
-
   it "doesn't show an old notice again on Back" do
     log_in_as user
     expect(page).to have_css(".flash", text: "Logged in.")
@@ -44,5 +37,27 @@ RSpec.describe "Notices after an action", type: :system do
 
     sleep 6 # past the time a notice fades
     expect(page).to have_css(".flash--alert", text: "Incorrect username or password.")
+
+    within(".flash--alert") { click_button "Close" }
+    expect(page).to have_no_css(".flash")
+  end
+
+  it "stays under the navbar's menus on a narrow screen, where they overlap" do
+    page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: 768, height: 800) }
+    log_in_as user
+    expect(page).to have_css(".flash--notice", text: "Logged in.")
+
+    find(".account-toggle").click
+    click_link "Preferences" # would hit the notice if it were on top
+
+    expect(page).to have_css("h1", text: "Preferences")
+  end
+
+  it "keeps a notice while the pointer is on it" do
+    log_in_as user
+
+    find(".flash--notice", text: "Logged in.").hover
+    sleep 6 # past the time it would fade
+    expect(page).to have_css(".flash--notice", text: "Logged in.")
   end
 end
