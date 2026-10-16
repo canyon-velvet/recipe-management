@@ -235,7 +235,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ### Issue tracker
 
-Issues are tracked in GitHub Issues (`canyon-velvet/recipe_management`) using the `gh` CLI. See `docs/agents/issue-tracker.md`.
+Issues are tracked in GitHub Issues (`canyon-velvet/recipe-management`) using the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
