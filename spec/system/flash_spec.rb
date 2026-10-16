@@ -53,11 +53,14 @@ RSpec.describe "Notices after an action", type: :system do
     expect(page).to have_css("h1", text: "Preferences")
   end
 
-  it "keeps a notice while the pointer is on it" do
+  it "keeps a notice while the pointer is on it, and fades it once the pointer leaves" do
     log_in_as user
 
     find(".flash--notice", text: "Logged in.").hover
     sleep 6 # past the time it would fade
     expect(page).to have_css(".flash--notice", text: "Logged in.")
+
+    find(".logo-text").hover # away from the notice
+    using_wait_time(4) { expect(page).to have_no_css(".flash") }
   end
 end

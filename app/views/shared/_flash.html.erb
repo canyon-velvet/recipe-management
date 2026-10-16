@@ -6,7 +6,8 @@
     <% flash.each do |type, message| %>
       <% alert = type.to_s != "notice" %>
       <div class="flash <%= alert ? "flash--alert" : "flash--notice" %>" role="<%= alert ? "alert" : "status" %>"
-           data-controller="flash" data-flash-auto-hide-value="<%= !alert %>">
+           data-controller="flash" data-flash-auto-hide-value="<%= !alert %>"
+           data-action="mouseenter->flash#pause focusin->flash#pause mouseleave->flash#resume focusout->flash#resume">
         <span class="flash-icon" aria-hidden="true"><%= alert ? "⚠" : "✓" %></span>
         <p class="flash-message"><%= message %></p>
         <button type="button" class="flash-close" data-action="flash#dismiss"
