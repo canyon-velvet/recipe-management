@@ -32,6 +32,22 @@ RSpec.describe "The recipe list", type: :system do
     expect(page).to have_no_text("Minestrone")
   end
 
+  it "keeps the heading level with the top of the sidebar, even when the sidebar is the taller" do
+    %w[breakfast lunch dinner snack dessert appetizer salad drink].each { create(:tag, key: _1, kind: "meal") }
+    %w[japanese mexican american].each { create(:tag, key: _1, kind: "cuisine") }
+    log_in_as user
+    visit recipes_path
+
+    box = lambda do |selector|
+      page.evaluate_script("document.querySelector('#{selector}').getBoundingClientRect().toJSON()")
+    end
+    # The sidebar is taller than the heading and the cards together...
+    heading_and_cards = box.(".recipes-header")["height"] + box.(".recipes-grid")["height"]
+    expect(box.(".recipes-sidebar")["height"]).to be > heading_and_cards
+    # ...and the heading still starts where the sidebar does
+    expect(box.(".recipes-title")["top"]).to be_within(2).of(box.(".recipes-sidebar")["top"])
+  end
+
   it "searches as you type, keeping the search box's focus, and a tag picked next keeps the search" do
     log_in_as user
     visit recipes_path
