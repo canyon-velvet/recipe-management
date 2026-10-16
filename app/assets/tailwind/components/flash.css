@@ -1,0 +1,58 @@
+@layer components {
+  /* Notices after an action ("Recipe saved."): the app's cream cards, with a brown edge and ✓, or a rose edge and ⚠
+     when something went wrong. Out of the page's flow, so nothing on it moves, centred on the page (beside the open
+     assistant panel), and as wide as their message (at least 20rem). For a fixed element 100% is the window without
+     its scrollbar, so the centre matches the page's.
+
+     On a small screen the navbar is full (logo and buttons), so they hang from its bottom edge, over the top of the
+     page and under the navbar's menus (z-20). */
+  /* Notices shown together stretch to share the width */
+  .flash-list {
+    @apply pointer-events-none fixed top-20 z-20 flex w-max -translate-x-1/2 flex-col gap-2;
+    left: calc((100% - var(--assistant-width, 0px)) / 2);
+    max-width: calc(100% - var(--assistant-width, 0px) - 2rem);
+    /* A short notice is still a card (on a phone, as wide as there's room for) */
+    min-width: min(20rem, 100% - var(--assistant-width, 0px) - 2rem);
+  }
+  /* From lg they hang from the top of the window over the navbar (above it, z-40), between the logo and the buttons,
+     where the links are folded into ☰ (the navbar folds them when they don't have room). Where the links show, or
+     for a long notice, it can cover a link for the few seconds it shows; × closes it. Shorter than the navbar, so a
+     one-line notice ends above the menus that open below its buttons. */
+  @media (width >= 64rem) {
+    .flash-list {
+      @apply top-0 z-40;
+    }
+  }
+  /* Between md and xl the open assistant panel covers the right of the page instead of sharing it: centre them in
+     what's left beside it. */
+  @media (width >= 48rem) and (width < 80rem) {
+    .assistant-open .flash-list {
+      left: calc((100% - var(--assistant-panel-width)) / 2);
+      max-width: calc(100% - var(--assistant-panel-width) - 2rem);
+      min-width: min(20rem, 100% - var(--assistant-panel-width) - 2rem);
+    }
+  }
+  .flash {
+    @apply pointer-events-auto flex items-center gap-3 rounded-xl border border-l-4 border-gray-200
+           bg-sectionbackground px-4 py-3 shadow-lg transition-opacity duration-300;
+  }
+  /* The first hangs from an edge (the window's, or the navbar's): square corners and no border there */
+  .flash:first-child {
+    @apply rounded-t-none border-t-0;
+  }
+  .flash--notice { @apply border-l-sectiontext-light; }
+  .flash--alert  { @apply border-l-rose-700; }
+  /* Fading out before it's removed */
+  .flash--leaving { @apply opacity-0; }
+  .flash-icon {
+    @apply text-lg leading-none;
+  }
+  .flash--notice .flash-icon { @apply text-sectiontext; }
+  .flash--alert .flash-icon  { @apply text-rose-700; }
+  .flash-message {
+    @apply flex-1 text-sm text-gray-800;
+  }
+  .flash-close {
+    @apply text-gray-400 hover:text-gray-600 cursor-pointer;
+  }
+}
