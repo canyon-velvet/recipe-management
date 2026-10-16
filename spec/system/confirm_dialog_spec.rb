@@ -25,6 +25,18 @@ RSpec.describe "Confirming a delete", type: :system do
     expect(user.recipes).to be_empty
   end
 
+  it "asks for a delete button inside another pop-up (an aisle in Edit aisles)" do
+    log_in_as user
+    find(".account-toggle").click
+    click_button "Edit aisles"
+
+    within("dialog[open]", text: "Edit aisles") { click_button "Delete Bakery" }
+    within("dialog[open]", text: "Delete \"Bakery\"?") { click_button "Delete" }
+
+    within("dialog[open]", text: "Edit aisles") { expect(page).to have_no_text("Bakery") }
+    expect(user.aisles.where(key: "bakery")).to be_empty
+  end
+
   it "keeps it on Cancel, or Esc" do
     log_in_as user
 

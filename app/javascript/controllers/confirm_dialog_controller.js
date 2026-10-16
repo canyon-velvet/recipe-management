@@ -11,6 +11,7 @@ export default class extends Controller {
   }
 
   ask(message) {
+    this.answer(false) // an earlier question still open gets a no, so it never stays pending
     this.messageTarget.textContent = message
     this.element.showModal()
     return new Promise((resolve) => { this.resolve = resolve })
