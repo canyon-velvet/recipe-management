@@ -1,20 +1,23 @@
 @layer components {
   /* Notices after an action ("Recipe saved."): the app's cream cards, with a brown edge and ✓, or a rose edge and ⚠
      when something went wrong. Out of the page's flow, so nothing on it moves, centred on the page (beside the open
-     assistant panel) and as wide as their message. For a fixed element 100% is the window without its scrollbar, so
-     the centre matches the page's.
+     assistant panel), and as wide as their message (at least 20rem). For a fixed element 100% is the window without
+     its scrollbar, so the centre matches the page's.
 
      On a small screen the navbar is full (logo and buttons), so they hang from its bottom edge, over the top of the
      page and under the navbar's menus (z-20). */
+  /* Notices shown together stretch to share the width */
   .flash-list {
-    @apply pointer-events-none fixed top-20 z-20 flex w-max -translate-x-1/2 flex-col items-center gap-2;
+    @apply pointer-events-none fixed top-20 z-20 flex w-max -translate-x-1/2 flex-col gap-2;
     left: calc((100% - var(--assistant-width, 0px)) / 2);
     max-width: calc(100% - var(--assistant-width, 0px) - 2rem);
+    /* A short notice is still a card (on a phone, as wide as there's room for) */
+    min-width: min(20rem, 100% - var(--assistant-width, 0px) - 2rem);
   }
   /* From lg they hang from the top of the window over the navbar (above it, z-40), between the logo and the buttons,
-     where the links are folded into ☰ (the navbar folds them when they don't have room). A long notice can still
-     touch the logo or a link for the few seconds it shows. Shorter than the navbar, so a one-line notice ends above
-     the menus that open below its buttons. */
+     where the links are folded into ☰ (the navbar folds them when they don't have room). Where the links show, or
+     for a long notice, it can cover a link for the few seconds it shows; × closes it. Shorter than the navbar, so a
+     one-line notice ends above the menus that open below its buttons. */
   @media (width >= 64rem) {
     .flash-list {
       @apply top-0 z-40;
@@ -26,6 +29,7 @@
     .assistant-open .flash-list {
       left: calc((100% - var(--assistant-panel-width)) / 2);
       max-width: calc(100% - var(--assistant-panel-width) - 2rem);
+      min-width: min(20rem, 100% - var(--assistant-panel-width) - 2rem);
     }
   }
   .flash {

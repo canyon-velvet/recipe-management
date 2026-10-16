@@ -23,6 +23,16 @@ RSpec.describe "Notices after an action", type: :system do
     expect(page.evaluate_script("document.querySelector('.flash').getBoundingClientRect().top")).to eq 80
   end
 
+  it "keeps a short notice at least 320px wide, and within a phone's screen" do
+    log_in_as user
+    expect(page).to have_css(".flash", text: "Logged in.")
+    expect(page.evaluate_script("document.querySelector('.flash').getBoundingClientRect().width")).to be >= 320
+
+    page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: 320, height: 700) }
+    expect(page.evaluate_script("document.querySelector('.flash').getBoundingClientRect().left")).to be >= 16
+    expect(page.evaluate_script("document.querySelector('.flash').getBoundingClientRect().right")).to be <= 304
+  end
+
   it "doesn't show an old notice again on Back" do
     log_in_as user
     expect(page).to have_css(".flash", text: "Logged in.")
