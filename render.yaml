@@ -6,6 +6,10 @@
 # config/credentials/production.yml.enc (secret_key_base, the Anthropic key), not development's. Both services need
 # it, and Render asks for each when the Blueprint is created (sync: false). It can't come from an environment group:
 # Render ignores sync: false there.
+#
+# Deploys are manual (autoDeployTrigger: off): a merge to main doesn't deploy the app. To release, use Manual Deploy
+# on both the web service and the worker, so they run the same code. A merge that changes this file is the exception:
+# Render syncs the Blueprint and redeploys the services it changes (unless the Blueprint's Auto Sync is off).
 
 services:
   - type: web
@@ -13,6 +17,7 @@ services:
     runtime: docker
     plan: 0.5c-512mb
     region: ohio
+    autoDeployTrigger: "off"
     healthCheckPath: /up
     # Before each deploy goes live: create or migrate the database, and seed the tags. db/seeds.rb can run every time:
     # it adds no users in production, and leaves what users changed alone.
@@ -47,6 +52,7 @@ services:
     runtime: docker
     plan: 0.5c-512mb
     region: ohio
+    autoDeployTrigger: "off"
     dockerCommand: bundle exec sidekiq
     envVars:
       - key: RAILS_MASTER_KEY
