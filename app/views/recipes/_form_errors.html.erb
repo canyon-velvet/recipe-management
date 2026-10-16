@@ -1,0 +1,10 @@
+<%# locals: (recipe:) %>
+<% if recipe.errors.any? %>
+  <div class="recipe-form-errors">
+    <ul class="list-disc list-inside text-sm">
+      <% recipe.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

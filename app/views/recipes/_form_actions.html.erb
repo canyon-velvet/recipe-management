@@ -1,0 +1,8 @@
+<%# locals: (form:, recipe:, draft:) %>
+<%# Save, and Cancel back to where the form came from: the Draft box, the recipe, or the list. %>
+<div class="recipe-form-actions">
+  <%= form.submit recipe.persisted? ? t("recipes.form.update") : t("recipes.form.create"),
+                  class: "btn-pill-primary btn-pill-sm recipe-form-submit" %>
+  <%= link_to t("actions.cancel"), (draft && drafts_path) || (recipe.persisted? ? recipe_path(recipe) : recipes_path),
+              class: "btn-pill-secondary btn-pill-sm" %>
+</div>

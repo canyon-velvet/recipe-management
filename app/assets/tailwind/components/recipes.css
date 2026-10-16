@@ -62,9 +62,45 @@
   .recipe-card-facts   { @apply mt-4 flex gap-4 text-xs text-gray-500; }
   .recipe-card-tags    { @apply ml-auto truncate; }
 
-  /* Servings and times: four small number fields side by side in the form */
+  /* Servings and times: small number fields, four side by side where the form's sidebar is full width, two in the
+     sidebar beside the content (lg) */
   .recipe-count-fields {
-    @apply grid grid-cols-2 md:grid-cols-4 gap-4;
+    @apply grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 gap-4;
+  }
+
+  /* The recipe form: the content in cards on the left, Save and the details in a sidebar on the right (after the
+     content on a narrow screen, with Save moved to its end, where the form ends). Capped in width so the content
+     column stays a comfortable size. */
+  .recipe-form-page  { @apply mx-auto max-w-5xl py-6; }
+  .recipe-form-title { @apply text-3xl font-bold tracking-tight text-gray-900; }
+  .recipe-form-hint  { @apply mt-1 text-sm text-gray-500; }
+  .recipe-form       { @apply mt-6 grid items-start gap-6 lg:grid-cols-[1fr_20rem]; }
+  .recipe-form-main  { @apply min-w-0 space-y-6; }
+  .recipe-form-card  { @apply space-y-4 rounded-3xl border border-gray-200 bg-white p-6; }
+  .recipe-form-card-title { @apply text-lg font-bold text-gray-900; }
+  .recipe-form-errors {
+    @apply rounded-2xl border border-red-300 bg-red-50 p-4 text-red-700;
+  }
+  .recipe-form-details {
+    @apply flex flex-col gap-5 rounded-3xl border border-gray-200 bg-white p-6;
+  }
+  .recipe-form-details-heading {
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 lg:border-t lg:border-gray-100 lg:pt-4;
+  }
+  .recipe-form-actions { @apply order-last flex gap-2 lg:order-first; }
+  .recipe-form-submit  { @apply flex-1 cursor-pointer justify-center; }
+  /* The sidebar stays in view as the content scrolls, but only in a window tall enough to show all of it (and the
+     source field's dropdown); in a shorter one a stuck sidebar would hide its own bottom fields until the end. */
+  @media (width >= 64rem) and (height >= 56rem) {
+    .recipe-form-details { @apply sticky top-24; }
+  }
+  /* From xl the open assistant panel takes 400px of the page's width; until 2xl that leaves the content column too
+     narrow beside the sidebar, so the sidebar goes below the content as on a narrow screen. */
+  @media (width >= 80rem) and (width < 96rem) {
+    .assistant-open .recipe-form         { @apply grid-cols-1; }
+    .assistant-open .recipe-form-details { @apply static; }
+    .assistant-open .recipe-form-actions { @apply order-last; }
+    .assistant-open .recipe-form-details-heading { @apply border-t-0 pt-0; }
   }
 
   /* The recipe page, like a cookbook's: one centred column. The heading (emoji, tags, name, quiet Edit / Delete,

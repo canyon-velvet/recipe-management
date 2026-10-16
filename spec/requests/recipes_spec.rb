@@ -29,6 +29,19 @@ RSpec.describe "Recipes", type: :request do
     expect(user.recipes).to be_empty
   end
 
+  it "lays the form out as the content on the left and Save with the details in a sidebar" do
+    recipe = create(:recipe, user: user)
+
+    get edit_recipe_path(recipe)
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.css(".recipe-form-main .recipe-form-card-title").map(&:text)).to eq %w[Ingredients Method]
+    expect(page.at_css(".recipe-form-main #recipe_name")).to be_present
+    details = page.at_css(".recipe-form-details")
+    expect(details.at_css("input[type=submit]")["value"]).to eq "Update recipe"
+    expect(details.css("label").map { _1.text.squish }).to include("Tags", "Servings", "Source", "Recipe link")
+  end
+
   describe "the recipe page" do
     let(:source) { create(:source, user: user, name: "Yummy Toddler Food") }
 

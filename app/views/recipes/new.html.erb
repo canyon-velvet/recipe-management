@@ -1,9 +1,9 @@
-<section class="container mx-auto max-w-3xl px-4 py-8">
+<section class="recipe-form-page">
   <% if @draft %>
-    <h1 class="text-2xl font-bold"><%= t(".review_title") %></h1>
-    <p class="text-sm text-gray-500 mt-1 mb-6"><%= t(".review_hint") %></p>
+    <h1 class="recipe-form-title"><%= t(".review_title") %></h1>
+    <p class="recipe-form-hint"><%= t(".review_hint") %></p>
   <% else %>
-    <h1 class="text-2xl font-bold mb-6"><%= t(".title") %></h1>
+    <h1 class="recipe-form-title"><%= t(".title") %></h1>
   <% end %>
   <%= render "form", recipe: @recipe,
         aisles: @aisles,
