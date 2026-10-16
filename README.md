@@ -1,4 +1,6 @@
-# Recipe Manager
+# [Recipe Manager](https://recipe-management-web-72dj.onrender.com/recipes)
+
+It's deployed on Render.
 
 One place for all the recipes I've saved, an assistant that helps me pick what to cook from them, and a weekly
 meal plan that writes my grocery list for me.
@@ -51,31 +53,3 @@ turns a week of meals into a shopping list.
 
 The interface is in English and Simplified Chinese, and the 🌐 button switches between them.
 I built this for my own household, where we cook from both Chinese and American recipes.
-
-## Deploy
-
-It runs on [Render](https://render.com), described in [`render.yaml`](render.yaml):
-
-- **Web service** (Docker): Thruster in front of Puma.
-- **Background worker**: Sidekiq, which runs imports and the assistant's replies.
-- **Postgres** and **Key Value** (Redis): for jobs, live updates and rate limits. Both are reachable only from the
-  services.
-
-The smallest paid plans come to about $30 a month, plus Claude usage.
-
-1. In Render, choose **New → Blueprint** and pick this repository.
-2. It asks for `RAILS_MASTER_KEY` twice, for the web service and the worker: paste the contents of
-   `config/credentials/production.key` into both. Production has its own credentials
-   (`config/credentials/production.yml.enc`, edited with `bin/rails credentials:edit --environment production`), apart
-   from development's `config/master.key`. Key files are never committed; keep them in a password manager.
-3. Once the first deploy is live, open the web service's **Shell**, run `bin/rails console`, and create your admin
-   account. The password is typed at a hidden prompt, so it isn't kept in the console's history:
-   ```ruby
-   User.create!(username: "me", password: IO.console.getpass("Password: "), admin: true)
-   ```
-4. Log in, then invite people from the account menu → **Invites**. Signing up is by invite link only.
-
-To use your own domain, add it in Render, then set `APP_HOSTS` on the web service (comma-separated) so the app
-accepts it.
-
-Built with Ruby on Rails.
