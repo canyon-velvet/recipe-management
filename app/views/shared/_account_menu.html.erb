@@ -1,8 +1,8 @@
 <div data-controller="dropdown" data-action="turbo:before-cache@document->dropdown#hide" class="relative">
   <button type="button" data-action="click->dropdown#toggle click@window->dropdown#close"
-          class="account-toggle" aria-haspopup="menu" aria-label="<%= current_user.username %>">
-    <%# On a phone, a person icon instead of the name, so the navbar fits %>
-    <svg class="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+          class="account-toggle" aria-haspopup="menu">
+    <%# Where the navbar is short of room, a person icon stands in for the name (navbar.css) %>
+    <svg class="account-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
          aria-hidden="true">
       <path stroke-linecap="round" stroke-linejoin="round"
             d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z

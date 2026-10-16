@@ -1,5 +1,5 @@
 <header>
-  <div class="flex items-center px-3 sm:px-6">
+  <div class="navbar-brand">
     <span class="logo-text"><%= t("app_name") %></span>
   </div>
 
@@ -8,15 +8,16 @@
     <div class="flex flex-grow">
       <div class="topnav-item-container">
         <% navbar_links.each do |label, path| %>
+          <% current = current_page?(path) %>
           <div class="topnav-item">
-            <%= link_to label, path, class: "nav-link #{'active' if current_page?(path)}" %>
+            <%= link_to label, path, class: "nav-link #{'active' if current}", aria: { current: ("page" if current) } %>
           </div>
         <% end %>
       </div>
     </div>
   </nav>
 
-  <div class="flex items-center px-2 sm:px-6 ml-auto">
+  <div class="navbar-actions">
     <% if assistant_available? %>
       <button type="button" class="assistant-toggle" data-assistant-panel-target="toggle"
               data-action="assistant-panel#toggle" aria-controls="<%= assistant_panel_id %>"

@@ -51,12 +51,25 @@
     }
   }
 
-  /* Between md and xl the open assistant panel covers the right of the page, navbar included (there's no room to
-     share). The navbar's own items move left of it, so ☰ and the account menu stay in reach while chatting. */
+  /* The two ends of the bar: the name, and the buttons (✦, 🌐, account, ☰) */
+  .navbar-brand   { @apply flex items-center px-6; }
+  .navbar-actions { @apply flex items-center px-6 ml-auto; }
+
+  /* Compact, where the bar is short of room: tighter ends, and a person icon for the username (screen readers still
+     read the name). On a phone; and between md and xl beside the open assistant panel, which covers the right of the
+     page there, navbar included (there's no room to share), so the navbar's items move left of it to stay in reach. */
+  @media (width < 40rem) {
+    .navbar-brand   { @apply px-3; }
+    .navbar-actions { @apply px-2; }
+    .account-name   { @apply sr-only; }
+    .account-icon   { @apply block; }
+  }
   @media (width >= 48rem) and (width < 80rem) {
-    .assistant-open header {
-      padding-right: var(--assistant-panel-width);
-    }
+    .assistant-open header                 { padding-right: var(--assistant-panel-width); }
+    .assistant-open .navbar-brand          { @apply px-3; }
+    .assistant-open .navbar-actions        { @apply px-2; }
+    .assistant-open .account-name          { @apply sr-only; }
+    .assistant-open .account-icon          { @apply block; }
   }
 
   .navbar-menu-toggle {
@@ -94,11 +107,9 @@
     @apply flex items-center gap-1 text-white text-sm font-light opacity-80 hover:opacity-100 px-2 py-1 rounded;
   }
 
-  /* The username, cut short when long (all of it shows on hover). On a phone a person icon stands in for it, so the
-     navbar fits. */
-  .account-name {
-    @apply hidden max-w-48 truncate sm:inline;
-  }
+  /* The username, cut short when long (all of it shows on hover); or, in the compact bar, the icon in its place */
+  .account-name { @apply max-w-48 truncate; }
+  .account-icon { @apply hidden w-5 h-5; }
 
   .account-menu {
     @apply absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-40 py-1;

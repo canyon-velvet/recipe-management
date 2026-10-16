@@ -10,8 +10,9 @@
 
   <div data-dropdown-target="menu" class="navbar-menu-list hidden">
     <% navbar_links.each do |label, path| %>
-      <%= link_to label, path, class: "navbar-menu-item #{'navbar-menu-item--active' if current_page?(path)}",
-                               aria: { current: ("page" if current_page?(path)) } %>
+      <% current = current_page?(path) %>
+      <%= link_to label, path, class: "navbar-menu-item #{'navbar-menu-item--active' if current}",
+                               aria: { current: ("page" if current) } %>
     <% end %>
     <p class="navbar-menu-heading"><%= t("shared.locale_switcher.label") %></p>
     <%= render "shared/locale_options" %>

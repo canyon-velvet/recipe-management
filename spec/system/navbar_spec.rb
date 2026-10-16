@@ -36,16 +36,25 @@ RSpec.describe "The navbar", type: :system do
     expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 360
   end
 
-  it "keeps ☰ in reach beside the open assistant panel on a medium window, where the panel covers the page" do
-    allow(CleanRecipeService).to receive(:available?).and_return(true)
-    resize(1024)
-    log_in_as user
-    click_button "Open assistant"
+  [ 768, 1024 ].each do |width|
+    it "keeps ☰ in reach beside the open assistant panel at #{width}px, where the panel covers the page" do
+      allow(CleanRecipeService).to receive(:available?).and_return(true)
+      resize(width)
+      log_in_as create(:user, username: "a_rather_long_username")
+      click_button "Open assistant"
 
-    click_button "Menu"
-    click_link "Meal Plans"
-    expect(page).to have_css("h1", text: "Meal Plans")
-    expect(page).to have_css(".assistant-panel")
+      click_button "Menu"
+      click_link "Meal Plans"
+      expect(page).to have_css("h1", text: "Meal Plans")
+      expect(page).to have_css(".assistant-panel")
+    end
+  end
+
+  it "keeps the username for screen readers where an icon shows instead" do
+    resize(360)
+    log_in_as create(:user, username: "home_cook")
+
+    expect(page).to have_button("home_cook")
   end
 
   it "folds them beside the open assistant panel, which leaves the links too little room" do
