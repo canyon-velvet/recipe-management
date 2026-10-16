@@ -3,8 +3,8 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["menu"]
 
-  toggle(event) {
-    event.stopPropagation()
+  // The click carries on to the window, so any other open dropdown closes (its #close sees a click outside it)
+  toggle() {
     this.menuTarget.classList.toggle("hidden")
   }
 

@@ -50,6 +50,26 @@ RSpec.describe "The navbar", type: :system do
     end
   end
 
+  it "closes ☰ when the account menu opens, and the other way round" do
+    resize(360)
+    log_in_as create(:user, username: "home_cook")
+
+    click_button "Menu"
+    expect(page).to have_css(".navbar-menu-list", visible: true)
+
+    click_button "home_cook"
+    expect(page).to have_css(".account-menu", visible: true)
+    expect(page).to have_no_css(".navbar-menu-list", visible: true)
+
+    click_button "Menu"
+    expect(page).to have_css(".navbar-menu-list", visible: true)
+    expect(page).to have_no_css(".account-menu", visible: true)
+
+    # Its own button still closes it
+    click_button "Menu"
+    expect(page).to have_no_css(".navbar-menu-list", visible: true)
+  end
+
   it "keeps the username for screen readers where an icon shows instead" do
     resize(360)
     log_in_as create(:user, username: "home_cook")
