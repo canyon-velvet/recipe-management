@@ -229,9 +229,10 @@ en:
     edit:
       title: "Edit recipe"
     show:
+      from: "From %{name}"
       ingredients: "Ingredients"
-      link: "Link"
-      source: "Source: %{name}"
+      method: "Method"
+      step: "Step %{number}"
     form:
       new_badge: "New"
       add_ingredient: "+ Add ingredient"

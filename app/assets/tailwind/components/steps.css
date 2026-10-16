@@ -6,20 +6,9 @@
   .step-action  { @apply rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700; }
   .step-action--remove { @apply hover:text-red-500; }
 
-  /* Steps on the recipe page: number on the same line as the first line of text */
-  .step-item { @apply flex items-baseline gap-3; }
-
-  /* Step number badge, shared by the form and the recipe page */
+  /* Step number badge in the form */
   .step-number {
     @apply inline-flex size-7 shrink-0 items-center justify-center rounded-full
            bg-sectiontext/40 text-sm font-semibold text-white;
   }
-}
-
-/* A utility, not a component: .prose paragraph margins live in the utilities layer and would win otherwise. */
-@utility step-body {
-  @apply flex-1 min-w-0;
-
-  & > :first-child { @apply mt-0; }
-  & > :last-child { @apply mb-0; }
 }

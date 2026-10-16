@@ -224,9 +224,10 @@ zh-CN:
     edit:
       title: "编辑菜谱"
     show:
+      from: "来自 %{name}"
       ingredients: "食材"
-      link: "链接"
-      source: "来源：%{name}"
+      method: "做法"
+      step: "第 %{number} 步"
     form:
       new_badge: "新"
       add_ingredient: "+ 添加食材"

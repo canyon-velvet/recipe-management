@@ -65,14 +65,50 @@
   .recipe-count-fields {
     @apply grid grid-cols-2 md:grid-cols-4 gap-4;
   }
-  /* ...and on the recipe page, inside a .section-card: one column per known fact, filling its width */
+
+  /* The recipe page, like a cookbook's: one centred column. The heading (emoji, tags, name, quiet Edit / Delete,
+     description, facts) is centred; the sections below read from the left. */
+  .recipe-page          { @apply mx-auto max-w-2xl py-10; }
+  .recipe-heading       { @apply text-center; }
+  .recipe-heading-icon  { @apply flex justify-center text-6xl leading-none; }
+  .recipe-heading-tags  { @apply mt-4 text-xs font-semibold uppercase tracking-[0.25em] text-sectiontext-light; }
+  .recipe-heading-title { @apply mt-3 text-4xl font-bold tracking-tight text-gray-900 md:text-5xl; }
+  .recipe-heading-actions        { @apply mt-2 text-xs text-gray-400; }
+  .recipe-heading-action         { @apply hover:text-gray-700; }
+  .recipe-heading-action--delete { @apply hover:text-red-600; }
+  /* Its colour is on the element, beside .prose, whose own colour (a utility) would beat it here */
+  .recipe-description   { @apply mx-auto mt-5; }
+
+  /* Servings and times in a strip: one equal column per known fact, with a line between them */
   .recipe-facts {
-    @apply grid grid-cols-2 md:grid-flow-col md:auto-cols-fr gap-4;
+    @apply mt-8 grid grid-flow-col auto-cols-fr border-y border-sectiontext/15 py-4 text-center;
   }
-  .recipe-fact-label {
-    @apply text-sm font-semibold text-sectiontext;
+  .recipe-fact + .recipe-fact { @apply border-l border-sectiontext/15; }
+  .recipe-fact-label { @apply text-[11px] font-semibold uppercase tracking-wider text-gray-400; }
+  .recipe-fact-value { @apply mt-1 font-semibold text-gray-900; }
+
+  .recipe-section { @apply mt-14; }
+  /* "—— INGREDIENTS ——": the heading between two rules */
+  .recipe-section-heading {
+    @apply flex items-center gap-4 text-sm font-semibold uppercase tracking-[0.25em] text-sectiontext;
   }
-  .recipe-fact-value {
-    @apply mt-1 text-sm text-gray-700;
+  .recipe-section-heading::before,
+  .recipe-section-heading::after {
+    content: "";
+    @apply h-px flex-1 bg-sectiontext/20;
   }
+
+  /* Ingredients, each with its amount at the end of a dotted line */
+  .recipe-ingredients       { @apply mt-6 gap-x-10 sm:columns-2; }
+  .recipe-ingredient        { @apply flex break-inside-avoid items-baseline gap-2 py-1.5 text-gray-800; }
+  .recipe-ingredient-leader { @apply flex-1 border-b border-dotted border-gray-300; }
+  .recipe-ingredient-amount { @apply text-gray-500; }
+
+  .recipe-steps      { @apply mt-6 space-y-8; }
+  .recipe-step-label { @apply mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-sectiontext-light; }
+  .recipe-tips       { @apply mt-6; }
+
+  /* Where it's from, at the bottom; the link to the original when there is one */
+  .recipe-source      { @apply mt-14 border-t border-sectiontext/15 pt-4 text-center text-sm text-gray-400; }
+  .recipe-source-link { @apply underline decoration-gray-300 underline-offset-4 hover:text-sectiontext; }
 }

@@ -6,10 +6,7 @@ RSpec.describe "Confirming a delete", type: :system do
 
   def open_delete
     visit recipe_path(recipe)
-    within("main") do # the recipe's ⋮ menu, not the navbar's
-      find("[data-action*='dropdown#toggle']").click
-      click_link "Delete"
-    end
+    within(".recipe-heading-actions") { click_link "Delete" }
   end
 
   it "asks in the app's own pop-up, and deletes on Delete" do

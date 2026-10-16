@@ -1,8 +1,0 @@
-<%# locals: (tags:) %>
-<% if tags.any? %>
-  <div class="flex flex-wrap gap-1">
-    <% tags.each do |tag| %>
-      <span class="tag-badge"><%= tag.name %></span>
-    <% end %>
-  </div>
-<% end %>

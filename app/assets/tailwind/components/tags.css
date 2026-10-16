@@ -1,9 +1,4 @@
 @layer components {
-  /* Read-only tag label on cards and the recipe page */
-  .tag-badge {
-    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700;
-  }
-
   /* A recipe card's emoji (one of its tags', see Recipe#card_icon); line-height 1 keeps it centred */
   .recipe-card-icon {
     @apply text-6xl leading-none select-none;

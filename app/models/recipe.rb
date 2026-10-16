@@ -52,6 +52,15 @@ class Recipe < ApplicationRecord
   # Shown with a "new" badge in the form until the recipe saves.
   def new_source? = new_source_name.present? && (source.nil? || source.new_record?)
 
+  # The description and the tips at its end, apart: [description, tips], each nil when there's none. Imports put the
+  # tips under a bold "Tips" line in the reviewer's language (BuildRecipeFromDraftService); typing one does the same,
+  # and the tips under a second one join the first. Line ends sent as \r\n (a plain form post) are evened out first.
+  def description_and_tips
+    headings = I18n.available_locales.map { |locale| Regexp.escape(I18n.t("recipes.tips_heading", locale: locale)) }
+    text, *tips = description.to_s.gsub("\r\n", "\n").split(/^\*\*(?:#{headings.join("|")})\*\*[ \t]*$/)
+    [ text.to_s.strip.presence, tips.map(&:strip).compact_blank.join("\n\n").presence ]
+  end
+
   # The emoji on the recipe's card: one of its tags', picked by the recipe's id, so cards vary but a recipe always
   # shows the same one. Nil without tags. Uses the loaded tags, so a list that includes them adds no queries.
   def card_icon

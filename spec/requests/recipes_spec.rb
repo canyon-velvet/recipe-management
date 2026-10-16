@@ -28,4 +28,42 @@ RSpec.describe "Recipes", type: :request do
     expect(response).to have_http_status(:unprocessable_content)
     expect(user.recipes).to be_empty
   end
+
+  describe "the recipe page" do
+    let(:source) { create(:source, user: user, name: "Yummy Toddler Food") }
+
+    def page_for(recipe)
+      get recipe_path(recipe)
+      Nokogiri::HTML(response.body)
+    end
+
+    it "shows the description up top, then Ingredients, Method and the tips last" do
+      recipe = build(:recipe, user: user, source: source, description: "Silky tofu.\n\n**Tips**\n\n- Cut gently.")
+      recipe.recipe_ingredients.build(ingredient: create(:ingredient, user: user, name: "Tofu"), quantity: "400", unit: "g")
+      recipe.save!
+
+      page = page_for(recipe)
+
+      expect(page.css(".recipe-description").text.squish).to eq "Silky tofu."
+      expect(page.css(".recipe-section-heading").map(&:text)).to eq %w[Ingredients Method Tips]
+      expect(page.css(".recipe-tips").text.squish).to eq "Cut gently."
+      expect(page.css(".recipe-heading-actions a").map { _1.text.squish }).to eq [ "✎ Edit", "Delete" ]
+    end
+
+    it "leaves out the ingredients and tips sections when there are none" do
+      page = page_for(create(:recipe, user: user, source: source, description: "Silky tofu."))
+
+      expect(page.css(".recipe-section-heading").map(&:text)).to eq %w[Method]
+    end
+
+    it "links where it's from to the original, only when there's a link" do
+      linked = create(:recipe, user: user, source: source, source_url: "https://example.com/tofu")
+      unlinked = create(:recipe, user: user, source: source)
+
+      expect(page_for(linked).at_css(".recipe-source a")["href"]).to eq "https://example.com/tofu"
+      expect(page_for(linked).at_css(".recipe-source").text.squish).to eq "From Yummy Toddler Food ↗"
+      expect(page_for(unlinked).at_css(".recipe-source a")).to be_nil
+      expect(page_for(unlinked).at_css(".recipe-source").text.squish).to eq "From Yummy Toddler Food"
+    end
+  end
 end
