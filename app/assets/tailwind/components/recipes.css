@@ -2,7 +2,9 @@
   /* Recipe list: the catalog in a sticky panel on the left; the heading and the cards on the right. On a phone the
      catalog folds behind "Search & filter" between the heading and the cards (order). The heading and the cards sit
      in a display: contents Turbo frame, so they are grid items of the page. */
-  .recipes-page    { @apply grid gap-6 py-4 md:grid-cols-[15rem_1fr] md:gap-x-8; }
+  /* The heading's row is only as tall as the heading (auto); when the sidebar, which spans both rows, is the taller
+     side (a few recipes), its extra height goes to the cards' row (1fr) instead of pushing the heading down. */
+  .recipes-page    { @apply grid gap-6 py-4 md:grid-cols-[15rem_1fr] md:grid-rows-[auto_1fr] md:gap-x-8; }
   .recipes-header  { @apply flex flex-wrap items-end justify-between gap-4 md:col-start-2 md:row-start-1; }
   .recipes-title   { @apply text-3xl font-bold tracking-tight text-gray-900; }
   .recipes-count   { @apply mt-1 text-sm text-gray-500; }
