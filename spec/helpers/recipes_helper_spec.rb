@@ -28,6 +28,12 @@ RSpec.describe RecipesHelper, type: :helper do
       expect(helper.recipe_summary(recipe)).to eq "Salt & pepper, then more."
     end
 
+    it "leaves out the tips" do
+      recipe = build(:recipe, description: "Silky tofu.\n\n**Tips**\n\n- Cut gently.")
+
+      expect(helper.recipe_summary(recipe)).to eq "Silky tofu."
+    end
+
     it "falls back to where the recipe is from" do
       recipe = build(:recipe, description: "")
 

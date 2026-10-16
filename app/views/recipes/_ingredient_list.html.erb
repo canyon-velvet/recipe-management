@@ -1,0 +1,13 @@
+<%# locals: (recipe_ingredients:) %>
+<%# Each ingredient with its amount at the end of a dotted line; two columns from a small screen up. %>
+<ul class="recipe-ingredients">
+  <% recipe_ingredients.each do |recipe_ingredient| %>
+    <li class="recipe-ingredient">
+      <span><%= recipe_ingredient.ingredient.name %></span>
+      <span class="recipe-ingredient-leader" aria-hidden="true"></span>
+      <span class="recipe-ingredient-amount">
+        <%= [ recipe_ingredient.quantity, recipe_ingredient.unit ].compact_blank.join(" ") %>
+      </span>
+    </li>
+  <% end %>
+</ul>

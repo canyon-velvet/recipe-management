@@ -56,4 +56,38 @@ RSpec.describe Recipe do
       expect(recipe.errors.attribute_names).to include(:servings, :prep_minutes, :cook_minutes, :total_minutes)
     end
   end
+
+  describe "#description_and_tips" do
+    it "splits off the tips under a bold Tips line, in either language" do
+      english = build(:recipe, description: "Silky tofu.\n\n**Tips**\n\n- Cut gently.")
+      chinese = build(:recipe, description: "嫩豆腐。\n\n**小贴士**\n\n- 轻轻切。")
+
+      expect(english.description_and_tips).to eq [ "Silky tofu.", "- Cut gently." ]
+      expect(chinese.description_and_tips).to eq [ "嫩豆腐。", "- 轻轻切。" ]
+    end
+
+    it "gives nil for a part that isn't there" do
+      expect(build(:recipe, description: "Just a description.").description_and_tips).to eq [ "Just a description.", nil ]
+      expect(build(:recipe, description: "**Tips**\n\n- Only tips.").description_and_tips).to eq [ nil, "- Only tips." ]
+      expect(build(:recipe, description: nil).description_and_tips).to eq [ nil, nil ]
+    end
+
+    it "splits text whose line ends are \\r\\n, as a plain form post sends them" do
+      recipe = build(:recipe, description: "Silky tofu.\r\n\r\n**Tips**\r\n\r\n- Cut gently.")
+
+      expect(recipe.description_and_tips).to eq [ "Silky tofu.", "- Cut gently." ]
+    end
+
+    it "gathers the tips under a second Tips line too" do
+      recipe = build(:recipe, description: "A.\n\n**Tips**\n\n- One.\n\n**Tips**\n\n- Two.")
+
+      expect(recipe.description_and_tips).to eq [ "A.", "- One.\n\n- Two." ]
+    end
+
+    it "leaves bold words inside a paragraph alone" do
+      recipe = build(:recipe, description: "Some **Tips** inside a sentence.")
+
+      expect(recipe.description_and_tips).to eq [ "Some **Tips** inside a sentence.", nil ]
+    end
+  end
 end

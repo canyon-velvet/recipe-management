@@ -1,9 +1,9 @@
 <%# locals: (steps:) %>
-<ol class="space-y-4 list-none pl-0">
+<ol class="recipe-steps">
   <% steps.each.with_index(1) do |step, number| %>
-    <li class="step-item">
-      <span class="step-number"><%= number %></span>
-      <div class="step-body"><%= render_markdown(step.body) %></div>
+    <li>
+      <p class="recipe-step-label"><%= t("recipes.show.step", number: number) %></p>
+      <div class="prose prose-lg max-w-none text-gray-800"><%= render_markdown(step.body) %></div>
     </li>
   <% end %>
 </ol>

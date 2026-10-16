@@ -1,65 +1,36 @@
-<section class="container mx-auto max-w-3xl px-4 py-8">
-  <!-- Top row: Title + kebab (left) • Edit (right) -->
-  <div class="flex items-center justify-between mb-4">
-    <div class="flex items-center">
-      <h1 class="text-2xl md:text-3xl font-bold tracking-wider truncate"><%= @recipe.name %></h1>
-      <div class="ml-2">
-        <%= render "shared/kebab_menu", items: [
-          { label: t("actions.delete"), url: recipe_path(@recipe), data: { turbo_method: :delete, turbo_confirm: t("recipes.confirm_delete") }, class: "text-red-600" }
-        ] %>
-      </div>
-    </div>
+<%# A recipe as a cookbook page: one centred column with the heading, then Ingredients, Method and Tips, each under a
+    ruled heading, and where it's from at the bottom. %>
+<% description, tips = @recipe.description_and_tips %>
+<article class="recipe-page">
+  <%= render "recipes/page_heading", recipe: @recipe, description: description %>
 
-    <%= link_to t("actions.edit"), edit_recipe_path(@recipe), class: "btn-secondary" %>
-  </div>
-
-  <!-- Tags -->
-  <div class="mb-4">
-    <%= render "shared/tag_badges", tags: @recipe.tags %>
-  </div>
-
-  <!-- Servings and times, when known -->
-  <% if (facts = recipe_facts(@recipe)).any? %>
-    <dl class="section-card recipe-facts mt-8">
-      <% facts.each do |label, value| %>
-        <div>
-          <dt class="recipe-fact-label"><%= label %></dt>
-          <dd class="recipe-fact-value"><%= value %></dd>
-        </div>
-      <% end %>
-    </dl>
+  <% if @recipe.recipe_ingredients.any? %>
+    <section class="recipe-section">
+      <%= render "recipes/section_heading", title: t(".ingredients") %>
+      <%= render "recipes/ingredient_list", recipe_ingredients: @recipe.recipe_ingredients %>
+    </section>
   <% end %>
 
-  <!-- Description -->
-  <% if @recipe.description.present? %>
-    <div class="mt-16">
-      <%= render "shared/section_card", title: Recipe.human_attribute_name(:description), html: render_markdown(@recipe.description) %>
-    </div>
+  <section class="recipe-section">
+    <%= render "recipes/section_heading", title: t(".method") %>
+    <%= render "recipes/steps", steps: @recipe.steps %>
+  </section>
+
+  <% if tips %>
+    <section class="recipe-section">
+      <%= render "recipes/section_heading", title: t("recipes.tips_heading") %>
+      <div class="recipe-tips prose prose-lg max-w-none text-gray-800"><%= render_markdown(tips) %></div>
+    </section>
   <% end %>
 
-  <!-- Ingredients -->
-  <div class="mt-16">
-    <% ingredients_kv = @recipe.recipe_ingredients.map { |ri|
-      label = ri.ingredient.name
-      value = [ri.quantity, ri.unit].compact_blank.join(" ")
-      [label, value]
-    } %>
-    <%= render "shared/section_card", title: t(".ingredients"), items_kv: ingredients_kv %>
-  </div>
-
-  <!-- Steps -->
-  <div class="mt-16">
-    <%= render "shared/section_card", title: Recipe.human_attribute_name(:steps),
-          html: render("recipes/steps", steps: @recipe.steps) %>
-  </div>
-
-  <!-- Source footnote -->
-  <div class="mt-4 text-left text-xs text-gray-400">
-    <% if @recipe.source %>
-      <%= t(".source", name: @recipe.source.name) %>
-      <% if @recipe.source_url.present? %>
-        · <%= link_to t(".link"), @recipe.source_url, class: "underline hover:no-underline", target: "_blank", rel: "noopener" %>
+  <p class="recipe-source">
+    <%# The original, when there's a link to it %>
+    <% if @recipe.source_url.present? %>
+      <%= link_to @recipe.source_url, target: "_blank", rel: "noopener", class: "recipe-source-link" do %>
+        <%= t(".from", name: @recipe.source.name) %> <span aria-hidden="true">↗</span>
       <% end %>
+    <% else %>
+      <%= t(".from", name: @recipe.source.name) %>
     <% end %>
-  </div>
-</section>
+  </p>
+</article>
