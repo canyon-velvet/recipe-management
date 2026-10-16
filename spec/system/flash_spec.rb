@@ -15,6 +15,14 @@ RSpec.describe "Notices after an action", type: :system do
     using_wait_time(7) { expect(page).to have_no_css(".flash") }
   end
 
+  it "hangs it from the navbar's bottom edge on a small screen, where the navbar is full" do
+    page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: 768, height: 800) }
+    log_in_as user
+
+    expect(page).to have_css(".flash--notice", text: "Logged in.")
+    expect(page.evaluate_script("document.querySelector('.flash').getBoundingClientRect().top")).to eq 80
+  end
+
   it "doesn't show an old notice again on Back" do
     log_in_as user
     expect(page).to have_css(".flash", text: "Logged in.")

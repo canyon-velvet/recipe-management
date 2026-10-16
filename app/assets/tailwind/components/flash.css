@@ -1,19 +1,36 @@
 @layer components {
   /* Notices after an action ("Recipe saved."): the app's cream cards, with a brown edge and ✓, or a rose edge and ⚠
-     when something went wrong. They hang from the top of the window over the navbar (above it, z-40), centred on the
-     page (beside the open assistant panel), so nothing on the page moves. As wide as their message, and shorter than
-     the navbar, so a one-line notice ends above the menus that open below its buttons. For a fixed element 100% is
-     the window without its scrollbar, so the centre matches the page's. */
+     when something went wrong. Out of the page's flow, so nothing on it moves, centred on the page (beside the open
+     assistant panel) and as wide as their message. For a fixed element 100% is the window without its scrollbar, so
+     the centre matches the page's.
+
+     On a small screen the navbar is full (logo and buttons), so they hang from its bottom edge, over the top of the
+     page and under the navbar's menus (z-20). */
   .flash-list {
-    @apply pointer-events-none fixed top-0 z-40 flex w-max -translate-x-1/2 flex-col items-center gap-2;
+    @apply pointer-events-none fixed top-20 z-20 flex w-max -translate-x-1/2 flex-col items-center gap-2;
     left: calc((100% - var(--assistant-width, 0px)) / 2);
     max-width: calc(100% - var(--assistant-width, 0px) - 2rem);
+  }
+  /* From lg the navbar has room between the logo and its buttons: they hang from the top of the window over it
+     (above it, z-40). Shorter than the navbar, so a one-line notice ends above the menus that open below its buttons. */
+  @media (width >= 64rem) {
+    .flash-list {
+      @apply top-0 z-40;
+    }
+  }
+  /* Between md and xl the open assistant panel covers the right of the page instead of sharing it: centre them in
+     what's left beside it. */
+  @media (width >= 48rem) and (width < 80rem) {
+    .assistant-open .flash-list {
+      left: calc((100% - var(--assistant-panel-width)) / 2);
+      max-width: calc(100% - var(--assistant-panel-width) - 2rem);
+    }
   }
   .flash {
     @apply pointer-events-auto flex items-center gap-3 rounded-xl border border-l-4 border-gray-200
            bg-sectionbackground px-4 py-3 shadow-lg transition-opacity duration-300;
   }
-  /* The first hangs from the top edge: square corners and no border there */
+  /* The first hangs from an edge (the window's, or the navbar's): square corners and no border there */
   .flash:first-child {
     @apply rounded-t-none border-t-0;
   }
