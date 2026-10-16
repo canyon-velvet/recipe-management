@@ -10,6 +10,7 @@
 @import "./components/modal.css";
 @import "./components/navbar.css";
 @import "./components/meal_grid.css";
+@import "./components/meal_plans.css";
 @import "./components/grocery_list.css";
 @import "./components/pagination.css";
 @import "./components/tags.css";

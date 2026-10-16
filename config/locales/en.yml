@@ -13,6 +13,11 @@ en:
     edit: "Edit"
     save: "Save"
 
+  date:
+    formats:
+      # The meal plan list's month headings, e.g. "October 2026"
+      month_year: "%B %Y"
+
   flash:
     import_started: "Importing… the recipe will wait in your Draft box."
     admin_required: "Admin access required."
@@ -277,13 +282,17 @@ en:
       snack: "Snack"
     index:
       empty: "No meal plans yet."
+      eyebrow: "Your weeks"
       new_meal_plan: "New meal plan"
       title: "Meal Plans"
     meal_plan_card:
       confirm_delete: "Delete this meal plan?"
+      next_week: "Next week"
+      planned_meals: "%{planned} of %{total} meals"
       recipe_count:
         one: "%{count} recipe planned"
         other: "%{count} recipes planned"
+      this_week: "This week"
     new:
       create: "Create"
       name: "Name (optional)"

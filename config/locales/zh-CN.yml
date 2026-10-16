@@ -12,6 +12,10 @@ zh-CN:
     edit: "编辑"
     save: "保存"
 
+  date:
+    formats:
+      month_year: "%Y年%-m月"
+
   flash:
     import_started: "正在导入，完成后菜谱会在草稿箱等你。"
     admin_required: "需要管理员权限"
@@ -272,11 +276,15 @@ zh-CN:
       snack: "加餐"
     index:
       empty: "还没有餐计划"
+      eyebrow: "我的每周"
       new_meal_plan: "新建餐计划"
       title: "餐计划"
     meal_plan_card:
       confirm_delete: "确定要删除这个餐计划吗？"
+      next_week: "下周"
+      planned_meals: "%{planned} / %{total} 餐已安排"
       recipe_count: "已安排 %{count} 道菜谱"
+      this_week: "本周"
     new:
       create: "创建"
       name: "名称（可选）"

@@ -1,18 +1,27 @@
-<section class="container mx-auto max-w-4xl px-4 py-8">
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold"><%= t(".title") %></h1>
-    <%= link_to t(".new_meal_plan"), new_meal_plan_path, class: "btn-primary" %>
+<section class="meal-plans-page">
+  <div class="meal-plans-header">
+    <div>
+      <p class="home-eyebrow"><%= t(".eyebrow") %></p>
+      <h1 class="meal-plans-title"><%= t(".title") %></h1>
+    </div>
+    <%= link_to "＋ #{t('.new_meal_plan')}", new_meal_plan_path, class: "btn-pill-primary btn-pill-sm" %>
   </div>
 
   <% if @meal_plans.any? %>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <% @meal_plans.each do |meal_plan| %>
-        <%= render "meal_plan_card", meal_plan: meal_plan %>
-      <% end %>
-    </div>
+    <%# Grouped by the month each week starts in, newest first %>
+    <% @meal_plans.group_by { |meal_plan| meal_plan.start_date.beginning_of_month }.each do |month, meal_plans| %>
+      <section class="meal-plans-month">
+        <h2 class="recipe-section-heading"><%= l(month, format: :month_year) %></h2>
+        <ol class="meal-plans-list">
+          <% meal_plans.each do |meal_plan| %>
+            <li><%= render "meal_plan_card", meal_plan: meal_plan %></li>
+          <% end %>
+        </ol>
+      </section>
+    <% end %>
 
     <%= render "shared/pagination", pagy: @pagy %>
   <% else %>
-    <p class="text-center text-gray-500 py-12"><%= t(".empty") %></p>
+    <p class="meal-plans-empty"><%= t(".empty") %></p>
   <% end %>
 </section>
