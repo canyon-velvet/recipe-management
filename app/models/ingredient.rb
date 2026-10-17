@@ -6,16 +6,10 @@ class Ingredient < ApplicationRecord
   has_many :grocery_list_items, dependent: :restrict_with_error
 
   validates :name, presence: true, uniqueness: { scope: :user_id, case_sensitive: false }
-  validate :aisle_must_belong_to_user
+  validates :aisle, same_user: true
 
   normalizes :name, with: ->(name) { name.strip }
 
   scope :alphabetical, -> { order(:name) }
   scope :named, ->(name) { where("lower(name) = lower(?)", name.strip) }
-
-  private
-
-  def aisle_must_belong_to_user
-    errors.add(:aisle, :invalid) if aisle && user && aisle.user_id != user_id
-  end
 end
