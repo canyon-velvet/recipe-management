@@ -3,24 +3,28 @@ require "rails_helper"
 RSpec.describe "Notices after an action", type: :system do
   let(:user) { create(:user) }
 
-  it "hangs a notice from the top of the window, over the navbar, and fades it away by itself" do
+  it "floats a white notice on the navbar, inside its band, and fades it away by itself" do
     log_in_as user
 
     notice = find(".flash--notice[role='status']", text: "Logged in.")
     expect(notice).to have_css(".flash-icon", text: "✓")
     # Over the page, not in it: nothing below moves down to make room
     expect(page.evaluate_script("getComputedStyle(document.querySelector('.flash-list')).position")).to eq "fixed"
-    expect(page.evaluate_script("document.querySelector('.flash').getBoundingClientRect().top")).to eq 0
+    # White, so it stands out on the cream navbar
+    expect(page.evaluate_script("getComputedStyle(document.querySelector('.flash')).backgroundColor"))
+      .to eq "rgb(255, 255, 255)"
+    expect(page.evaluate_script("document.querySelector('.flash').getBoundingClientRect().top")).to eq 10
+    expect(page.evaluate_script("document.querySelector('.flash').getBoundingClientRect().bottom")).to be <= 80
 
     using_wait_time(7) { expect(page).to have_no_css(".flash") }
   end
 
-  it "hangs it from the navbar's bottom edge on a small screen, where the navbar is full" do
+  it "floats it just below the navbar on a small screen, where the navbar is full" do
     page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: 768, height: 800) }
     log_in_as user
 
     expect(page).to have_css(".flash--notice", text: "Logged in.")
-    expect(page.evaluate_script("document.querySelector('.flash').getBoundingClientRect().top")).to eq 80
+    expect(page.evaluate_script("document.querySelector('.flash').getBoundingClientRect().top")).to eq 92
   end
 
   it "keeps a short notice at least 320px wide, and within a phone's screen" do
