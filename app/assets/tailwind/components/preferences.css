@@ -2,7 +2,7 @@
   /* Preferences page: one white sheet, a row per category with its name and hint beside its facts as removable
      chips, and a dashed chip to type a new one in. Avoid, which the assistant warns about, is tinted red. */
   .preferences-page     { @apply mx-auto max-w-4xl py-10; }
-  .preferences-title    { @apply text-3xl font-bold tracking-tight text-gray-900; }
+  .preferences-title    { @apply mt-2 text-4xl font-bold tracking-tight text-gray-900; }
   .preferences-subtitle { @apply mt-1 text-sm text-gray-500; }
   .preferences-sheet {
     @apply mt-6 overflow-hidden rounded-3xl border border-gray-200 bg-white;

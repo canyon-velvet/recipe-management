@@ -374,6 +374,7 @@ zh-CN:
     remove: "删除%{value}"
     index:
       add_hint: "在虚线框里输入，按回车即可添加。"
+      eyebrow: "供助手参考"
       title: "饮食偏好"
       subtitle: "助手推荐菜谱时会参考这些偏好。"
     categories:

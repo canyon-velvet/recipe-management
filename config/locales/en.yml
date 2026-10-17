@@ -385,6 +385,7 @@ en:
     remove: "Remove %{value}"
     index:
       add_hint: "Type in a dashed box and press Enter to add."
+      eyebrow: "For the assistant"
       title: "Preferences"
       subtitle: "The assistant follows these when it recommends recipes."
     categories:
