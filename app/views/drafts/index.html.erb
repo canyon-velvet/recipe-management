@@ -1,16 +1,22 @@
-<section class="container mx-auto max-w-3xl px-4 py-8">
-  <div class="mb-6">
-    <h1 class="text-2xl font-bold"><%= t(".title") %></h1>
-    <p class="text-sm text-gray-500 mt-1"><%= t(".subtitle") %></p>
+<section class="drafts-page" data-controller="modal">
+  <div class="drafts-header">
+    <div>
+      <p class="home-eyebrow"><%= t(".eyebrow") %></p>
+      <h1 class="drafts-title"><%= t(".title") %></h1>
+      <p class="drafts-subtitle"><%= t(".subtitle") %></p>
+    </div>
+    <%= link_to "＋ #{t('recipes.index.import_recipe')}", new_import_path, class: "btn-pill-primary btn-pill-sm",
+          data: { action: "modal#open:prevent" } %>
   </div>
+  <%= render "shared/modal_frame", frame: "new_import", src: new_import_path, labelledby: "new_import_title" %>
 
   <% if @drafts.any? %>
-    <div class="space-y-3">
+    <ol class="drafts-list">
       <% @drafts.each do |draft| %>
         <%= render "drafts/draft", draft: draft %>
       <% end %>
-    </div>
+    </ol>
   <% else %>
-    <p class="text-center text-gray-500 py-12"><%= t(".empty") %></p>
+    <p class="drafts-empty"><%= t(".empty") %></p>
   <% end %>
 </section>
