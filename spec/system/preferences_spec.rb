@@ -30,4 +30,16 @@ RSpec.describe "Preferences", type: :system do
 
     expect(user.preferences.pluck(:category, :value)).to eq [ [ "avoid", "peanuts" ] ]
   end
+
+  it "saves the time zone as soon as one is picked" do
+    log_in_as user
+    visit preferences_path
+
+    within("#time_zone") do
+      expect(page).to have_select("Time zone", selected: "(GMT-06:00) Central Time (US & Canada)")
+      select "(GMT+08:00) Beijing", from: "Time zone"
+      expect(page).to have_text("Saved")
+    end
+    expect(user.reload.time_zone).to eq "Beijing"
+  end
 end

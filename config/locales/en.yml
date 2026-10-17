@@ -390,6 +390,10 @@ en:
 
   preferences:
     remove: "Remove %{value}"
+    time_zone:
+      hint: "Select your time zone."
+      saved: "✓ Saved"
+      title: "Time zone"
     index:
       add_hint: "Type in a dashed box and press Enter to add."
       eyebrow: "For the assistant"

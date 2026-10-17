@@ -379,6 +379,10 @@ zh-CN:
 
   preferences:
     remove: "删除%{value}"
+    time_zone:
+      hint: "选择你所在的时区。"
+      saved: "✓ 已保存"
+      title: "时区"
     index:
       add_hint: "在虚线框里输入，按回车即可添加。"
       eyebrow: "供助手参考"

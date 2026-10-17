@@ -11,7 +11,7 @@ RSpec.describe "Preferences", type: :request do
 
     get preferences_path
 
-    titles = Nokogiri::HTML(response.body).css(".preference-title").map(&:text)
+    titles = Nokogiri::HTML(response.body).css("[id^='preferences_'] .preference-title").map(&:text)
     expect(titles).to eq [ "Household", "Diet", "Likes", "Dislikes", "Avoid" ] # who you cook for comes first
     expect(response.body).to include("peanuts")
     expect(response.body).not_to include("shellfish")
@@ -86,5 +86,16 @@ RSpec.describe "Preferences", type: :request do
 
     expect(response).to have_http_status(:not_found)
     expect(other.reload).to be_persisted
+  end
+
+  it "saves the user's time zone, and keeps a made-up one out" do
+    patch time_zone_path, params: { user: { time_zone: "Beijing" } }
+
+    expect(user.reload.time_zone).to eq "Beijing"
+    expect(response.body).to include('id="time_zone"', "Saved")
+
+    patch time_zone_path, params: { user: { time_zone: "Mars/Olympus" } }
+    expect(response).to have_http_status(:unprocessable_entity)
+    expect(user.reload.time_zone).to eq "Beijing"
   end
 end

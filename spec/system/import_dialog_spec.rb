@@ -43,6 +43,24 @@ RSpec.describe "Importing from the recipe list's pop-up", type: :system do
     expect(page).to have_css("h2", text: "Bring in a recipe")
   end
 
+  it "leaves the pop-up for the recipe or the Draft box a link was already imported to" do
+    recipe = create(:recipe, user: user, source_url: "https://example.com/apple-cake")
+    user.drafts.create!(source_url: "https://example.com/pear-tart")
+
+    within("dialog[open]") do
+      fill_in "Recipe link", with: "https://example.com/apple-cake"
+      click_button "Import"
+    end
+    click_link "View it"
+    expect(page).to have_current_path(recipe_path(recipe))
+
+    visit new_import_path
+    fill_in "Recipe link", with: "https://example.com/pear-tart"
+    click_button "Import"
+    click_link "Open Draft box"
+    expect(page).to have_current_path(drafts_path)
+  end
+
   it "opens as new again after Cancel" do
     within("dialog[open]") do
       fill_in "Recipe link", with: "https://example.com/apple-cake"
