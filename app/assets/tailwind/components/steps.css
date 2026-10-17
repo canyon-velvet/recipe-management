@@ -11,4 +11,25 @@
     @apply inline-flex size-7 shrink-0 items-center justify-center rounded-full
            bg-sectiontext/40 text-sm font-semibold text-white;
   }
+
+  /* Reorder mode: each step collapses to a one-line preview, which drags with a mouse; on a touch screen it scrolls the
+     page, and the handle drags. The handle also takes ↑ ↓. */
+  .steps-toolbar { @apply mb-3 flex justify-end; }
+  .step-preview,
+  .step-handle   { @apply hidden; }
+  .steps--reordering .step-row {
+    @apply items-center rounded-xl border border-gray-200 bg-white px-2 py-1.5;
+  }
+  .steps--reordering .step-row .step-number { @apply mt-0; }
+  .steps--reordering .step-row textarea,
+  .steps--reordering .step-actions,
+  .steps--reordering .step-add { @apply hidden; }
+  .steps--reordering .step-preview {
+    @apply block min-w-0 flex-1 cursor-grab truncate text-sm text-gray-700 select-none;
+  }
+  .steps--reordering .step-handle {
+    @apply -my-1 block cursor-grab touch-none rounded px-3 py-2 text-gray-400 hover:text-gray-700
+           focus-visible:outline-2 focus-visible:outline-sectiontext;
+  }
+  .step-row--lifted { @apply relative z-10 shadow-xl ring-1 ring-sectiontext/30; }
 }

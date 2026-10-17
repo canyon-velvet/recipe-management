@@ -249,9 +249,12 @@ zh-CN:
       search_source: "搜索来源..."
       update: "更新菜谱"
     step_fields:
-      move_down: "下移"
-      move_up: "上移"
+      move: "移动第 %{number} 步：拖动，或用上下方向键"
       placeholder: "描述这一步"
+    step_list_fields:
+      done: "完成"
+      moved: "已移到第 %{number} 步，共 %{total} 步"
+      reorder: "排序"
     tag_catalog:
       all_recipes: "全部菜谱"
       label: "菜谱分类"

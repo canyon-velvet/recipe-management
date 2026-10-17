@@ -1,6 +1,18 @@
 <%# locals: (form:, recipe:) %>
-<%# The recipe's step rows (one empty to start), which can be moved up and down, and + Add step. %>
-<div data-controller="nested-form step-list">
+<%# The recipe's step rows (one empty to start), ⇅ Reorder to drag them into order, and + Add step. %>
+<%# The texts with %{…} are filled in by step-list as the steps move. %>
+<div data-controller="nested-form step-list"
+     data-step-list-reorder-text-value="<%= t(".reorder") %>" data-step-list-done-text-value="<%= t(".done") %>"
+     data-step-list-move-text-value="<%= t("recipes.step_fields.move", number: "%{number}") %>"
+     data-step-list-moved-text-value="<%= t(".moved", number: "%{number}", total: "%{total}") %>">
+  <p class="sr-only" aria-live="polite" data-step-list-target="status"></p>
+  <div class="steps-toolbar">
+    <button type="button" class="btn-secondary btn-sm" aria-pressed="false" data-step-list-target="toggle"
+            data-action="step-list#toggleReorder">
+      <span aria-hidden="true">⇅</span> <span data-step-list-target="toggleLabel"><%= t(".reorder") %></span>
+    </button>
+  </div>
+
   <div data-nested-form-target="container" class="space-y-3">
     <% steps = recipe.steps.any? ? recipe.steps : [ recipe.steps.build ] %>
     <%= form.fields_for :steps, steps do |step_form| %>
@@ -14,7 +26,7 @@
     <% end %>
   </template>
 
-  <button type="button" data-action="nested-form#add" class="btn-secondary btn-sm mt-3">
+  <button type="button" data-action="nested-form#add" class="step-add btn-secondary btn-sm mt-3">
     <%= t("recipes.form.add_step") %>
   </button>
 </div>
