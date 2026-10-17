@@ -36,7 +36,7 @@
 
   /* When the links don't have room (a window narrower than xl, or narrower than 2xl beside the open assistant panel,
      which takes 400px), they and the language switcher fold into ☰. From lg, the middle of the bar is then free, which
-     is where notices hang from the top of the window (flash.css). */
+     is where notices float on the bar (flash.css). */
   .navbar-links,
   .navbar-locale {
     @apply hidden xl:block;
