@@ -42,6 +42,35 @@ RSpec.describe "Recipes", type: :request do
     expect(details.css("label").map { _1.text.squish }).to include("Tags", "Servings", "Source", "Recipe link")
   end
 
+  describe "another user's source or ingredient in the form" do
+    let(:other_user) { create(:user) }
+    let(:their_source) { create(:source, user: other_user, name: "Their secret source") }
+    let(:their_ingredient) { create(:ingredient, user: other_user, name: "Their secret ingredient") }
+
+    it "is not found when creating a recipe" do
+      post recipes_path, params: { recipe: {
+        name: "Apple cake", source_id: their_source.id,
+        recipe_ingredients_attributes: { "0" => { ingredient_id: their_ingredient.id } },
+        steps_attributes: { "0" => { body: "Bake it.", position: "1" } }
+      } }
+
+      # Not the form, which would show their names (production shows the plain 404 page)
+      expect(response).to have_http_status(:not_found)
+      expect(user.recipes).to be_empty
+    end
+
+    it "is not found when editing a recipe (in either form of the rows)" do
+      recipe = create(:recipe, user: user)
+
+      patch recipe_path(recipe), params: { recipe: { source_id: their_source.id } }
+      expect(response).to have_http_status(:not_found)
+
+      patch recipe_path(recipe), params: { recipe: { recipe_ingredients_attributes: [ { ingredient_id: their_ingredient.id } ] } }
+      expect(response).to have_http_status(:not_found)
+      expect(recipe.reload.ingredients).to be_empty
+    end
+  end
+
   describe "a recipe planned for the grocery list" do
     let(:egg) { create(:ingredient, user: user, name: "Egg") }
     let(:milk) { create(:ingredient, user: user, name: "Milk") }
