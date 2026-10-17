@@ -295,6 +295,7 @@ en:
       this_week: "This week"
     new:
       create: "Create"
+      heading: "Plan a week"
       name: "Name (optional)"
       name_placeholder: "e.g. Week 1"
       other: "Other…"

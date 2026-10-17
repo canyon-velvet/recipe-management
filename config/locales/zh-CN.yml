@@ -287,6 +287,7 @@ zh-CN:
       this_week: "本周"
     new:
       create: "创建"
+      heading: "安排一周"
       name: "名称（可选）"
       name_placeholder: "例：第一周"
       other: "其他…"

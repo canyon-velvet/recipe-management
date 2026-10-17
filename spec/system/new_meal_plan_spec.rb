@@ -54,4 +54,13 @@ RSpec.describe "Starting a meal plan", type: :system do
     expect(page).to have_no_css("dialog[open]")
     expect(page).to have_current_path(meal_plans_path)
   end
+
+  it "closes on ×" do
+    within("dialog[open]") do
+      expect(page).to have_css("h2", text: "Plan a week")
+      click_button "Close"
+    end
+
+    expect(page).to have_no_css("dialog[open]")
+  end
 end

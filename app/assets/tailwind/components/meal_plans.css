@@ -50,9 +50,9 @@
   /* New meal plan, in the list's pop-up or on a page of its own (.modal-panel): the weeks to choose from as chips,
      the chosen one in brown; a week that already has a plan is dimmed and can't be chosen */
   .meal-plan-new-page { @apply mx-auto mt-6; }
-  .week-chips { @apply mt-2 flex flex-wrap gap-2; }
+  .week-chips { @apply mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4; }
   .week-chip {
-    @apply min-h-14 cursor-pointer rounded-2xl bg-sectionbackground px-4 py-2 text-gray-900
+    @apply min-h-14 cursor-pointer rounded-2xl bg-sectionbackground px-3 py-2 text-gray-900
            has-checked:bg-sectiontext has-checked:text-white
            has-focus-visible:ring-2 has-focus-visible:ring-sectiontext-light has-focus-visible:ring-offset-2
            has-disabled:cursor-not-allowed has-disabled:opacity-50;
