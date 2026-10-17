@@ -263,9 +263,8 @@ zh-CN:
       placeholder: "选择标签"
       remove: "移除"
     ingredient_modal:
-      aisle_prompt: "请选择货架区"
-      new_aisle: "+ 新建货架区…"
-      new_aisle_placeholder: "货架区名称"
+      add_aisle: "＋ 新增“%{name}”"
+      aisle_placeholder: "输入搜索，或新增货架区"
 
   meal_plans:
     days:

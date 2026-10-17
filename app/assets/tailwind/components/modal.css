@@ -13,8 +13,8 @@ dialog[open] {
     @apply text-lg font-semibold text-gray-900 mb-4;
   }
 
-  /* A roomier pop-up, for a task more than a question (starting a meal plan): wider and rounder, with a larger
-     heading and a × in the corner. The dialog takes the panel's width and rounding. */
+  /* A roomier pop-up, for a task more than a question (starting a meal plan, creating an ingredient): wider and
+     rounder, with a larger heading and a × in the corner. The dialog takes the panel's width and rounding. */
   .modal-dialog--roomy { @apply w-full max-w-xl rounded-[1.75rem] p-0 backdrop:bg-black/40; }
   .modal-panel--roomy  { @apply max-w-xl rounded-[1.75rem] p-7; }
   .modal-heading { @apply mb-6 text-2xl font-bold tracking-tight text-gray-900; }
@@ -25,4 +25,30 @@ dialog[open] {
   }
   /* A pop-up's form on a page of its own (.modal-panel--roomy), for links from elsewhere and for its problems */
   .modal-page { @apply mx-auto mt-6; }
+  /* A roomy pop-up's text box: taller and rounder than .form-input */
+  .modal-input {
+    @apply w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-base text-gray-900
+           focus:border-sectiontext/60 focus:ring-2 focus:ring-sectiontext/20 focus:outline-none;
+  }
+  /* A create pop-up's fields (shared/inline_create_modal), side by side from sm */
+  .inline-create-fields { @apply grid gap-5 sm:grid-cols-2; }
 }
+
+/* The create-ingredient pop-up's aisle box (aisle-combobox), matched to .modal-input. Unlayered so it overrides the
+   vendored tom-select.css. */
+.ts-wrapper.aisle-combobox .ts-control {
+  @apply rounded-2xl border-gray-200 px-4 py-3 text-base shadow-none;
+}
+.ts-wrapper.aisle-combobox.focus .ts-control {
+  @apply border-sectiontext/60 ring-2 ring-sectiontext/20 shadow-none;
+}
+.ts-wrapper.aisle-combobox .ts-dropdown {
+  @apply mt-1 overflow-hidden rounded-2xl border-gray-200 shadow-lg;
+}
+/* One line while focused: the typing space shrinks beside the chosen aisle instead of wrapping under it */
+.ts-wrapper.aisle-combobox .ts-control { @apply flex-nowrap; }
+.ts-wrapper.aisle-combobox .ts-control > input { @apply min-w-0; }
+.ts-wrapper.aisle-combobox .ts-dropdown .active { @apply bg-sectionbackground text-gray-900; }
+/* The vendored theme's pale blue for matched letters, in the app's brown */
+.ts-wrapper.aisle-combobox .ts-dropdown [data-selectable] .highlight { @apply bg-sectiontext-light/30 text-inherit; }
+.ts-wrapper.aisle-combobox .ts-dropdown .create { @apply text-sectiontext; }

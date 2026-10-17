@@ -1,32 +1,29 @@
 <%# locals: (aisles:) %>
-<%= render layout: "shared/inline_create_modal", locals: { title: t("recipes.ingredient_fields.create") } do %>
-  <div class="field">
-    <label class="form-label"><%= Ingredient.human_attribute_name(:name) %></label>
-    <input type="text" name="ingredient[name]"
-           data-inline-create-target="prefill"
-           class="form-input">
-  </div>
-
-  <div class="field"
-       data-controller="aisle-select"
-       data-aisle-select-create-url-value="<%= aisles_path %>"
-       data-aisle-select-error-text-value="<%= t("recipes.form.save_failed") %>">
-    <label class="form-label"><%= Ingredient.human_attribute_name(:aisle) %></label>
-    <select name="ingredient[aisle_id]" class="form-select"
-            data-aisle-select-target="select" data-action="change->aisle-select#change">
-      <option value=""><%= t("recipes.ingredient_modal.aisle_prompt") %></option>
-      <% aisles.each do |aisle| %>
-        <option value="<%= aisle.id %>"><%= aisle.name %></option>
-      <% end %>
-      <option value="new"><%= t("recipes.ingredient_modal.new_aisle") %></option>
-    </select>
-
-    <%# No name attribute: the ingredient form must not submit this field. %>
-    <div class="flex items-center gap-2 pt-2" data-aisle-select-target="newAisle" hidden>
-      <input type="text" class="form-input" placeholder="<%= t("recipes.ingredient_modal.new_aisle_placeholder") %>"
-             data-aisle-select-target="input" data-action="keydown.enter->aisle-select#add">
-      <button type="button" class="btn-primary btn-sm" data-action="aisle-select#add"><%= t("actions.add") %></button>
+<%# The name (side by side with the aisle on a wide screen), and the aisle: a box that searches the aisles as you
+    type, or adds the typed one as a new aisle. %>
+<%= render layout: "shared/inline_create_modal",
+           locals: { title: t("recipes.ingredient_fields.create"), name: "ingredient" } do %>
+  <div class="inline-create-fields">
+    <div class="field">
+      <label class="form-label" for="new_ingredient_name"><%= Ingredient.human_attribute_name(:name) %></label>
+      <input type="text" name="ingredient[name]" id="new_ingredient_name" class="modal-input" autofocus
+             data-inline-create-target="prefill">
     </div>
-    <p class="error-text" data-aisle-select-target="error"></p>
+
+    <%# %{name} in the add text is filled in by aisle-combobox with what was typed %>
+    <div class="field" data-controller="aisle-combobox" data-aisle-combobox-create-url-value="<%= aisles_path %>"
+         data-aisle-combobox-add-text-value="<%= t("recipes.ingredient_modal.add_aisle", name: "%{name}") %>"
+         data-aisle-combobox-error-text-value="<%= t("recipes.form.save_failed") %>">
+      <label class="form-label" for="new_ingredient_aisle"><%= Ingredient.human_attribute_name(:aisle) %></label>
+      <select name="ingredient[aisle_id]" id="new_ingredient_aisle" class="aisle-combobox"
+              placeholder="<%= t("recipes.ingredient_modal.aisle_placeholder") %>"
+              data-aisle-combobox-target="select">
+        <option value=""></option>
+        <% aisles.each do |aisle| %>
+          <option value="<%= aisle.id %>"><%= aisle.name %></option>
+        <% end %>
+      </select>
+      <p class="error-text" aria-live="polite" data-aisle-combobox-target="error"></p>
+    </div>
   </div>
 <% end %>

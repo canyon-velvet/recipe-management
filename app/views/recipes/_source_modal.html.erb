@@ -1,8 +1,7 @@
-<%= render layout: "shared/inline_create_modal", locals: { title: t("recipes.form.create_source") } do %>
+<%= render layout: "shared/inline_create_modal", locals: { title: t("recipes.form.create_source"), name: "source" } do %>
   <div class="field">
-    <label class="form-label"><%= Source.human_attribute_name(:name) %></label>
-    <input type="text" name="source[name]"
-           data-inline-create-target="prefill"
-           class="form-input">
+    <label class="form-label" for="new_source_name"><%= Source.human_attribute_name(:name) %></label>
+    <input type="text" name="source[name]" id="new_source_name" class="modal-input" autofocus
+           data-inline-create-target="prefill">
   </div>
 <% end %>

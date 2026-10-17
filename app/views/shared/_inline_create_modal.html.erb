@@ -1,17 +1,22 @@
-<%# locals: (title:) %>
+<%# locals: (title:, name:) %>
+<%# A pop-up that creates something for the form behind it (an ingredient, a source), in the roomy style: a heading,
+    a × in the corner, the fields, and Cancel / Save. Its content shows past its edges, so a search box's list of
+    choices isn't cut off. %>
 <dialog data-inline-create-target="dialog"
-        data-action="click->inline-create#backdropClose"
-        class="rounded-xl p-0 backdrop:bg-black/40">
-  <div class="modal-panel">
-    <h3 class="modal-title"><%= title %></h3>
+        data-action="click->inline-create#backdropClose keydown.enter->inline-create#submitOnEnter"
+        class="modal-dialog--roomy overflow-visible" aria-labelledby="new_<%= name %>_title">
+  <div class="modal-panel modal-panel--roomy">
+    <button type="button" class="modal-close" data-action="inline-create#closeModal"
+            aria-label="<%= t("actions.close") %>">&times;</button>
+    <h3 id="new_<%= name %>_title" class="modal-heading"><%= title %></h3>
     <div data-inline-create-target="errors" class="error-text mb-3"></div>
 
-    <div class="space-y-4">
+    <div class="space-y-5">
       <%= yield %>
 
       <div class="flex justify-end gap-3 pt-2">
-        <button type="button" data-action="inline-create#closeModal" class="btn-cancel"><%= t("actions.cancel") %></button>
-        <button type="button" data-action="inline-create#save" class="btn-primary"><%= t("actions.save") %></button>
+        <button type="button" data-action="inline-create#closeModal" class="btn-pill-ghost"><%= t("actions.cancel") %></button>
+        <button type="button" data-action="inline-create#save" class="btn-pill-primary"><%= t("actions.save") %></button>
       </div>
     </div>
   </div>

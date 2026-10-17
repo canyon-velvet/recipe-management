@@ -1,6 +1,6 @@
 # The Edit-aisles pop-up loads #index into a Turbo Frame; each change redirects back to it, except a move, which the
 # pop-up has already shown.
-# #create also answers JSON for the "+ New aisle…" option in the ingredient pop-up.
+# #create also answers JSON for adding an aisle from the create-ingredient pop-up's aisle box.
 class AislesController < ApplicationController
   before_action :set_aisle, only: [ :update, :destroy, :move ]
 
