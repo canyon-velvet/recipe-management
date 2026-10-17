@@ -8,7 +8,7 @@
 <% content_for :head do %>
   <meta name="turbo-cache-control" content="no-preview">
 <% end %>
-<div class="recipes-page" data-controller="dropdown search-form">
+<div class="recipes-page" data-controller="dropdown search-form modal">
   <%= turbo_frame_tag "recipe_results", target: "_top", class: "contents",
                       data: { action: "turbo:frame-missing->search-form#showWholePage" } do %>
   <div class="recipes-header">
@@ -25,7 +25,8 @@
       </p>
     </div>
     <div class="recipes-actions">
-      <%= link_to t(".import_recipe"), new_import_path, class: "btn-pill-secondary btn-pill-sm" %>
+      <%= link_to t(".import_recipe"), new_import_path, class: "btn-pill-secondary btn-pill-sm",
+            data: { action: "modal#open:prevent" } %>
       <%= link_to "＋ #{t('.new_recipe')}", new_recipe_path, class: "btn-pill-primary btn-pill-sm" %>
     </div>
   </div>
@@ -44,6 +45,9 @@
     <%= render "shared/pagination", pagy: @pagy %>
   </section>
   <% end %>
+
+  <%# Outside the frame, so searching doesn't redraw it %>
+  <%= render "shared/modal_frame", frame: "new_import", src: new_import_path, labelledby: "new_import_title" %>
 
   <%# Outside the frame, so searching doesn't redraw it and lose whether the catalog is open %>
   <button type="button" class="recipes-filter-toggle" data-action="dropdown#toggle" data-dropdown-target="button"

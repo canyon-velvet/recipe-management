@@ -1,5 +1,5 @@
-<%# Shown in the meal plan list's pop-up (meal_plans/new_dialog), and as a page of its own from other links %>
-<section class="meal-plan-new-page modal-panel modal-panel--roomy">
+<%# Shown in the meal plan list's pop-up (shared/modal_frame), and as a page of its own from other links %>
+<section class="modal-page modal-panel modal-panel--roomy">
   <%= turbo_frame_tag "new_meal_plan" do %>
     <p class="home-eyebrow"><%= t(".title") %></p>
     <h2 id="new_meal_plan_title" class="modal-heading"><%= t(".heading") %></h2>

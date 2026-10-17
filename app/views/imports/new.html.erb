@@ -1,38 +1,56 @@
-<section class="container mx-auto max-w-2xl px-4 py-8">
-  <h1 class="text-2xl font-bold"><%= t(".title") %></h1>
-  <p class="text-sm text-gray-500 mt-1 mb-6"><%= t(".hint") %></p>
+<%# Shown in the recipe list's pop-up (shared/modal_frame), and as a page of its own from other links (the home page,
+    a draft's "paste instead") and for a problem %>
+<section class="modal-page modal-panel modal-panel--roomy">
+  <%= turbo_frame_tag "new_import" do %>
+    <p class="home-eyebrow"><%= t(".title") %></p>
+    <h2 id="new_import_title" class="modal-heading"><%= t(".heading") %></h2>
+    <p class="modal-lead"><%= t(".hint") %></p>
 
-  <% if @result && !@result.success? %>
-    <div class="bg-red-50 border border-red-300 text-red-700 rounded-md p-3 mb-4 text-sm">
-      <%= t("imports.errors.#{@result.error}") %>
-      <% if @result.recipe %>
-        <%= link_to t(".view_recipe"), recipe_path(@result.recipe), class: "underline font-medium" %>
-      <% elsif @result.error == :already_in_draft_box %>
-        <%= link_to t(".open_draft_box"), drafts_path, class: "underline font-medium" %>
-      <% end %>
-    </div>
-  <% end %>
-
-  <%= form_with url: imports_path, class: "space-y-4" do |f| %>
-    <div class="field">
-      <%= f.label :url, t(".link"), class: "form-label" %>
-      <%= f.url_field :url, value: @url, placeholder: "https://...", class: "form-input", autofocus: !@paste %>
-    </div>
-
-    <%= tag.details class: "import-paste", open: @paste do %>
-      <summary class="import-paste-toggle"><%= t(".paste_instead") %></summary>
-      <% if @can_paste %>
-        <p class="help-text mb-2"><%= t(".paste_hint") %></p>
-        <%= f.text_area :text, value: @text, rows: 12, class: "form-textarea", autofocus: @paste,
-                        maxlength: Draft::MAX_SOURCE_TEXT, placeholder: t(".paste_placeholder") %>
-      <% else %>
-        <p class="help-text"><%= t(".paste_needs_claude") %></p>
-      <% end %>
+    <% if @result && !@result.success? %>
+      <div class="bg-red-50 border border-red-300 text-red-700 rounded-md p-3 mb-4 text-sm">
+        <%= t("imports.errors.#{@result.error}") %>
+        <% if @result.recipe %>
+          <%= link_to t(".view_recipe"), recipe_path(@result.recipe), class: "underline font-medium" %>
+        <% elsif @result.error == :already_in_draft_box %>
+          <%= link_to t(".open_draft_box"), drafts_path, class: "underline font-medium" %>
+        <% end %>
+      </div>
     <% end %>
 
-    <div class="flex items-center gap-3 pt-2">
-      <%= f.submit t(".submit"), class: "btn-primary" %>
-      <%= link_to t("actions.cancel"), recipes_path, class: "btn-cancel" %>
-    </div>
+    <%= form_with url: imports_path, class: "space-y-4", data: { turbo_frame: "_top" } do |f| %>
+      <div class="field">
+        <%= f.label :url, t(".link"), class: "form-label" %>
+        <%= f.url_field :url, value: @url, placeholder: "https://...", class: "form-input", autofocus: !@paste %>
+      </div>
+
+      <%= tag.details class: "import-paste", open: @paste do %>
+        <summary class="import-paste-toggle">
+          <span class="import-paste-label"><%= t(".paste_instead") %></span>
+          <span class="import-paste-detail"><%= t(".paste_for") %></span>
+        </summary>
+        <div class="import-paste-body">
+          <% if @can_paste %>
+            <%= f.text_area :text, value: @text, rows: 8, class: "form-textarea", autofocus: @paste,
+                            maxlength: Draft::MAX_SOURCE_TEXT, placeholder: t(".paste_placeholder"),
+                            aria: { label: t(".paste_instead") } %>
+            <p class="help-text"><%= t(".paste_hint") %></p>
+          <% else %>
+            <p class="help-text"><%= t(".paste_needs_claude") %></p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
+        <% if (waiting = draft_counts.values.sum).positive? %>
+          <%= link_to t(".draft_box_count", count: waiting), drafts_path, class: "import-draft-count",
+                data: { turbo_frame: "_top" } %>
+        <% end %>
+        <div class="ml-auto flex gap-2">
+          <%= link_to t("actions.cancel"), recipes_path, class: "btn-pill-ghost btn-pill-sm",
+                data: { turbo_frame: "_top", action: "modal#close:prevent" } %>
+          <%= f.submit t(".submit"), class: "btn-pill-primary btn-pill-sm cursor-pointer" %>
+        </div>
+      </div>
+    <% end %>
   <% end %>
 </section>
