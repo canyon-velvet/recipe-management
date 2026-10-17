@@ -8,6 +8,7 @@ class Recipe < ApplicationRecord
   has_many :tags, -> { ordered }, through: :recipe_tags, after_add: :touch_if_persisted, after_remove: :touch_if_persisted
   has_many :meal_slot_recipes, dependent: :destroy
   has_many :meal_slots, through: :meal_slot_recipes
+  has_many :meal_plans, -> { distinct }, through: :meal_slots
 
   # Optional whole numbers: how many people it serves and how long it takes. The caps catch typos and keep imported
   # values within the integer columns (a week is the longest time a recipe can take).

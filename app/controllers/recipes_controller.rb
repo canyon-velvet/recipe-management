@@ -42,6 +42,7 @@ class RecipesController < ApplicationController
 
   def update
     if @recipe.update(recipe_params)
+      sync_grocery_lists(@recipe.meal_plans)
       redirect_to recipe_path(@recipe), notice: t("flash.recipe_updated")
     else
       render :edit, status: :unprocessable_entity
@@ -49,7 +50,9 @@ class RecipesController < ApplicationController
   end
 
   def destroy
+    meal_plans = @recipe.meal_plans.to_a
     @recipe.destroy
+    sync_grocery_lists(meal_plans)
     redirect_to recipes_path, notice: t("flash.recipe_deleted")
   end
 
@@ -72,6 +75,11 @@ class RecipesController < ApplicationController
       @draft&.destroy!
       true
     end
+  end
+
+  # The grocery lists of the meal plans the recipe is in follow its ingredients (or its removal)
+  def sync_grocery_lists(meal_plans)
+    meal_plans.each { |meal_plan| SyncGroceryListService.new(meal_plan).call }
   end
 
   def set_form_data
