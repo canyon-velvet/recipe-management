@@ -256,9 +256,12 @@ en:
       search_source: "Search sources..."
       update: "Update recipe"
     step_fields:
-      move_down: "Move down"
-      move_up: "Move up"
+      move: "Move step %{number}: drag it, or use the up and down arrow keys"
       placeholder: "Describe this step"
+    step_list_fields:
+      done: "Done"
+      moved: "Step moved to %{number} of %{total}"
+      reorder: "Reorder"
     tag_catalog:
       all_recipes: "All recipes"
       label: "Recipe categories"
