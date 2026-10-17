@@ -15,7 +15,7 @@ RSpec.describe "Invites", type: :request do
       get invites_path
 
       expect(response.body).to include("Mum", "Old friend", "Expired 1 day ago", register_url(invite_token: open.token))
-      statuses = Nokogiri::HTML(response.body).css(".invite-status").map(&:text)
+      statuses = Nokogiri::HTML(response.body).css(".status-pill").map(&:text)
       expect(statuses).to eq %w[Expired Active] # newest first
     end
 
