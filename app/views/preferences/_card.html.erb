@@ -1,44 +1,46 @@
 <%# locals: (category:, preferences:, new_preference: nil, focus: false) %>
-<%# One category's facts as removable chips, plus a box to add one. Household holds a single fact, so its box hides
-    once it's set. focus: puts the keyboard back in the box after an add or a remove re-renders the card. %>
+<%# One category's row of the sheet: its name and hint, then its facts as removable chips and a dashed chip to type a
+    new one in (Enter adds it). Household holds a single fact, so its box hides once it's set. focus: puts the keyboard
+    back in the box after an add or a remove re-renders the row. %>
 <% errors = new_preference&.errors&.full_messages || [] %>
 <% errors_id = "#{category}_preference_errors" %>
-<%= turbo_frame_tag "preferences_#{category}", class: "block" do %>
-  <div class="section-card">
+<%= turbo_frame_tag "preferences_#{category}", class: "preference-row preference-row--#{category}" do %>
+  <div class="preference-label">
     <h2 class="preference-title"><%= t("preferences.categories.#{category}.title") %></h2>
-    <p class="help-text mb-3"><%= t("preferences.categories.#{category}.hint") %></p>
+    <p class="preference-hint"><%= t("preferences.categories.#{category}.hint") %></p>
+  </div>
 
-    <% if preferences.any? %>
-      <ul class="preference-list">
-        <% preferences.each do |preference| %>
-          <li class="preference-chip">
-            <span><%= preference.value %></span>
-            <%# With the household box hidden, the keyboard goes to its fact's remove button instead. %>
-            <%= button_to "×", preference_path(preference), method: :delete, class: "preference-remove",
-                          autofocus: (focus && category == "household"),
-                          "aria-label": t("preferences.remove", value: preference.value) %>
-          </li>
-        <% end %>
-      </ul>
-    <% end %>
-
-    <% unless category == "household" && preferences.any? %>
-      <%# The namespace keeps each card's field ids unique on the page. %>
-      <%= form_with model: new_preference || Preference.new(category: category), url: preferences_path,
-                    namespace: category, class: "preference-form" do |f| %>
-        <%= f.hidden_field :category %>
-        <%= f.text_field :value, class: "form-input", maxlength: 100, autocomplete: "off", autofocus: focus,
-                         placeholder: t("preferences.categories.#{category}.placeholder"),
-                         "aria-label": t("preferences.categories.#{category}.title"),
-                         "aria-invalid": (true if errors.any?), "aria-describedby": (errors_id if errors.any?) %>
-        <%= f.submit t("preferences.add"), class: "btn-secondary" %>
+  <div class="preference-values">
+    <ul class="preference-list">
+      <% preferences.each do |preference| %>
+        <li class="preference-chip">
+          <span><%= preference.value %></span>
+          <%# With the household box hidden, the keyboard goes to its fact's remove button instead. %>
+          <%= button_to "×", preference_path(preference), method: :delete, class: "preference-remove",
+                        autofocus: (focus && category == "household"),
+                        "aria-label": t("preferences.remove", value: preference.value) %>
+        </li>
       <% end %>
-    <% end %>
+
+      <% unless category == "household" && preferences.any? %>
+        <li>
+          <%# The namespace keeps each row's field ids unique on the page. %>
+          <%= form_with model: new_preference || Preference.new(category: category), url: preferences_path,
+                        namespace: category do |f| %>
+            <%= f.hidden_field :category %>
+            <%= f.text_field :value, class: "preference-input", maxlength: 100, autocomplete: "off", autofocus: focus,
+                             placeholder: "＋ #{t("preferences.categories.#{category}.placeholder")}",
+                             "aria-label": t("preferences.categories.#{category}.title"),
+                             "aria-invalid": (true if errors.any?), "aria-describedby": (errors_id if errors.any?) %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
 
     <% if errors.any? %>
       <div id="<%= errors_id %>">
         <% errors.each do |message| %>
-          <p class="error-text mt-1"><%= message %></p>
+          <p class="error-text mt-2"><%= message %></p>
         <% end %>
       </div>
     <% end %>
