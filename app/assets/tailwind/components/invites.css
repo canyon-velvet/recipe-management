@@ -1,15 +1,43 @@
 @layer components {
-  /* Invites page: a note box and button to create a link */
+  /* Invites page: the header as on the Draft box, a rounded bar to create a link (a note and the button inside it),
+     then a white row per invite, newest first */
+  .invites-page     { @apply mx-auto max-w-3xl py-10; }
+  .invites-title    { @apply mt-2 text-4xl font-bold tracking-tight text-gray-900; }
+  .invites-subtitle { @apply mt-1.5 text-sm text-gray-500; }
+  /* On a phone the button goes under the note, full width, in a rounded box rather than a pill */
   .invite-form {
-    @apply flex items-center gap-2;
+    @apply mt-6 flex flex-wrap items-center gap-2 rounded-3xl bg-white p-1.5 shadow-sm ring-1 ring-gray-200
+           sm:rounded-full;
   }
+  .invite-form [type="submit"] { @apply max-sm:w-full max-sm:justify-center; }
+  .invite-note {
+    @apply h-11 min-w-0 flex-[1_1_14rem] border-0 bg-transparent px-4 text-[15px] focus:outline-none;
+  }
+  .invites-list  { @apply mt-7 flex flex-col gap-3; }
+  .invites-empty { @apply py-16 text-center text-gray-500; }
 
-  /* An invite and what became of it */
-  .invite-card {
-    @apply rounded-xl border border-gray-200 bg-white p-4;
+  .invite-row     { @apply rounded-3xl bg-white p-4 shadow-sm ring-1 ring-gray-100; }
+  .invite-main    { @apply flex flex-wrap items-center gap-4; }
+  /* Its state: a brown link on cream while it can be used, a grey ✓ once used, a faint clock once expired */
+  .invite-icon    { @apply flex size-12 flex-none items-center justify-center rounded-2xl [&>svg]:size-5.5; }
+  .invite-icon--active  { @apply bg-sectionbackground text-sectiontext; }
+  .invite-icon--used    { @apply bg-gray-100 text-gray-600; }
+  .invite-icon--expired { @apply bg-gray-50 text-gray-400 ring-1 ring-gray-200 ring-inset; }
+  .invite-body    { @apply min-w-0 flex-[1_1_12rem]; }
+  .invite-heading { @apply flex flex-wrap items-center gap-2; }
+  .invite-title   { @apply min-w-0 truncate text-lg font-semibold text-gray-900; }
+  .invite-meta    { @apply mt-1 text-sm text-gray-500; }
+  .invite-status {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider;
   }
-  /* Its link, with a Copy button */
-  .invite-link {
-    @apply mt-3 flex items-center gap-2;
+  .invite-status--active  { @apply bg-sectionbackground text-sectiontext; }
+  .invite-status--used    { @apply bg-gray-100 text-gray-600; }
+  .invite-status--expired { @apply bg-gray-50 text-gray-500; }
+
+  /* Its link, under the text (beside the tile from sm), with Copy link */
+  .invite-link       { @apply mt-3 flex items-center gap-2 sm:pl-16; }
+  .invite-link-field {
+    @apply h-10 min-w-0 flex-1 rounded-xl border-0 bg-gray-100 px-3.5 text-sm text-gray-600 focus:outline-none
+           focus:ring-2 focus:ring-sectiontext-light/30;
   }
 }

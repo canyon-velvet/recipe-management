@@ -483,16 +483,21 @@ en:
     index:
       create: "Create invite link"
       empty: "No invites yet."
+      eyebrow: "Sign-up"
       note_placeholder: "Who it's for (optional)"
       subtitle: "Sign-up is by invitation. Each link works once, for %{days} days."
       title: "Invites"
     invite:
       confirm_delete: "Delete this invite? Its link will stop working."
       copied: "Copied"
-      copy: "Copy"
+      copy: "Copy link"
       deleted_account: "a deleted account"
-      expired: "Expired"
+      expired_ago: "Expired %{time} ago"
       expires: "Expires in %{time}"
       link: "Invite link"
+      statuses:
+        active: "Active"
+        expired: "Expired"
+        used: "Used"
       untitled: "Invite"
       used: "Used by %{username}, %{time} ago"
