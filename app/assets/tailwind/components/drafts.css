@@ -10,11 +10,12 @@
   .draft-row {
     @apply flex flex-wrap items-center gap-4 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-gray-100;
   }
-  /* Where it's at: a spinner while it's read, a brown ✓ when ready, a red ! when it failed */
+  /* Where it's at: a spinner while it's read, a brown ✓ on cream when ready (the Review button stays the row's one solid
+     brown), a red ! when it failed */
   .draft-icon {
     @apply flex size-12 flex-none items-center justify-center rounded-2xl text-xl font-bold;
   }
-  .draft-icon--ready   { @apply bg-sectiontext text-white; }
+  .draft-icon--ready   { @apply bg-sectionbackground text-sectiontext; }
   .draft-icon--failed  { @apply bg-red-50 text-red-700; }
   .draft-icon--reading {
     @apply m-1 size-10 animate-spin rounded-full border-4 border-sectiontext/15 border-t-sectiontext
