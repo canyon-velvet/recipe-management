@@ -11,6 +11,10 @@ RSpec.describe "Assistant panel", type: :system do
 
     within(".assistant-panel") do
       expect(page).to have_text("Ask me what to cook tonight")
+      # A starter fills in the box, for the user to finish
+      click_button "Import a recipe link"
+      expect(page).to have_field("Ask about recipes…", with: "Import this recipe: ", focused: true)
+
       fill_in "Ask about recipes…", with: "Dinner for 4?"
       find_field("Ask about recipes…").send_keys(:enter)
 

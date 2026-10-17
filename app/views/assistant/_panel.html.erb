@@ -5,13 +5,17 @@
 <aside id="<%= assistant_panel_id %>" class="assistant-panel <%= 'hidden' unless open %>" data-turbo-permanent
        data-assistant-panel-target="panel" aria-label="<%= t("assistant.title") %>">
   <div class="assistant-header">
-    <h2 class="assistant-title"><span aria-hidden="true">✦</span> <%= t("assistant.title") %></h2>
-    <div class="flex items-center gap-1">
-      <%= button_to t("assistant.new_chat"), assistant_conversations_path, class: "assistant-header-button",
-                    form: { data: { turbo_stream: true } } %>
-      <button type="button" class="assistant-header-button" data-action="assistant-panel#close"
-              aria-label="<%= t("assistant.close") %>">×</button>
-    </div>
+    <span class="assistant-mark" aria-hidden="true">✦</span>
+    <h2 class="assistant-title"><%= t("assistant.title") %></h2>
+    <%= button_to assistant_conversations_path, class: "btn-pill-secondary assistant-new-chat",
+                  form: { data: { turbo_stream: true } } do %>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      <%= t("assistant.new_chat") %>
+    <% end %>
+    <button type="button" class="assistant-close" data-action="assistant-panel#close"
+            aria-label="<%= t("assistant.close") %>">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
   </div>
 
   <%# Replies stream in over the user's own signed stream (WriteReplyService broadcasts to it). %>

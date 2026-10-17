@@ -1,8 +1,10 @@
-<%# Enter sends, Shift+Enter adds a line (see assistant_panel_controller.js). %>
+<%# Enter sends, Shift+Enter adds a line (see assistant_panel_controller.js). The box grows with what's typed. %>
 <%= form_with scope: :message, url: assistant_messages_path, class: "assistant-form",
               data: { assistant_panel_target: "form", action: "turbo:submit-end->assistant-panel#sent" } do |f| %>
-  <%= f.text_area :content, rows: 2, required: true, maxlength: Message::MAX_LENGTH, class: "form-textarea",
+  <%= f.text_area :content, rows: 1, required: true, maxlength: Message::MAX_LENGTH, class: "assistant-input",
                   placeholder: t("assistant.placeholder"), "aria-label": t("assistant.placeholder"),
                   data: { assistant_panel_target: "input", action: "keydown->assistant-panel#send" } %>
-  <%= f.submit t("assistant.send"), class: "btn-primary", data: { assistant_panel_target: "submit" } %>
+  <%= f.button class: "assistant-send", "aria-label": t("assistant.send"), data: { assistant_panel_target: "submit" } do %>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+  <% end %>
 <% end %>

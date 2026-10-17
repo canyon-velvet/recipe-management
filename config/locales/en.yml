@@ -371,6 +371,13 @@ en:
     searching: "Searching your recipes…"
     send: "Send"
     servings: "Serves %{count}"
+    starters:
+      - label: "What can I cook tonight?"
+        text: "What can I cook tonight?"
+      - label: "Use up what’s in my fridge"
+        text: "What can I make with "
+      - label: "Import a recipe link"
+        text: "Import this recipe: "
     suggestion:
       dismiss: "Skip"
       dismissed: "Not saved"
@@ -380,6 +387,7 @@ en:
       saved: "✓ Saved to Preferences"
     thinking: "Thinking…"
     title: "Assistant"
+    welcome: "What shall we cook?"
 
   preferences:
     remove: "Remove %{value}"

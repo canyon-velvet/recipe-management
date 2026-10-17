@@ -360,6 +360,13 @@ zh-CN:
     searching: "正在查找你的菜谱…"
     send: "发送"
     servings: "%{count} 人份"
+    starters:
+      - label: "今晚做什么？"
+        text: "今晚做什么？"
+      - label: "用完冰箱里的食材"
+        text: "我有这些食材，可以做什么："
+      - label: "导入菜谱链接"
+        text: "导入这个菜谱："
     suggestion:
       dismiss: "跳过"
       dismissed: "未保存"
@@ -369,6 +376,7 @@ zh-CN:
       saved: "✓ 已保存到饮食偏好"
     thinking: "思考中…"
     title: "助手"
+    welcome: "今天做点什么？"
 
   preferences:
     remove: "删除%{value}"

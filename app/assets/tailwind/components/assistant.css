@@ -32,34 +32,51 @@
     @apply hidden;
   }
 
+  /* The header: the ✦ on a cream tile, the title, New chat as a pill, and a round × */
   .assistant-header {
-    @apply flex h-20 flex-none items-center justify-between bg-sectiontext-light px-4 text-white;
+    @apply flex h-17 flex-none items-center gap-3 border-b border-gray-100 pr-3 pl-4.5;
+  }
+  .assistant-mark {
+    @apply flex size-9 flex-none items-center justify-center rounded-xl bg-sectionbackground text-sectiontext;
   }
   .assistant-title {
-    @apply font-semibold tracking-wide;
+    @apply flex-1 text-lg font-bold tracking-tight text-gray-900;
   }
-  .assistant-header-button {
-    @apply rounded px-2 py-1 text-sm hover:bg-white/10 cursor-pointer;
+  .assistant-new-chat { @apply cursor-pointer gap-1.5 px-3.5 py-1.5 text-[13px] [&>svg]:size-3.5; }
+  .assistant-close {
+    @apply flex size-9 cursor-pointer items-center justify-center rounded-full text-gray-500 hover:bg-gray-100
+           hover:text-gray-700 [&>svg]:size-4.5;
   }
 
-  /* The chat: the user's messages on the right, the assistant's on the left */
+  /* The chat: the user's messages as brown bubbles on the right, the assistant's as plain text across the panel */
   .assistant-messages {
-    @apply flex flex-1 flex-col gap-3 overflow-y-auto p-4;
+    @apply flex flex-1 flex-col gap-4.5 overflow-y-auto px-4.5 py-5;
   }
+  /* A new chat's welcome, in the middle of the panel, with starters that fill in the box */
   .assistant-empty {
-    @apply text-sm text-gray-500;
+    @apply my-auto flex flex-col items-center px-3 text-center;
   }
   .assistant-empty:not(:only-child) {
     @apply hidden;
   }
+  .assistant-empty-mark {
+    @apply flex size-16 items-center justify-center rounded-[1.375rem] bg-sectionbackground text-3xl text-sectiontext;
+  }
+  .assistant-empty-title { @apply mt-4.5 text-[22px] font-bold tracking-tight text-gray-900; }
+  .assistant-empty-lead  { @apply mt-2 text-sm leading-relaxed text-gray-500; }
+  .assistant-starters    { @apply mt-5.5 flex flex-wrap justify-center gap-2; }
+  .assistant-starter {
+    @apply cursor-pointer rounded-full border border-sectiontext/30 bg-white px-3.5 py-2 text-[13px] text-sectiontext
+           hover:border-sectiontext;
+  }
   .assistant-message {
-    @apply max-w-[85%] rounded-xl px-3 py-2 text-sm;
+    @apply text-sm;
   }
   .assistant-message--user {
-    @apply self-end bg-sectionbackground text-gray-800;
+    @apply max-w-[80%] self-end rounded-[1.25rem] rounded-br-md bg-sectiontext px-3.5 py-2.5 leading-normal text-white;
   }
   .assistant-message--assistant {
-    @apply self-start border border-gray-200 bg-white text-gray-800;
+    @apply self-stretch leading-relaxed text-gray-800;
   }
   /* A note from the app in the chat, not a message (e.g. the daily limit) */
   .assistant-notice {
@@ -69,54 +86,64 @@
     @apply italic text-gray-500 animate-pulse;
   }
 
-  /* Recipes the assistant recommends, as cards under its reply */
+  /* Recipes the assistant recommends (and drafts it imported), as white cards under its reply */
   .assistant-recipes {
-    @apply mt-2 flex flex-col gap-2;
+    @apply mt-2.5 flex flex-col gap-2;
   }
   .assistant-recipe {
-    @apply flex items-center gap-3 rounded-lg border border-gray-200 bg-sectionbackground/40 px-3 py-2
-           hover:border-gray-400;
+    @apply flex items-center gap-3 rounded-2xl bg-white p-3 shadow-sm ring-1 ring-gray-200 hover:ring-sectiontext/50;
   }
   .assistant-recipe-icon {
-    @apply flex h-8 w-8 flex-none items-center justify-center text-2xl;
+    @apply flex size-10 flex-none items-center justify-center rounded-xl bg-sectionbackground text-2xl
+           text-sectiontext [&>svg]:size-5;
   }
   .assistant-recipe-name {
-    @apply block truncate font-semibold;
+    @apply block truncate font-semibold text-gray-900;
   }
   .assistant-recipe-facts {
     @apply block text-xs text-gray-500;
   }
-  /* A preference the assistant suggests saving, with Save / Skip */
+  /* A preference the assistant suggests saving, on cream, with Save / Skip */
   .assistant-suggestion {
-    @apply rounded-lg border border-dashed border-gray-300 px-3 py-2;
+    @apply rounded-2xl bg-sectionbackground p-3.5;
   }
   .assistant-suggestion-fact {
     @apply flex items-center gap-3;
+  }
+  .assistant-suggestion .assistant-recipe-icon {
+    @apply bg-white;
   }
   /* Save and Skip side by side under the fact, half the card each */
   .assistant-suggestion-actions {
     @apply mt-3 grid grid-cols-2 gap-2;
   }
-  .assistant-suggestion-actions button {
-    @apply whitespace-nowrap;
+  .assistant-suggestion-button {
+    @apply w-full cursor-pointer justify-center whitespace-nowrap px-4 py-2 text-[13px] shadow-none;
   }
-  /* An imported draft that's ready to review */
+  /* An imported draft that's ready to review: a cream chip */
   .assistant-draft-ready {
-    @apply block text-xs font-semibold text-green-700;
+    @apply mt-1 inline-block rounded-full bg-sectionbackground px-2.5 py-0.5 text-xs font-semibold text-sectiontext;
   }
   /* Why the assistant recommends it */
   .assistant-recipe-why {
-    @apply mt-1 block text-xs text-gray-700;
+    @apply mt-1 block text-xs text-gray-600;
   }
   /* The recipe has something the user avoids */
   .assistant-recipe-warning {
-    @apply mt-0.5 block text-xs font-semibold text-red-700;
+    @apply mt-1 block text-xs font-semibold text-red-700;
   }
 
+  /* The box to type in: one rounded field with a round send button, growing with what's typed */
   .assistant-form {
-    @apply flex flex-none items-end gap-2 border-t border-gray-200 p-3;
+    @apply mx-3.5 mt-3 mb-4 flex flex-none items-end gap-2 rounded-[1.625rem] bg-gray-50 py-1.5 pr-1.5 pl-4.5
+           ring-1 ring-gray-200 focus-within:ring-sectiontext-light;
   }
-  .assistant-form .form-textarea {
-    @apply flex-1 resize-none text-sm;
+  .assistant-input {
+    @apply max-h-40 min-w-0 flex-1 resize-none border-0 bg-transparent py-2.5 text-sm field-sizing-content
+           placeholder:text-gray-400 focus:outline-none;
+  }
+  .assistant-send {
+    @apply flex size-10 flex-none cursor-pointer items-center justify-center rounded-full bg-sectiontext text-white
+           hover:bg-gray-900 disabled:opacity-50 [&>svg]:size-4.5;
   }
 }

@@ -4,7 +4,9 @@
     card opens the review form), or why it failed (the card opens the Draft box). %>
 <li class="assistant-draft-<%= draft.id %>">
   <%= link_to draft.ready? ? new_recipe_path(draft_id: draft.id) : drafts_path, class: "assistant-recipe" do %>
-    <span class="assistant-recipe-icon" aria-hidden="true">📥</span>
+    <span class="assistant-recipe-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l2.2-7h11.6L20 13v6H4zM4 13h5a3 3 0 0 0 6 0h5"/></svg>
+    </span>
     <span class="min-w-0">
       <span class="assistant-recipe-name"><%= draft.title %></span>
       <% if draft.ready? %>
