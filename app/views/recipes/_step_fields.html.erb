@@ -1,17 +1,17 @@
 <%# locals: (form:) %>
 <%# A step: its number, its text and ×. In reorder mode the text collapses to a one-line preview, which drags with a
     mouse (on a touch screen it scrolls the page), and a handle that drags and also moves the step with ↑ ↓. %>
-<div data-nested-form-row data-step-list-target="step"
+<div data-nested-form-row data-step-list-target="step" data-sortable-target="item"
      class="step-row <%= "hidden" if form.object.marked_for_destruction? %>">
   <span class="step-number" data-step-list-target="number"><%= form.object.position %></span>
   <%= form.hidden_field :position, data: { step_list_target: "position" } %>
   <%= form.hidden_field :_destroy if form.object.persisted? %>
 
   <%= form.text_area :body, rows: 3, class: "form-textarea flex-1", placeholder: t(".placeholder") %>
-  <p class="step-preview" data-step-list-target="preview" data-action="pointerdown->step-list#startDragByRow"></p>
+  <p class="step-preview" data-step-list-target="preview" data-action="pointerdown->sortable#drag"
+     data-sortable-mouse-only-param="true"></p>
   <button type="button" class="step-handle" aria-label="<%= t(".move", number: form.object.position) %>"
-          data-step-list-target="handle"
-          data-action="pointerdown->step-list#startDrag keydown->step-list#moveWithKeys">
+          data-step-list-target="handle" data-action="pointerdown->sortable#drag keydown->sortable#moveWithKeys">
     <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
       <path stroke-linecap="round" stroke-width="2" d="M4 8h16M4 12h16M4 16h16"/>
     </svg>
