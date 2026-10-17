@@ -3,7 +3,7 @@ class MealPlansController < ApplicationController
   before_action :set_week_choices, only: [ :new, :create ]
 
   def index
-    meal_plans = current_user.meal_plans.order(start_date: :desc)
+    meal_plans = current_user.meal_plans.with_counts.order(start_date: :desc)
     @pagy, @meal_plans = pagy(meal_plans)
   end
 

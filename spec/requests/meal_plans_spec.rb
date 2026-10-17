@@ -67,6 +67,25 @@ RSpec.describe "Meal plans", type: :request do
     expect(response.body.scan("meal-plan-row--current").size).to eq 1
   end
 
+  it "counts every row's recipes and planned meals in the same few queries, however many weeks there are" do
+    def queries_for_list
+      count = 0
+      counter = ->(*, payload) { count += 1 unless payload[:name] == "SCHEMA" || payload[:cached] }
+      ActiveSupport::Notifications.subscribed(counter, "sql.active_record") { get meal_plans_path }
+      count
+    end
+
+    plan_one = plan_week(monday)
+    plan_one.meal_slots.first.recipes << create(:recipe, user: user)
+    one_week = queries_for_list
+
+    3.times { |n| plan_week(monday - (n + 1).weeks).meal_slots.first.recipes << create(:recipe, user: user) }
+
+    expect(queries_for_list).to eq one_week
+    expect(response.body.scan("1 recipe").size).to eq 4
+    expect(response.body.scan("1 of 28 meals").size).to eq 4
+  end
+
   describe "a week's plan" do
     let(:meal_plan) { plan_week(monday) }
 
