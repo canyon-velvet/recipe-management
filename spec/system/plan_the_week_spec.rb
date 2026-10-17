@@ -40,14 +40,14 @@ RSpec.describe "Planning the week", type: :system do
 
     click_link "Grocery list"
     # Aisles in shopping order; the oats weren't planned, so none of their ingredients are listed.
-    expect(page.all(".grocery-card-header", count: 4).map(&:text))
+    expect(page.all(".grocery-aisle-name", count: 4).map { |name| name.text(:all) })
       .to eq [ "Produce", "Meat & Seafood", "Dairy & Eggs", "Spices & Seasonings" ]
-    expect(grocery_item("Scallions")).to have_css(".grocery-count-badge", exact_text: "2")
+    expect(grocery_item("Scallions")).to have_css(".grocery-count-badge", exact_text: "2 recipes")
     expect(page).to have_no_text("Rolled oats")
 
     grocery_item("Soy sauce").check
     within("#pantry_items") { expect(page).to have_text("Soy sauce") }
-    expect(find(".grocery-aisle-card", text: "Spices & Seasonings")).to have_no_text("Soy sauce")
+    expect(find(".grocery-aisle-card", text: "SPICES & SEASONINGS")).to have_no_text("Soy sauce")
   end
 
   private

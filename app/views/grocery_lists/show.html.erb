@@ -1,43 +1,21 @@
-<section class="container mx-auto max-w-3xl px-4 py-8" data-controller="grocery-list" data-reload-on-aisle-change>
-  <!-- Header -->
-  <div class="flex items-center justify-between mb-6">
+<section class="grocery-page" data-controller="grocery-list" data-reload-on-aisle-change>
+  <%# Back to the week, the week's dates over the title, and Edit aisles %>
+  <div class="meal-plan-header">
     <div>
-      <h1 class="text-2xl font-bold"><%= t(".title") %></h1>
-      <p class="text-sm text-gray-500 mt-1"><%= @meal_plan.display_name %></p>
+      <%= link_to meal_plan_path(@meal_plan), class: "meal-plan-back" do %>
+        <span aria-hidden="true">←</span> <%= @meal_plan.display_name %>
+      <% end %>
+      <p class="home-eyebrow mt-4">
+        <%= l(@meal_plan.start_date, format: :month_day) %> – <%= l(@meal_plan.end_date, format: :month_day_year) %>
+      </p>
+      <h1 class="meal-plan-title"><%= t(".title") %></h1>
     </div>
-    <div class="flex items-center gap-3">
-      <button type="button" class="btn-secondary" data-action="aisle-editor#open"><%= t("aisle_editor.title") %></button>
-      <%= link_to t(".back"), meal_plan_path(@meal_plan), class: "btn-secondary" %>
-    </div>
+    <button type="button" class="btn-pill-secondary btn-pill-sm cursor-pointer" data-action="aisle-editor#open">
+      <%= t("aisle_editor.title") %>
+    </button>
   </div>
 
-  <% if @active_groups.empty? && @pantry_items.empty? %>
-    <div class="text-center py-16 text-gray-400">
-      <p class="text-lg"><%= t(".empty") %></p>
-      <p class="text-sm mt-1"><%= t(".empty_hint") %></p>
-    </div>
-  <% else %>
-    <!-- Active items grouped by aisle, in shopping order -->
-    <div id="active_items" class="space-y-4">
-      <% @active_groups.each do |aisle, items| %>
-        <%= render "grocery_lists/aisle_group", aisle: aisle, items: items %>
-      <% end %>
-    </div>
-
-    <!-- Pantry section -->
-    <% if @pantry_items.any? %>
-      <div class="mt-8">
-        <h2 class="text-sm font-semibold text-gray-500 mb-3"><%= t(".pantry") %></h2>
-        <div id="pantry_items" class="grocery-card divide-y divide-gray-100">
-          <% @pantry_items.each do |item| %>
-            <%= render "grocery_lists/grocery_item", item: item %>
-          <% end %>
-        </div>
-      </div>
-    <% else %>
-      <div id="pantry_items" class="hidden mt-8">
-        <h2 class="text-sm font-semibold text-gray-500 mb-3"><%= t(".pantry") %></h2>
-      </div>
-    <% end %>
-  <% end %>
+  <div id="grocery_list">
+    <%= render "grocery_lists/list", grocery_list: @grocery_list %>
+  </div>
 </section>

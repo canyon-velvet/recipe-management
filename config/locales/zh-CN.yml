@@ -319,11 +319,15 @@ zh-CN:
       title: "选择菜谱"
 
   grocery_lists:
-    show:
-      back: "返回餐计划"
+    grocery_item:
+      recipe_count: "%{count} 道菜谱"
+    list:
       empty: "购物清单为空"
       empty_hint: "在餐计划中勾选菜谱的购物复选框以添加食材"
       pantry: "已有食材"
+      pantry_hint: "点一下即可放回清单。"
+      summary_html: "还需购买 <strong>%{to_buy}</strong> 项 · 已有 %{have} 项"
+    show:
       title: "购物清单"
 
   aisle_editor:

@@ -4,8 +4,12 @@ class GroceryListItemsController < ApplicationController
   def update
     @item.update!(in_pantry: params[:in_pantry])
 
+    # The whole list is drawn again, so the item lands in its aisle or in Already have, and the counts follow
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream_for_toggle }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("grocery_list", partial: "grocery_lists/list",
+                                                                 locals: { grocery_list: @item.grocery_list })
+      end
     end
   end
 
@@ -15,18 +19,5 @@ class GroceryListItemsController < ApplicationController
     @item = GroceryListItem.includes(ingredient: :aisle, grocery_list: :meal_plan).find(params[:id])
     meal_plan = @item.grocery_list.meal_plan
     redirect_to meal_plans_path, alert: t("flash.not_authorized") unless meal_plan.user_id == current_user.id
-  end
-
-  def turbo_stream_for_toggle
-    if @item.in_pantry?
-      # Remove from active list, append to pantry list
-      [
-        turbo_stream.remove("grocery_item_#{@item.id}"),
-        turbo_stream.append("pantry_items", partial: "grocery_lists/grocery_item", locals: { item: @item })
-      ]
-    else
-      # Remove from pantry list — full page reload needed to place in correct group
-      turbo_stream.remove("grocery_item_#{@item.id}")
-    end
   end
 end

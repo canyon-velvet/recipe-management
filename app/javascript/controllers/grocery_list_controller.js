@@ -38,28 +38,11 @@ export default class extends Controller {
               target.replaceChildren(...content.childNodes)
             }
           })
-
-          this.cleanupEmptyGroups()
-          this.togglePantrySection()
         }
       }
     } catch (error) {
       console.error("Failed to toggle pantry:", error)
       checkbox.checked = !checkbox.checked
-    }
-  }
-
-  cleanupEmptyGroups() {
-    document.querySelectorAll(".grocery-aisle-card").forEach(card => {
-      if (!card.querySelector(".grocery-item")) card.remove()
-    })
-  }
-
-  togglePantrySection() {
-    const pantryContainer = document.getElementById("pantry_items")
-    if (pantryContainer) {
-      const hasItems = pantryContainer.querySelector(".grocery-item")
-      pantryContainer.closest("div.mt-8")?.classList.toggle("hidden", !hasItems)
     }
   }
 }

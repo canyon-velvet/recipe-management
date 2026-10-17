@@ -1,0 +1,37 @@
+<%# locals: (grocery_list:) %>
+<%# How much is left to buy, then what's left by aisle in shopping order, then what's already in the pantry. Drawn
+    again whenever an item is ticked or unticked (GroceryListItemsController), so the counts follow. %>
+<% active_groups = grocery_list.active_groups %>
+<% pantry_items = grocery_list.pantry_items.to_a %>
+<% to_buy = active_groups.values.sum(&:size) %>
+
+<% if to_buy.zero? && pantry_items.empty? %>
+  <div class="grocery-empty">
+    <p class="text-lg"><%= t(".empty") %></p>
+    <p class="mt-1 text-sm"><%= t(".empty_hint") %></p>
+  </div>
+<% else %>
+  <div class="grocery-progress">
+    <progress class="meal-plan-meter-bar" max="<%= to_buy + pantry_items.size %>" value="<%= pantry_items.size %>"
+              aria-hidden="true"></progress>
+    <p class="grocery-progress-text"><%= t(".summary_html", to_buy: to_buy, have: pantry_items.size) %></p>
+  </div>
+
+  <div id="active_items" class="grocery-aisles">
+    <% active_groups.each do |aisle, items| %>
+      <%= render "grocery_lists/aisle_group", aisle: aisle, items: items %>
+    <% end %>
+  </div>
+
+  <% if pantry_items.any? %>
+    <section class="grocery-pantry">
+      <h2 class="recipe-section-heading"><%= t(".pantry") %></h2>
+      <ul id="pantry_items" class="grocery-pantry-list">
+        <% pantry_items.each do |item| %>
+          <%= render "grocery_lists/grocery_item", item: item %>
+        <% end %>
+      </ul>
+      <p class="grocery-pantry-hint"><%= t(".pantry_hint") %></p>
+    </section>
+  <% end %>
+<% end %>
