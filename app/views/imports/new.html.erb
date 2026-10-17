@@ -9,9 +9,11 @@
       <div class="bg-red-50 border border-red-300 text-red-700 rounded-md p-3 mb-4 text-sm">
         <%= t("imports.errors.#{@result.error}") %>
         <% if @result.recipe %>
-          <%= link_to t(".view_recipe"), recipe_path(@result.recipe), class: "underline font-medium" %>
+          <%= link_to t(".view_recipe"), recipe_path(@result.recipe), class: "underline font-medium",
+                      data: { turbo_frame: "_top" } %>
         <% elsif @result.error == :already_in_draft_box %>
-          <%= link_to t(".open_draft_box"), drafts_path, class: "underline font-medium" %>
+          <%= link_to t(".open_draft_box"), drafts_path, class: "underline font-medium",
+                      data: { turbo_frame: "_top" } %>
         <% end %>
       </div>
     <% end %>
