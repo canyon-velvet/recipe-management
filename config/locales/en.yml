@@ -309,7 +309,6 @@ en:
       other: "Other…"
       pick_a_date: "Pick a date"
       planned: "Already planned"
-      title: "New meal plan"
       week: "Week"
       week_help: "Snaps to the Monday of the week you pick."
       week_labels: [ "This week", "Next week", "In 2 weeks" ]
@@ -348,7 +347,6 @@ en:
     confirm_delete: "Delete \"%{name}\"? Its ingredients will move to %{other}."
     delete: "Delete %{name}"
     done: "Done"
-    eyebrow: "Grocery list"
     lead: "Put the aisles in the order you walk the store, and the grocery list follows it."
     loading: "Loading…"
     move: "Move %{name}: drag it, or use the up and down arrow keys"
@@ -459,7 +457,6 @@ en:
       paste_needs_claude: "Reading pasted text needs Claude, which isn't set up (no Anthropic API key)."
       paste_placeholder: "Copy the ingredients and steps from the page and paste them here"
       submit: "Import"
-      title: "Import a recipe"
       view_recipe: "View it"
 
   sessions:

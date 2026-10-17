@@ -300,7 +300,6 @@ zh-CN:
       other: "其他…"
       pick_a_date: "选择日期"
       planned: "已有计划"
-      title: "新建餐计划"
       week: "选择周"
       week_help: "将自动调整到所选日期所在周的周一"
       week_labels: [ "本周", "下周", "两周后" ]
@@ -337,7 +336,6 @@ zh-CN:
     confirm_delete: "删除“%{name}”？其中的食材将移到“%{other}”。"
     delete: "删除“%{name}”"
     done: "完成"
-    eyebrow: "购物清单"
     lead: "按你逛超市的顺序排好货架区，购物清单就按这个顺序列出。"
     loading: "加载中…"
     move: "移动“%{name}”：拖动，或用上下方向键"
@@ -448,7 +446,6 @@ zh-CN:
       paste_needs_claude: "读取粘贴的文字需要 Claude，但尚未配置（缺少 Anthropic API 密钥）。"
       paste_placeholder: "从网页复制用料和步骤，粘贴到这里"
       submit: "导入"
-      title: "导入菜谱"
       view_recipe: "查看菜谱"
 
   sessions:
