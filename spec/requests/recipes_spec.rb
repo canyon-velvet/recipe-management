@@ -42,6 +42,44 @@ RSpec.describe "Recipes", type: :request do
     expect(details.css("label").map { _1.text.squish }).to include("Tags", "Servings", "Source", "Recipe link")
   end
 
+  describe "a recipe planned for the grocery list" do
+    let(:egg) { create(:ingredient, user: user, name: "Egg") }
+    let(:milk) { create(:ingredient, user: user, name: "Milk") }
+    let(:omelette) do
+      create(:recipe, user: user, name: "Omelette").tap do |recipe|
+        recipe.recipe_ingredients.create!([ { ingredient: egg }, { ingredient: milk } ])
+      end
+    end
+    let(:plan) { user.meal_plans.create!(start_date: Date.new(2026, 10, 19), end_date: Date.new(2026, 10, 25)) }
+
+    def on_the_list = plan.grocery_list.grocery_list_items.reload.map { |item| item.ingredient.name }.sort
+
+    before do
+      plan.meal_slots.find_by!(day_of_week: "monday", meal_type: "breakfast").meal_slot_recipes
+          .create!(recipe: omelette, add_to_grocery_list: true)
+      SyncGroceryListService.new(plan).call
+    end
+
+    it "keeps the list in step when the recipe's ingredients change" do
+      milk_row = omelette.recipe_ingredients.find_by!(ingredient: milk)
+
+      patch recipe_path(omelette), params: { recipe: {
+        recipe_ingredients_attributes: { "0" => { id: milk_row.id, _destroy: "1" } }
+      } }
+
+      expect(response).to redirect_to(recipe_path(omelette))
+      expect(on_the_list).to eq [ "Egg" ]
+    end
+
+    it "takes the recipe's ingredients off the list when it's deleted" do
+      expect(on_the_list).to eq [ "Egg", "Milk" ]
+
+      delete recipe_path(omelette)
+
+      expect(on_the_list).to be_empty
+    end
+  end
+
   describe "the recipe page" do
     let(:source) { create(:source, user: user, name: "Yummy Toddler Food") }
 
