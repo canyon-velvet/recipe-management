@@ -1,20 +1,25 @@
 <%= turbo_frame_tag "aisles" do %>
-  <% movable = @aisles.reject(&:other?) %>
   <% other_name = @aisles.find(&:other?)&.saved_name %>
 
-  <ul class="aisle-list">
-    <% @aisles.each do |aisle| %>
-      <%= render "aisles/aisle_row", aisle: aisle, other_name: other_name,
-                 can_move_up: movable.include?(aisle) && movable.first != aisle,
-                 can_move_down: movable.include?(aisle) && movable.last != aisle %>
-    <% end %>
-  </ul>
+  <%# The texts with %{…} are filled in by aisle-order as aisles move. %>
+  <div class="aisle-list" data-controller="sortable aisle-order" data-action="sortable:moved->aisle-order#moved"
+       data-sortable-lifted-class="aisle-row--lifted"
+       data-aisle-order-moved-text-value="<%= t("aisle_editor.moved", name: "%{name}", number: "%{number}",
+                                                total: "%{total}") %>">
+    <p class="sr-only" aria-live="polite" data-aisle-order-target="status"></p>
+    <ol class="space-y-2">
+      <% @aisles.each do |aisle| %>
+        <%= render "aisles/aisle_row", aisle: aisle, other_name: other_name %>
+      <% end %>
+    </ol>
+  </div>
 
-  <%= form_with url: aisles_path, scope: :aisle, class: "flex items-center gap-2 pt-4" do |f| %>
-    <%= f.text_field :name, value: @new_aisle&.name, id: "new_aisle_name", class: "form-input",
+  <%= form_with url: aisles_path, scope: :aisle, class: "aisle-add" do |f| %>
+    <span class="aisle-add-icon" aria-hidden="true">＋</span>
+    <%= f.text_field :name, value: @new_aisle&.name, id: "new_aisle_name", class: "aisle-name",
                      placeholder: t("aisle_editor.new_aisle_placeholder"),
                      aria: { label: t("aisle_editor.new_aisle_placeholder") } %>
-    <%= f.submit t("actions.add"), class: "btn-secondary btn-sm" %>
+    <%= f.submit t("actions.add"), class: "btn-pill-primary btn-pill-sm" %>
   <% end %>
   <% if @new_aisle&.errors&.any? %>
     <p class="error-text"><%= @new_aisle.errors.full_messages.to_sentence %></p>

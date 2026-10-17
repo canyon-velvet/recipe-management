@@ -11,6 +11,7 @@ export default class extends Controller {
 
   connect() {
     this.pending = 0
+    this.moving = 0
   }
 
   open() {
@@ -38,6 +39,27 @@ export default class extends Controller {
     this.pending--
     if (event.detail.success) this.changed = true
     if (!this.dialogTarget.open) this.refresh()
+  }
+
+  // A dragged aisle's place is saving (aisle-order). It counts like a form's submit, and if the list was redrawn
+  // meanwhile (after a rename), that drawing may be from before the move was saved, so the list is reloaded once the
+  // moves are saved.
+  moveStarted() {
+    this.moving++
+    this.submitStarted()
+  }
+
+  moveEnded(event) {
+    this.moving--
+    this.submitEnded(event)
+    if (this.moving === 0 && this.listOutdated) {
+      this.listOutdated = false
+      this.frameTarget.reload()
+    }
+  }
+
+  listRendered() {
+    if (this.moving > 0) this.listOutdated = true
   }
 
   refresh() {

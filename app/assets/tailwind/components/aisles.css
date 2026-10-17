@@ -1,14 +1,34 @@
 @layer components {
-  .aisle-list {
-    @apply max-h-[60vh] overflow-y-auto space-y-2;
+  /* The Edit-aisles pop-up: a row per aisle, in a list that scrolls when it's long (p-1 keeps the rows' rings and the
+     lifted row's shadow from being clipped) */
+  .aisle-list { @apply max-h-[50vh] overflow-y-auto p-1; }
+  .aisle-row {
+    @apply flex flex-wrap items-center gap-2 rounded-2xl border border-gray-200 bg-white py-1.5 pr-2 pl-2;
   }
-  .aisle-action {
-    @apply inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-500
-           hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent;
+  /* Other stays last: cream, with a lock instead of the grip */
+  .aisle-row--pinned { @apply bg-sectionbackground/60; }
+  /* Being dragged */
+  .aisle-row--lifted { @apply relative z-10 shadow-xl ring-1 ring-sectiontext/30; }
+  .aisle-grip {
+    @apply shrink-0 cursor-grab touch-none rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600
+           focus-visible:outline-2 focus-visible:outline-sectiontext active:cursor-grabbing;
   }
-  .aisle-action--delete {
-    @apply hover:text-red-600 hover:bg-red-50;
+  .aisle-lock { @apply flex w-[26px] shrink-0 justify-center text-sm; }
+  /* A name looks like text until it's pointed at or edited */
+  .aisle-name {
+    @apply w-full rounded-lg border border-transparent bg-transparent px-2 py-1.5 text-sm text-gray-800
+           hover:border-gray-200 focus:border-sectiontext/50 focus:bg-white focus:outline-none;
   }
+  .aisle-delete {
+    @apply flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-gray-400
+           hover:bg-red-50 hover:text-red-600;
+  }
+  .aisle-error { @apply w-full pl-10; }
+  /* + a new aisle, in a dashed row under the list */
+  .aisle-add {
+    @apply mt-3 flex items-center gap-2 rounded-2xl border border-dashed border-gray-300 py-1.5 pr-1.5 pl-4;
+  }
+  .aisle-add-icon { @apply text-lg text-gray-400; }
   /* Turbo marks the frame busy while a change is saving; a second click would cancel the first. */
   .aisle-editor-frame[aria-busy="true"] {
     @apply pointer-events-none opacity-60;

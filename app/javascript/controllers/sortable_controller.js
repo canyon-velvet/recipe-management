@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
-const EDGE = 60 // how near the top or bottom of the screen a drag scrolls the page
+const EDGE = 60 // how near the top or bottom of the screen (or a scrolling list) a drag scrolls it
 const NUDGE = 8 // how far the pointer moves before edge scrolling starts, so a press on an item near an edge stays put
 
 // Puts its items in order by dragging them, with the mouse or a finger, or with ↑ ↓ on a focused handle. A handle
@@ -26,12 +26,13 @@ export default class extends Controller {
     this.pointerY = this.startY = event.clientY
     this.startIndex = this.items().indexOf(this.dragged)
     this.nudged = false
+    this.scroller = this.scrollBox()
     this.onDragMove = (e) => { if (e.pointerId === this.pointerId) this.dragMove(e.clientY) }
     this.onDragEnd = (e) => { if (e.pointerId === this.pointerId) this.dragEnd() }
     document.addEventListener("pointermove", this.onDragMove)
     document.addEventListener("pointerup", this.onDragEnd)
     document.addEventListener("pointercancel", this.onDragEnd)
-    this.scrollFrame = requestAnimationFrame(() => this.scrollNearEdge())
+    if (this.scroller) this.scrollFrame = requestAnimationFrame(() => this.scrollNearEdge())
   }
 
   dragMove(y) {
@@ -57,17 +58,31 @@ export default class extends Controller {
     this.dragged = null
   }
 
-  // While the pointer is held near the top (below the sticky header) or the bottom of the screen, scrolls the page and
-  // keeps the dragged item under the pointer
+  // While the pointer is held near the top or the bottom of what scrolls (a pop-up's list, or else the page below the
+  // sticky header), scrolls it and keeps the dragged item under the pointer
   scrollNearEdge() {
     this.nudged ||= Math.abs(this.pointerY - this.startY) > NUDGE
-    const top = document.querySelector("header")?.getBoundingClientRect().bottom ?? 0
-    const scroll = this.pointerY < top + EDGE ? -10 : this.pointerY > window.innerHeight - EDGE ? 10 : 0
+    const page = this.scroller === window
+    const box = page ? null : this.scroller.getBoundingClientRect()
+    const top = page ? document.querySelector("header")?.getBoundingClientRect().bottom ?? 0 : box.top
+    const bottom = page ? window.innerHeight : box.bottom
+    const edge = Math.min(EDGE, (bottom - top) / 4)
+    const scroll = this.pointerY < top + edge ? -10 : this.pointerY > bottom - edge ? 10 : 0
     if (scroll && this.nudged) {
-      window.scrollBy(0, scroll)
+      this.scroller.scrollBy(0, scroll)
       this.dragMove(this.pointerY)
     }
     this.scrollFrame = requestAnimationFrame(() => this.scrollNearEdge())
+  }
+
+  // The nearest box that scrolls, from the items' own (a pop-up's list) outwards; else the page, or nothing in a
+  // pop-up, which covers the page
+  scrollBox() {
+    for (let box = this.element; box && box !== document.body; box = box.parentElement) {
+      const { overflowY } = getComputedStyle(box)
+      if ((overflowY === "auto" || overflowY === "scroll") && box.scrollHeight > box.clientHeight) return box
+    }
+    return this.element.closest("dialog") ? null : window
   }
 
   // ↑ ↓ on a focused handle move its item, keeping the focus on the handle

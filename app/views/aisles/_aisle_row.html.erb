@@ -1,40 +1,43 @@
-<%# locals: (aisle:, other_name:, can_move_up:, can_move_down:) %>
-<%# A failed rename re-renders with the rejected text in the field; labels and the confirm keep the saved name. %>
+<%# locals: (aisle:, other_name:) %>
+<%# An aisle: a ⋮⋮ grip that drags it (or moves it with ↑ ↓), its name edited in place, and a bin. Other is the
+    catch-all, so it stays last (a lock instead of the grip) and can't be deleted.
+    A failed rename re-renders with the rejected text in the field; labels and the confirm keep the saved name. %>
 <% saved_name = aisle.saved_name %>
-<li>
-  <div class="flex items-center gap-1">
-    <%= form_with model: aisle, url: aisle_path(aisle), method: :patch, class: "flex-1" do |f| %>
-      <%= f.text_field :name, value: aisle.name, id: dom_id(aisle, :name), class: "form-input",
-                       aria: { label: Aisle.human_attribute_name(:name) },
-                       data: { action: "change->aisle-editor#submit" } %>
-    <% end %>
+<li class="aisle-row <%= "aisle-row--pinned" if aisle.other? %>"
+    <% unless aisle.other? %>
+      data-sortable-target="item" data-name="<%= saved_name %>" data-move-url="<%= move_aisle_path(aisle) %>"
+    <% end %>>
+  <% if aisle.other? %>
+    <span class="aisle-lock" title="<%= t("aisle_editor.other_hint", other: other_name) %>" aria-hidden="true">🔒</span>
+  <% else %>
+    <button type="button" class="aisle-grip" title="<%= t("aisle_editor.move", name: saved_name) %>"
+            aria-label="<%= t("aisle_editor.move", name: saved_name) %>"
+            data-action="pointerdown->sortable#drag keydown->sortable#moveWithKeys">
+      <svg width="14" height="20" viewBox="0 0 14 20" fill="currentColor" aria-hidden="true">
+        <circle cx="4" cy="4" r="1.6"/><circle cx="10" cy="4" r="1.6"/><circle cx="4" cy="10" r="1.6"/>
+        <circle cx="10" cy="10" r="1.6"/><circle cx="4" cy="16" r="1.6"/><circle cx="10" cy="16" r="1.6"/>
+      </svg>
+    </button>
+  <% end %>
 
-    <%= button_to move_aisle_path(aisle, direction: :up), method: :patch, disabled: !can_move_up,
-                  class: "aisle-action", title: t("aisle_editor.move_up", name: saved_name),
-                  aria: { label: t("aisle_editor.move_up", name: saved_name) } do %>
-      &uarr;
-    <% end %>
-    <%= button_to move_aisle_path(aisle, direction: :down), method: :patch, disabled: !can_move_down,
-                  class: "aisle-action", title: t("aisle_editor.move_down", name: saved_name),
-                  aria: { label: t("aisle_editor.move_down", name: saved_name) } do %>
-      &darr;
-    <% end %>
+  <%= form_with model: aisle, url: aisle_path(aisle), method: :patch, class: "min-w-0 flex-1" do |f| %>
+    <%= f.text_field :name, value: aisle.name, id: dom_id(aisle, :name), class: "aisle-name",
+                     aria: { label: Aisle.human_attribute_name(:name) },
+                     data: { action: "change->aisle-editor#submit" } %>
+  <% end %>
 
-    <% if aisle.other? %>
-      <span class="aisle-action invisible" aria-hidden="true"></span>
-    <% else %>
-      <%= button_to aisle_path(aisle), method: :delete, class: "aisle-action aisle-action--delete",
-                    title: t("aisle_editor.delete", name: saved_name), aria: { label: t("aisle_editor.delete", name: saved_name) },
-                    form: { data: { turbo_confirm: t("aisle_editor.confirm_delete", name: saved_name, other: other_name) } } do %>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"/>
-        </svg>
-      <% end %>
+  <% unless aisle.other? %>
+    <%= button_to aisle_path(aisle), method: :delete, class: "aisle-delete",
+                  title: t("aisle_editor.delete", name: saved_name), aria: { label: t("aisle_editor.delete", name: saved_name) },
+                  form: { data: { turbo_confirm: t("aisle_editor.confirm_delete", name: saved_name, other: other_name) } } do %>
+      <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"/>
+      </svg>
     <% end %>
-  </div>
+  <% end %>
 
   <% if aisle.errors.any? %>
-    <p class="error-text"><%= aisle.errors.full_messages.to_sentence %></p>
+    <p class="aisle-error error-text"><%= aisle.errors.full_messages.to_sentence %></p>
   <% end %>
 </li>

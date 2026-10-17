@@ -46,8 +46,19 @@ class Aisle < ApplicationRecord
   # The name as stored, ignoring an unsaved rename.
   def saved_name = attribute_in_database(:name) || (key && I18n.t(key, scope: :aisles))
 
-  def move_up = swap_with(movable_siblings.where(position: ...position).reorder(position: :desc, id: :desc).first)
-  def move_down = swap_with(movable_siblings.where("position > ?", position).first)
+  # Puts the aisle at index (from 0) among the aisles before Other, which stays last, and numbers them all again in
+  # tens. Locking the user makes concurrent moves take turns.
+  def move_to(index)
+    return if other?
+
+    transaction do
+      user.lock!
+      aisles = movable_siblings.to_a
+      aisles.insert(index.clamp(0, aisles.size), self)
+      aisles << user.aisles.find_by(key: "other")
+      aisles.compact.each.with_index(1) { |aisle, i| aisle.update_column(:position, i * 10) }
+    end
+  end
 
   # Other is the catch-all, so it can't be deleted; anything in this aisle moves there.
   def destroy_moving_ingredients_to_other
@@ -64,18 +75,8 @@ class Aisle < ApplicationRecord
 
   private
 
-  # Other stays last, so it never trades places with anything.
+  # Other stays last, so it never moves among the rest.
   def movable_siblings = user.aisles.ordered.where.not(id: id).where("key IS NULL OR key <> 'other'")
-
-  def swap_with(neighbor)
-    return if other? || neighbor.nil?
-
-    transaction do
-      old_position = position
-      update!(position: neighbor.position)
-      neighbor.update!(position: old_position)
-    end
-  end
 
   def clear_name_matching_default
     self.name = nil if self[:name] && self.class.default_labels(key).any? { |label| label.casecmp?(self[:name]) }

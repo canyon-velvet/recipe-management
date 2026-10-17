@@ -1,4 +1,5 @@
-# The Edit-aisles pop-up loads #index into a Turbo Frame; each change redirects back to it.
+# The Edit-aisles pop-up loads #index into a Turbo Frame; each change redirects back to it, except a move, which the
+# pop-up has already shown.
 # #create also answers JSON for the "+ New aisle…" option in the ingredient pop-up.
 class AislesController < ApplicationController
   before_action :set_aisle, only: [ :update, :destroy, :move ]
@@ -38,9 +39,10 @@ class AislesController < ApplicationController
     end
   end
 
+  # Dragged into a new place in the pop-up, which already shows it there
   def move
-    params[:direction] == "up" ? @aisle.move_up : @aisle.move_down
-    redirect_to aisles_path, status: :see_other
+    @aisle.move_to(params.require(:position).to_i)
+    head :no_content
   end
 
   private
