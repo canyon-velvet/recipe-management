@@ -1,7 +1,8 @@
 <%# locals: (form:, recipe:) %>
 <%# The recipe's step rows (one empty to start), ⇅ Reorder to drag them into order, and + Add step. %>
 <%# The texts with %{…} are filled in by step-list as the steps move. %>
-<div data-controller="nested-form step-list"
+<div data-controller="nested-form step-list sortable" data-action="sortable:moved->step-list#moved"
+     data-sortable-lifted-class="step-row--lifted"
      data-step-list-reorder-text-value="<%= t(".reorder") %>" data-step-list-done-text-value="<%= t(".done") %>"
      data-step-list-move-text-value="<%= t("recipes.step_fields.move", number: "%{number}") %>"
      data-step-list-moved-text-value="<%= t(".moved", number: "%{number}", total: "%{total}") %>">
