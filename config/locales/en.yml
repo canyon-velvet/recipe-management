@@ -15,6 +15,9 @@ en:
 
   date:
     formats:
+      # A week's plan: its days and its dates, e.g. "Oct 12" and "Oct 18, 2026"
+      month_day: "%b %-d"
+      month_day_year: "%b %-d, %Y"
       # The meal plan list's month headings, e.g. "October 2026"
       month_year: "%B %Y"
 
@@ -303,9 +306,15 @@ en:
     show:
       grocery_list: "Grocery list"
       no_recipes_found: "No recipes found"
+    header:
+      all_meal_plans: "All meal plans"
+      to_buy: "%{count} to buy"
+    week:
+      today: "Today"
     meal_slot_cell:
-      remove: "Remove from plan"
-      view_recipe: "View recipe"
+      add: "Add"
+      on_grocery_list: "Put %{recipe} on the grocery list"
+      remove: "Remove %{recipe} from the plan"
     recipe_search_modal:
       prompt: "Type to search"
       search_placeholder: "Search recipes..."

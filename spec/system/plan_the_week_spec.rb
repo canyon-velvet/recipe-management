@@ -65,8 +65,8 @@ RSpec.describe "Planning the week", type: :system do
     within("#meal_slot_#{slot.id}") do
       expect(page).to have_text(recipe_name)
       find("input[type=checkbox]").check
-      # The green row comes from the server's re-render, so the grocery list has been synced by now.
-      expect(page).to have_css(".bg-green-50 input[type=checkbox]:checked")
+      # The cream pill comes from the server's re-render, so the grocery list has been synced by now.
+      expect(page).to have_css(".meal-pill--on-list input[type=checkbox]:checked")
     end
   end
 

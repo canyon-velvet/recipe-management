@@ -1,12 +1,64 @@
 @layer components {
-  .meal-grid          { @apply w-full border-collapse text-sm; }
-  .meal-grid th       { @apply px-2 py-2 text-center text-xs font-semibold text-gray-500 uppercase tracking-wide; }
-  .meal-grid td       { @apply border border-gray-200 align-top; }
-  .meal-type-label    { @apply px-2 py-3 text-xs font-semibold text-sectiontext bg-sectionbackground whitespace-nowrap; }
-  .meal-slot-cell     { @apply relative min-h-[4rem] p-1.5; }
-  .meal-slot-cell--empty  { @apply flex items-center justify-center h-full; }
-  .meal-slot-cell--filled { @apply bg-white; }
-  .meal-slot-cell--grocery { @apply bg-green-50; }
-  .slot-add-btn       { @apply text-gray-300 hover:text-sectiontext transition-colors cursor-pointer; }
-  .slot-recipe-name   { @apply text-xs leading-tight text-gray-800 truncate block; }
+  /* A week's meal plan: the heading (back to the plans, name, week, the grocery list with what's left to buy) */
+  .meal-plan-page    { @apply py-4; }
+  .meal-plan-header  { @apply flex flex-wrap items-end justify-between gap-4; }
+  .meal-plan-back    { @apply text-sm text-sectiontext hover:underline; }
+  .meal-plan-title   { @apply mt-2 text-3xl font-bold tracking-tight text-gray-900; }
+  .meal-plan-summary { @apply mt-1 text-sm text-gray-500; }
+  .meal-plan-to-buy  { @apply rounded-full bg-white/20 px-2 py-0.5 text-xs; }
+
+  /* The week: a stack of day cards on a phone. From lg, one card holding a week × meal grid: the meals' names down the
+     first column, a column per day (scrolling sideways when the page is narrower than the grid). */
+  .meal-week {
+    @apply mt-6 lg:overflow-x-auto lg:rounded-3xl lg:border lg:border-gray-200 lg:bg-white;
+  }
+  .meal-week-grid {
+    @apply space-y-4 lg:grid lg:min-w-[56rem] lg:grid-cols-[7rem_repeat(7,minmax(0,1fr))] lg:space-y-0;
+  }
+  .meal-week-corner { @apply hidden lg:col-start-1 lg:row-start-1 lg:block; }
+  .meal-week-meal-name {
+    @apply hidden border-t border-gray-100 bg-sectionbackground/60 px-3 py-3 text-[11px] font-semibold uppercase
+           tracking-wider text-sectiontext lg:col-start-1 lg:block;
+  }
+
+  /* A day: a card on a phone (today's outlined, with a Today badge). From lg the card dissolves (contents) and its
+     heading and meals are cells of the grid; today's column is tinted. */
+  .meal-day        { @apply rounded-3xl border border-gray-200 bg-white p-5 lg:contents; }
+  .meal-day--today { @apply border-sectiontext/30 ring-2 ring-sectiontext/10; }
+  .meal-day-heading {
+    @apply flex items-baseline gap-2 lg:row-start-1 lg:block lg:px-3 lg:pt-4 lg:pb-3;
+  }
+  .meal-day-name {
+    @apply text-lg font-bold text-gray-900
+           lg:block lg:text-[11px] lg:font-semibold lg:uppercase lg:tracking-wider lg:text-gray-400;
+  }
+  .meal-day-month-day { @apply text-sm text-gray-400 lg:hidden; }
+  .meal-day-number    { @apply hidden text-xl font-bold text-gray-900 lg:inline; }
+  .meal-day-today {
+    @apply ml-auto rounded-full bg-sectionbackground px-2.5 py-0.5 text-xs font-medium text-sectiontext lg:hidden;
+  }
+  .meal-day--today .meal-day-heading { @apply lg:bg-sectionbackground; }
+  .meal-day--today .meal-day-name,
+  .meal-day--today .meal-day-number  { @apply lg:text-sectiontext; }
+  .meal-day--today .meal-slot        { @apply lg:bg-sectionbackground/40; }
+
+  /* A meal: on a phone a row with its name; from lg a cell of the grid */
+  .meal-slot {
+    @apply mt-1 grid grid-cols-[5.5rem_minmax(0,1fr)] items-start gap-2 border-t border-gray-100 py-1
+           lg:mt-0 lg:block lg:border-l lg:py-0;
+  }
+  .meal-slot-name { @apply pt-2.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400 lg:hidden; }
+
+  /* A meal's recipes as pills, then ＋ Add. A pill on the grocery list is cream. */
+  .meal-slot-recipes   { @apply flex min-h-12 flex-wrap items-start gap-1.5 p-1.5; }
+  .meal-pill {
+    @apply flex max-w-full items-center gap-1.5 rounded-full border border-gray-200 bg-white py-1 pr-1.5 pl-2 text-xs;
+  }
+  .meal-pill--on-list  { @apply border-sectiontext/30 bg-sectionbackground; }
+  .meal-pill-check     { @apply size-3.5 shrink-0 cursor-pointer accent-sectiontext; }
+  .meal-pill-name      { @apply min-w-0 truncate text-gray-800 hover:underline; }
+  .meal-pill-remove    { @apply shrink-0 cursor-pointer px-0.5 text-gray-300 hover:text-red-500; }
+  .meal-slot-add {
+    @apply cursor-pointer rounded-full px-2 py-1 text-xs text-gray-400 hover:bg-sectionbackground hover:text-sectiontext;
+  }
 }

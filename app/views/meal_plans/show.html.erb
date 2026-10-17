@@ -1,50 +1,10 @@
-<section class="container mx-auto max-w-6xl px-4 py-8" data-controller="recipe-select"
+<%# A week's plan: the heading, then the week (a grid on a wide screen, a card per day on a phone), with the pop-up that
+    adds a recipe to a meal. %>
+<section class="meal-plan-page" data-controller="recipe-select"
          data-recipe-select-search-url-value="<%= search_recipes_path %>"
          data-recipe-select-prompt-text-value="<%= t("meal_plans.recipe_search_modal.prompt") %>"
          data-recipe-select-no-results-text-value="<%= t(".no_recipes_found") %>">
-  <!-- Header -->
-  <div class="flex items-center justify-between mb-6">
-    <div>
-      <h1 class="text-2xl font-bold"><%= @meal_plan.display_name %></h1>
-      <p class="text-sm text-gray-500 mt-1"><%= format_week_range(@meal_plan) %></p>
-    </div>
-    <div class="flex items-center gap-3">
-      <%= link_to t(".grocery_list"), meal_plan_grocery_list_path(@meal_plan), class: "btn-primary" %>
-      <%= link_to t("actions.back"), meal_plans_path, class: "btn-secondary" %>
-    </div>
-  </div>
-
-  <!-- Weekly grid -->
-  <div class="overflow-x-auto rounded-xl border border-gray-200">
-    <table class="meal-grid">
-      <thead>
-        <tr>
-          <th class="w-16"></th>
-          <% 7.times do |day| %>
-            <th><%= day_label(day) %></th>
-          <% end %>
-        </tr>
-      </thead>
-      <tbody>
-        <% 4.times do |meal_type| %>
-          <tr>
-            <td class="meal-type-label"><%= meal_type_label(meal_type) %></td>
-            <% 7.times do |day| %>
-              <% slot = @grid.dig(day, meal_type) %>
-              <td>
-                <% if slot %>
-                  <turbo-frame id="meal_slot_<%= slot.id %>">
-                    <%= render "meal_plans/meal_slot_cell", meal_slot: slot %>
-                  </turbo-frame>
-                <% end %>
-              </td>
-            <% end %>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Recipe selection modal -->
+  <div id="meal_plan_header"><%= render "meal_plans/header", meal_plan: @meal_plan %></div>
+  <%= render "meal_plans/week", meal_plan: @meal_plan, grid: @grid %>
   <%= render "meal_plans/recipe_search_modal" %>
 </section>
