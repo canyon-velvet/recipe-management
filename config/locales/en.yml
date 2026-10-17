@@ -193,6 +193,8 @@ en:
       preview: "Preview"
       preview_failed: "Couldn't load the preview. Try again."
       write: "Write"
+    modal_frame:
+      loading: "Loading…"
     navbar:
       home: "Home"
       login: "Log in"
@@ -308,8 +310,6 @@ en:
       week: "Week"
       week_help: "Snaps to the Monday of the week you pick."
       week_labels: [ "This week", "Next week", "In 2 weeks" ]
-    new_dialog:
-      loading: "Loading…"
     show:
       grocery_list: "Grocery list"
       no_recipes_found: "No recipes found"
@@ -435,11 +435,14 @@ en:
       rate_limited: "You've imported a lot this hour. Please try again later."
       too_long: "The pasted text is too long. Paste just the ingredients and steps."
     new:
+      draft_box_count: "%{count} in your Draft box"
+      heading: "Bring in a recipe"
       hint: "Paste a link to a recipe page. It's read in the background and waits in your Draft box for you to review."
       link: "Recipe link"
       open_draft_box: "Open Draft box"
-      paste_hint: "For sites that block importing, such as 小红书. Add the link above too if you have it, so the recipe keeps it."
-      paste_instead: "Or paste the recipe text instead"
+      paste_for: "For sites that block importing, such as 小红书"
+      paste_hint: "Add the link above too if you have it, so the recipe keeps it."
+      paste_instead: "Paste the recipe text instead"
       paste_needs_claude: "Reading pasted text needs Claude, which isn't set up (no Anthropic API key)."
       paste_placeholder: "Copy the ingredients and steps from the page and paste them here"
       submit: "Import"

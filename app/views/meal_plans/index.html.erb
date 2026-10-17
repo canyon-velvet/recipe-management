@@ -11,7 +11,7 @@
     <%= link_to "＋ #{t('.new_meal_plan')}", new_meal_plan_path, class: "btn-pill-primary btn-pill-sm",
           data: { action: "modal#open:prevent" } %>
   </div>
-  <%= render "new_dialog" %>
+  <%= render "shared/modal_frame", frame: "new_meal_plan", src: new_meal_plan_path, labelledby: "new_meal_plan_title" %>
 
   <% if @meal_plans.any? %>
     <%# Grouped by the month each week starts in, newest first %>
