@@ -1,21 +1,22 @@
-<section class="container mx-auto max-w-3xl px-4 py-8">
-  <h1 class="text-2xl font-bold"><%= t(".title") %></h1>
-  <p class="text-sm text-gray-500 mt-1 mb-6"><%= t(".subtitle", days: Invite::LIFETIME.in_days.to_i) %></p>
+<section class="invites-page">
+  <p class="home-eyebrow"><%= t(".eyebrow") %></p>
+  <h1 class="invites-title"><%= t(".title") %></h1>
+  <p class="invites-subtitle"><%= t(".subtitle", days: Invite::LIFETIME.in_days.to_i) %></p>
 
   <%= form_with model: @invite, class: "invite-form" do |f| %>
-    <%= f.text_field :note, class: "form-input", maxlength: 100, autocomplete: "off",
+    <%= f.text_field :note, class: "invite-note", maxlength: 100, autocomplete: "off",
                             placeholder: t(".note_placeholder"), "aria-label": Invite.human_attribute_name(:note) %>
-    <%= f.submit t(".create"), class: "btn-primary" %>
+    <%= f.submit "＋ #{t('.create')}", class: "btn-pill-primary btn-pill-sm cursor-pointer" %>
   <% end %>
   <% @invite.errors.full_messages.each do |message| %>
     <p class="error-text mt-2"><%= message %></p>
   <% end %>
 
   <% if @invites.any? %>
-    <ul class="mt-6 space-y-3">
+    <ol class="invites-list">
       <%= render partial: "invites/invite", collection: @invites %>
-    </ul>
+    </ol>
   <% else %>
-    <p class="text-center text-gray-500 py-12"><%= t(".empty") %></p>
+    <p class="invites-empty"><%= t(".empty") %></p>
   <% end %>
 </section>

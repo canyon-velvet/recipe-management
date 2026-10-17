@@ -474,16 +474,21 @@ zh-CN:
     index:
       create: "创建邀请链接"
       empty: "还没有邀请。"
+      eyebrow: "注册"
       note_placeholder: "给谁（可选）"
       subtitle: "注册需要邀请。每个链接只能用一次，%{days} 天内有效。"
       title: "邀请"
     invite:
       confirm_delete: "删除这个邀请？链接将失效。"
       copied: "已复制"
-      copy: "复制"
+      copy: "复制链接"
       deleted_account: "已删除的账号"
-      expired: "已过期"
+      expired_ago: "%{time}前已过期"
       expires: "%{time}后过期"
       link: "邀请链接"
+      statuses:
+        active: "有效"
+        expired: "已过期"
+        used: "已使用"
       untitled: "邀请"
       used: "%{username} 已使用（%{time}前）"
