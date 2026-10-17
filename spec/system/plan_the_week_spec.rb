@@ -58,7 +58,7 @@ RSpec.describe "Planning the week", type: :system do
     find("button[data-meal-slot-id='#{slot.id}']").click
 
     within("dialog[open]") do
-      fill_in placeholder: "Search recipes...", with: search
+      fill_in placeholder: "Search recipes or ingredients...", with: search
       find("li", text: recipe_name).click
     end
 

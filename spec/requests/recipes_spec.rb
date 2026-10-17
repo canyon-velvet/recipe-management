@@ -157,4 +157,57 @@ RSpec.describe "Recipes", type: :request do
       expect(page_for(unlinked).at_css(".recipe-source").text.squish).to eq "From Yummy Toddler Food"
     end
   end
+
+  describe "searching" do
+    let(:breakfast) { create(:tag, key: "breakfast", kind: "meal") }
+
+    def with_ingredients(name, *ingredients, tags: [])
+      create(:recipe, user: user, name: name, tags: tags).tap do |recipe|
+        ingredients.each { |ingredient| recipe.recipe_ingredients.create!(ingredient: create(:ingredient, user: user, name: ingredient)) }
+      end
+    end
+
+    def listed = Nokogiri::HTML(response.body).css(".recipe-card-link").map { _1["aria-label"] }
+
+    before do
+      with_ingredients("Pancakes", "eggs", "flour", tags: [ breakfast ])
+      with_ingredients("Egg fried rice", "rice")
+      with_ingredients("Fried egg sandwich", "egg yolk", "bread")
+      with_ingredients("Tomato soup", "tomatoes")
+      someone_else = create(:user)
+      create(:recipe, user: someone_else, name: "Their egg tart").recipe_ingredients
+        .create!(ingredient: create(:ingredient, user: someone_else, name: "eggs"))
+    end
+
+    it "finds a recipe in the list by its name or one of its ingredients, among the user's own" do
+      get recipes_path(q: "egg")
+
+      expect(listed).to contain_exactly("Pancakes", "Egg fried rice", "Fried egg sandwich")
+    end
+
+    it "shows every recipe for a search that isn't text" do
+      get recipes_path(q: [ "egg" ])
+
+      expect(response).to have_http_status(:ok)
+      expect(listed.size).to eq 4
+    end
+
+    it "keeps the tag filter with an ingredient search" do
+      get recipes_path(q: "egg", tag: "breakfast")
+
+      expect(listed).to eq [ "Pancakes" ]
+    end
+
+    it "takes the text as it is, so a % in it matches only a %" do
+      get recipes_path(q: "%")
+
+      expect(listed).to be_empty
+    end
+
+    it "finds a recipe for the meal plan by its name or one of its ingredients" do
+      get search_recipes_path(q: "flour")
+
+      expect(response.parsed_body.pluck("name")).to eq [ "Pancakes" ]
+    end
+  end
 end

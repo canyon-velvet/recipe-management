@@ -30,7 +30,7 @@ turns a week of meals into a shopping list.
   amounts and units, steps in order, tags and the author's tips. It then waits in a Draft box
   until I review and save it. I can also type a recipe in by hand.
 - **Browse my collection.** Tag recipes by meal, cuisine, diet and convenience, then browse them
-  from a category sidebar or search by name.
+  from a category sidebar or search by name or ingredient.
 - **Plan the week.** Drop recipes into breakfast, lunch, dinner or snack for each day.
 - **Get the grocery list for free.** Ingredients from the week's meals are gathered into one
   list, grouped by store aisle in shopping order. I can rename, reorder and add aisles.

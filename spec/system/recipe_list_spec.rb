@@ -52,7 +52,7 @@ RSpec.describe "The recipe list", type: :system do
     log_in_as user
     visit recipes_path
 
-    fill_in "Search recipes", with: "soup"
+    fill_in "Search recipes or ingredients", with: "soup"
     expect(page).to have_text("1 recipe · matching “soup”")
     expect(page).to have_css(".recipe-card", count: 1, text: "Hot and Sour Soup")
     expect(page).to have_css("input[name='q']:focus")
@@ -63,7 +63,7 @@ RSpec.describe "The recipe list", type: :system do
     within(".tag-catalog") { click_link "Soup" }
     expect(page).to have_css("h1", text: "Soup")
     expect(page).to have_css(".recipe-card", count: 1, text: "Hot and Sour Soup")
-    expect(page).to have_field("Search recipes", with: "soup")
+    expect(page).to have_field("Search recipes or ingredients", with: "soup")
   end
 
   it "shows the login page whole when a search finds the session has ended" do
@@ -71,7 +71,7 @@ RSpec.describe "The recipe list", type: :system do
     visit recipes_path
     page.driver.with_playwright_page { |pw| pw.context.clear_cookies }
 
-    fill_in "Search recipes", with: "soup"
+    fill_in "Search recipes or ingredients", with: "soup"
 
     expect(page).to have_current_path(login_path)
     expect(page).to have_button("Log in")
@@ -80,9 +80,9 @@ RSpec.describe "The recipe list", type: :system do
   it "keeps searches out of the history, so Back leaves the page" do
     log_in_as user
     click_link "All Recipes"
-    fill_in "Search recipes", with: "soup"
+    fill_in "Search recipes or ingredients", with: "soup"
     expect(page).to have_text("matching “soup”")
-    fill_in "Search recipes", with: "minestrone"
+    fill_in "Search recipes or ingredients", with: "minestrone"
     expect(page).to have_text("matching “minestrone”")
 
     page.go_back
@@ -114,7 +114,7 @@ RSpec.describe "The recipe list", type: :system do
     expect(page).to have_css("button[aria-expanded='true']", text: "Search & filter")
 
     # Searching leaves it open, and the search box focused (the keyboard stays up)
-    fill_in "Search recipes", with: "o"
+    fill_in "Search recipes or ingredients", with: "o"
     expect(page).to have_text("matching “o”")
     expect(page).to have_css(".tag-catalog", visible: true)
     expect(page).to have_css("input[name='q']:focus")

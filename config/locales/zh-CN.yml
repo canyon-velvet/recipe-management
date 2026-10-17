@@ -222,7 +222,7 @@ zh-CN:
       matching: "匹配“%{query}”"
       new_recipe: "新建菜谱"
       search_and_filter: "搜索和筛选"
-      search_placeholder: "搜索菜谱"
+      search_placeholder: "搜索菜谱或食材"
       title: "全部菜谱"
     new:
       review_hint: "确认读取的内容后保存。标记为“新”的食材和来源会在保存时创建。"
@@ -315,7 +315,7 @@ zh-CN:
       remove: "把%{recipe}移出计划"
     recipe_search_modal:
       prompt: "输入关键词搜索"
-      search_placeholder: "搜索菜谱..."
+      search_placeholder: "搜索菜谱或食材..."
       title: "选择菜谱"
 
   grocery_lists:

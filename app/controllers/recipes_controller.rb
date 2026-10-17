@@ -7,7 +7,7 @@ class RecipesController < ApplicationController
     # An unknown or malformed ?tag= shows all recipes, so the list and the catalog always agree.
     @selected_tag = Tag.find_by(key: params[:tag]) if params[:tag].is_a?(String) && params[:tag].present?
     recipes = current_user.recipes.includes(:source, :tags)
-                          .search_by_name(params[:q])
+                          .search_by_name_or_ingredient(params[:q])
                           .tagged(@selected_tag&.key)
                           .order(updated_at: :desc)
     @pagy, @recipes = pagy(recipes)
@@ -16,7 +16,7 @@ class RecipesController < ApplicationController
   end
 
   def search
-    recipes = current_user.recipes.includes(:tags).search_by_name(params[:q]).order(:name).limit(20)
+    recipes = current_user.recipes.includes(:tags).search_by_name_or_ingredient(params[:q]).order(:name).limit(20)
     render json: recipes.map { |r| { id: r.id, name: r.name, tags: r.tags.map(&:name) } }
   end
 
