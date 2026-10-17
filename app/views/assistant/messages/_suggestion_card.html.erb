@@ -5,7 +5,9 @@
 <% category = t("preferences.categories.#{suggestion["category"]}.title") %>
 <li class="assistant-suggestion">
   <div class="assistant-suggestion-fact">
-    <span class="assistant-recipe-icon" aria-hidden="true">💡</span>
+    <span class="assistant-recipe-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.8 10.6c.6.6.8 1.4.8 2.4h6c0-1 .2-1.8.8-2.4A6 6 0 0 0 12 3z"/></svg>
+    </span>
     <span class="min-w-0">
       <span class="assistant-recipe-name"><%= category %>: <%= suggestion["value"] %></span>
       <% case suggestion["state"] %>
@@ -23,9 +25,9 @@
   <% if suggestion["state"] == "pending" %>
     <div class="assistant-suggestion-actions">
       <%= button_to t("assistant.suggestion.save"), save_assistant_message_suggestion_path(message, index),
-                    class: "btn-primary btn-sm w-full" %>
+                    class: "btn-pill-primary assistant-suggestion-button" %>
       <%= button_to t("assistant.suggestion.dismiss"), dismiss_assistant_message_suggestion_path(message, index),
-                    class: "btn-cancel btn-sm w-full" %>
+                    class: "btn-pill-secondary assistant-suggestion-button" %>
     </div>
   <% end %>
 </li>

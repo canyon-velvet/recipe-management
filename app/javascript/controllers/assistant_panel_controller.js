@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Opens and closes the assistant side panel, remembers that choice in a cookie (so the next page arrives the same
-// way, without a flash), keeps the chat scrolled to the newest message, and sends on Enter.
+// way, without a flash), keeps the chat scrolled to the newest message, fills in a starter, and sends on Enter.
 export default class extends Controller {
   static targets = ["panel", "toggle", "messages", "message", "form", "input", "submit"]
 
@@ -26,6 +26,12 @@ export default class extends Controller {
     const hadFocus = this.panelTarget.contains(document.activeElement)
     this.show(false)
     if (hadFocus && this.hasToggleTarget) this.toggleTarget.focus()
+  }
+
+  // A new chat's starter fills in the box, for the user to finish or send.
+  start({ params: { text } }) {
+    this.inputTarget.value = text
+    this.inputTarget.focus()
   }
 
   // A new message (sent or received) scrolls the chat to it.

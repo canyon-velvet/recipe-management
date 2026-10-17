@@ -1,8 +1,18 @@
 <%# locals: (conversation:) %>
 <%# The chat so far: its latest messages, so every page renders the same small panel however long the chat gets.
-    The hint shows only while it's empty (CSS hides it once a message is added). %>
+    The welcome shows only while it's empty (CSS hides it once a message is added); its starters fill in the box. %>
 <div id="assistant_messages" class="assistant-messages" data-assistant-panel-target="messages" aria-live="polite">
-  <p class="assistant-empty"><%= t("assistant.empty") %></p>
+  <div class="assistant-empty">
+    <span class="assistant-empty-mark" aria-hidden="true">✦</span>
+    <p class="assistant-empty-title"><%= t("assistant.welcome") %></p>
+    <p class="assistant-empty-lead"><%= t("assistant.empty") %></p>
+    <div class="assistant-starters">
+      <% t("assistant.starters").each do |starter| %>
+        <button type="button" class="assistant-starter" data-action="assistant-panel#start"
+                data-assistant-panel-text-param="<%= starter[:text] %>"><%= starter[:label] %></button>
+      <% end %>
+    </div>
+  </div>
   <% if conversation %>
     <% messages = Message.load_cards(conversation.recent_messages(50), conversation.user) %>
     <%= render partial: "assistant/messages/message", collection: messages, as: :message,
