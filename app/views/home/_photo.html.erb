@@ -2,7 +2,7 @@
 <%# The photo fills a 4:5 box, so the page is laid out before it downloads, whatever the photo's size. %>
 <% dinners = meal_plan ? meal_plan.recipes_for(Date.current, :dinner) : [] %>
 <div class="home-photo">
-  <%= image_tag "egg.jpg", alt: t(".image_alt"), class: "home-photo-image" %>
+  <%= image_tag "egg.jpg", alt: t(".image_alt"), class: "home-photo-image", fetchpriority: "high" %>
 
   <div class="home-tonight">
     <p class="home-tonight-label"><%= t(".tonight") %></p>
