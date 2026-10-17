@@ -55,6 +55,20 @@ RSpec.describe "Starting a meal plan", type: :system do
     expect(page).to have_current_path(meal_plans_path)
   end
 
+  it "opens as new again after ×" do
+    within("dialog[open]") do
+      find(".week-chip", text: "Other…").click
+      expect(page).to have_css("input[type=date]")
+      click_button "Close"
+    end
+
+    click_link "New meal plan"
+    within("dialog[open]") do
+      expect(page).to have_checked_field("Next week", visible: :all)
+      expect(page).to have_no_css("input[type=date]")
+    end
+  end
+
   it "closes on ×" do
     within("dialog[open]") do
       expect(page).to have_css("h2", text: "Plan a week")

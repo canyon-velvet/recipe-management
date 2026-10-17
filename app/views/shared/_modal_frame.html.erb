@@ -1,12 +1,13 @@
 <%# locals: (frame:, src:, labelledby:) %>
 <%# A roomy pop-up holding another page's form (new meal plan, import), which loads the first time it opens. Needs a
     modal controller on an ancestor. The form submits to the whole page, which goes on, or shows the form again on a
-    page of its own with its problem. Closed before Turbo caches the page, so Back doesn't bring it back open. %>
+    page of its own with its problem. Once closed, the form is loaded again, so the next open starts afresh. Closed
+    before Turbo caches the page, so Back doesn't bring it back open. %>
 <dialog data-modal-target="dialog" class="modal-dialog--roomy" aria-labelledby="<%= labelledby %>"
-        data-action="click->modal#backdropClose close->modal#close turbo:before-cache@document->modal#close">
+        data-action="click->modal#backdropClose close->modal#closed turbo:before-cache@document->modal#close">
   <div class="modal-panel modal-panel--roomy">
     <button type="button" class="modal-close" data-action="modal#close" aria-label="<%= t("actions.close") %>">×</button>
-    <%= turbo_frame_tag frame, src: src, loading: :lazy do %>
+    <%= turbo_frame_tag frame, src: src, loading: :lazy, data: { modal_target: "frame" } do %>
       <p class="help-text"><%= t(".loading") %></p>
     <% end %>
   </div>

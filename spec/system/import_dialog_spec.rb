@@ -43,6 +43,21 @@ RSpec.describe "Importing from the recipe list's pop-up", type: :system do
     expect(page).to have_css("h2", text: "Bring in a recipe")
   end
 
+  it "opens as new again after Cancel" do
+    within("dialog[open]") do
+      fill_in "Recipe link", with: "https://example.com/apple-cake"
+      find(".import-paste-toggle").click
+      expect(page).to have_field("Paste the recipe text instead")
+      click_link "Cancel"
+    end
+
+    click_link "Import recipe"
+    within("dialog[open]") do
+      expect(page).to have_field("Recipe link", with: "")
+      expect(page).to have_no_field("Paste the recipe text instead")
+    end
+  end
+
   it "closes on Cancel and on ×" do
     within("dialog[open]") { click_link "Cancel" }
     expect(page).to have_no_css("dialog[open]")
