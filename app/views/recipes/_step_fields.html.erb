@@ -1,6 +1,6 @@
 <%# locals: (form:) %>
-<%# A step: its number, its text and ×. In reorder mode the text collapses to a one-line preview, which drags, and a
-    handle that also moves the step with ↑ ↓. %>
+<%# A step: its number, its text and ×. In reorder mode the text collapses to a one-line preview, which drags with a
+    mouse (on a touch screen it scrolls the page), and a handle that drags and also moves the step with ↑ ↓. %>
 <div data-nested-form-row data-step-list-target="step"
      class="step-row <%= "hidden" if form.object.marked_for_destruction? %>">
   <span class="step-number" data-step-list-target="number"><%= form.object.position %></span>
@@ -8,7 +8,7 @@
   <%= form.hidden_field :_destroy if form.object.persisted? %>
 
   <%= form.text_area :body, rows: 3, class: "form-textarea flex-1", placeholder: t(".placeholder") %>
-  <p class="step-preview" data-step-list-target="preview" data-action="pointerdown->step-list#startDrag"></p>
+  <p class="step-preview" data-step-list-target="preview" data-action="pointerdown->step-list#startDragByRow"></p>
   <button type="button" class="step-handle" aria-label="<%= t(".move", number: form.object.position) %>"
           data-step-list-target="handle"
           data-action="pointerdown->step-list#startDrag keydown->step-list#moveWithKeys">

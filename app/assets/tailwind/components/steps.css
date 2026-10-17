@@ -12,7 +12,8 @@
            bg-sectiontext/40 text-sm font-semibold text-white;
   }
 
-  /* Reorder mode: each step collapses to a one-line preview that drags, with a handle that also takes ↑ ↓ */
+  /* Reorder mode: each step collapses to a one-line preview, which drags with a mouse; on a touch screen it scrolls the
+     page, and the handle drags. The handle also takes ↑ ↓. */
   .steps-toolbar { @apply mb-3 flex justify-end; }
   .step-preview,
   .step-handle   { @apply hidden; }
@@ -24,10 +25,10 @@
   .steps--reordering .step-actions,
   .steps--reordering .step-add { @apply hidden; }
   .steps--reordering .step-preview {
-    @apply block min-w-0 flex-1 cursor-grab touch-none truncate text-sm text-gray-700 select-none;
+    @apply block min-w-0 flex-1 cursor-grab truncate text-sm text-gray-700 select-none;
   }
   .steps--reordering .step-handle {
-    @apply block cursor-grab touch-none rounded px-1 text-gray-400 hover:text-gray-700
+    @apply -my-1 block cursor-grab touch-none rounded px-3 py-2 text-gray-400 hover:text-gray-700
            focus-visible:outline-2 focus-visible:outline-sectiontext;
   }
   .step-row--lifted { @apply relative z-10 shadow-xl ring-1 ring-sectiontext/30; }

@@ -61,13 +61,25 @@ RSpec.describe "Reordering a recipe's steps", type: :system do
     expect(saved_steps).to eq [ "Fry the garlic", "Soak the beans", "Boil them", "Mix and serve" ]
   end
 
+  it "lets a finger scroll the page over the steps' text, and drag only by the handle" do
+    touch_action = ->(selector) { page.evaluate_script("getComputedStyle(document.querySelector('#{selector}')).touchAction") }
+    expect(touch_action.(".step-preview")).to eq "auto"
+    expect(touch_action.(".step-handle")).to eq "none"
+
+    page.execute_script(<<~JS)
+      document.querySelector(".step-preview").dispatchEvent(
+        new PointerEvent("pointerdown", { bubbles: true, cancelable: true, pointerId: 1, pointerType: "touch" }))
+    JS
+    expect(page).to have_no_css(".step-row--lifted")
+  end
+
   it "leaves a step pressed near the bottom of the screen where it is, without scrolling" do
     page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: 390, height: 844) }
     scrolled = page.evaluate_async_script(<<~JS)
       const done = arguments[0], before = scrollY, y = innerHeight - 10
-      const fire = (target, type) =>
-        target.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 1, clientY: y }))
-      fire([...document.querySelectorAll(".step-preview")].at(-1), "pointerdown")
+      const fire = (target, type) => target.dispatchEvent(
+        new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 1, pointerType: "touch", clientY: y }))
+      fire([...document.querySelectorAll(".step-handle")].at(-1), "pointerdown")
       setTimeout(() => { fire(document, "pointerup"); done(scrollY - before) }, 300)
     JS
 
@@ -78,9 +90,9 @@ RSpec.describe "Reordering a recipe's steps", type: :system do
 
   it "ignores a second finger while one step is being dragged" do
     page.execute_script(<<~JS)
-      const [first, , third] = document.querySelectorAll(".step-preview")
-      const fire = (target, type, pointerId, y) =>
-        target.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, pointerId, clientY: y }))
+      const [first, , third] = document.querySelectorAll(".step-handle")
+      const fire = (target, type, pointerId, y) => target.dispatchEvent(
+        new PointerEvent(type, { bubbles: true, cancelable: true, pointerId, pointerType: "touch", clientY: y }))
       fire(first, "pointerdown", 1, 0)
       fire(third, "pointerdown", 2, 0)
       fire(document, "pointerup", 1, 0)

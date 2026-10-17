@@ -4,7 +4,8 @@ const EDGE = 60 // how near the top or bottom of the screen a drag scrolls the p
 const NUDGE = 8 // how far the pointer moves before edge scrolling starts, so a press on a row near an edge stays put
 
 // Reorders recipe step rows and keeps their visible numbers and hidden position fields in DOM order. Reorder mode
-// collapses each step to its first line: drag a row with the mouse or a finger, or focus its handle and use ↑ ↓.
+// collapses each step to its first line: drag a row with the mouse, or its handle with a finger, or focus the handle
+// and use ↑ ↓.
 export default class extends Controller {
   static targets = ["step", "number", "position", "preview", "handle", "toggle", "toggleLabel", "status"]
   static values = { reorderText: String, doneText: String, moveText: String, movedText: String }
@@ -25,6 +26,11 @@ export default class extends Controller {
       const body = preview.closest("[data-step-list-target='step']").querySelector("textarea")
       preview.textContent = body.value || body.placeholder
     })
+  }
+
+  // A step's text drags only with a mouse: on a touch screen a swipe on it scrolls the page, and its handle drags
+  startDragByRow(event) {
+    if (event.pointerType === "mouse") this.startDrag(event)
   }
 
   // One drag at a time, following only the pointer that started it (a second finger is ignored)
