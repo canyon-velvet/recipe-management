@@ -10,4 +10,8 @@
     <% end %>
   </div>
   <p class="preferences-hint"><%= t(".add_hint") %></p>
+
+  <div class="preferences-sheet">
+    <%= render "preferences/time_zone", user: current_user %>
+  </div>
 </section>

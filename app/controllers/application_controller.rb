@@ -8,6 +8,8 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   before_action :authenticate_user!
+  # "Today" and "this week" (tonight's dinner, the current meal plan) follow the user's time zone
+  around_action :use_time_zone, if: :logged_in?
 
   helper_method :current_user, :logged_in?, :assistant_available?, :assistant_open?
 
@@ -46,6 +48,10 @@ class ApplicationController < ActionController::Base
 
   def authenticate_user!
     redirect_to login_path, alert: t("flash.login_required") unless logged_in?
+  end
+
+  def use_time_zone(&action)
+    Time.use_zone(current_user.time_zone, &action)
   end
 
   def require_admin

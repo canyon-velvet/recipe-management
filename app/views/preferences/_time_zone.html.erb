@@ -1,0 +1,19 @@
+<%# locals: (user:, saved: false) %>
+<%# The user's time zone, in its own frame: picking one saves it (auto-submit), and the frame comes back saying so.
+    US zones are listed first. %>
+<%= turbo_frame_tag "time_zone" do %>
+  <%= form_with model: user, url: time_zone_path, method: :patch, class: "preference-row",
+                data: { controller: "auto-submit" } do |f| %>
+    <div class="preference-label">
+      <%= f.label :time_zone, t(".title"), class: "preference-title" %>
+      <p class="preference-hint"><%= t(".hint") %></p>
+    </div>
+    <div class="preference-values preference-time-zone">
+      <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.us_zones, {},
+                             class: "preference-select", data: { action: "auto-submit#submit" } %>
+      <% if saved %>
+        <span class="preference-saved" role="status"><%= t(".saved") %></span>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

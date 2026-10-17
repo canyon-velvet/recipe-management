@@ -48,6 +48,22 @@ RSpec.describe "Home page", type: :request do
     expect(response.body).to include(%(href="#{meal_plan_path(plan)}"))
   end
 
+  it "works out tonight in the user's time zone" do
+    # Sunday 18 Oct, 10 pm in Chicago: already Monday in UTC
+    travel_to Time.utc(2026, 10, 19, 3)
+    sunday_dinner = create(:recipe, user: user, name: "Sunday roast")
+    plan = user.meal_plans.create!(start_date: Date.new(2026, 10, 12), end_date: Date.new(2026, 10, 18))
+    plan.meal_slots.find_by!(day_of_week: "sunday", meal_type: "dinner").recipes << sunday_dinner
+    log_in
+
+    get root_path
+    expect(Nokogiri::HTML(response.body).at_css(".home-tonight").text).to include("Sunday roast")
+
+    user.update!(time_zone: "UTC")
+    get root_path
+    expect(Nokogiri::HTML(response.body).at_css(".home-tonight").text).to include("Nothing planned yet")
+  end
+
   it "shows the latest recipes, and leaves the section out for a new account" do
     log_in
 

@@ -379,6 +379,10 @@ zh-CN:
 
   preferences:
     remove: "删除%{value}"
+    time_zone:
+      hint: "决定“今天”和“本周”从何时开始：首页的今晚晚餐，以及哪份餐计划算作本周。"
+      saved: "✓ 已保存"
+      title: "时区"
     index:
       add_hint: "在虚线框里输入，按回车即可添加。"
       eyebrow: "供助手参考"

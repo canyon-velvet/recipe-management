@@ -15,6 +15,7 @@ class User < ApplicationRecord
                        uniqueness: { case_sensitive: false },
                        length: { minimum: 2, maximum: 50 }
   validates :password, length: { minimum: 6 }, on: :create
+  validates :time_zone, inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
 
   normalizes :username, with: ->(username) { username.strip }
 
@@ -34,7 +35,7 @@ class User < ApplicationRecord
   # The user's "avoid" preferences, e.g. ["peanut", "花生"]. Recipes with them are flagged, not hidden.
   def avoided_ingredients = preferences.avoid.pluck(:value)
 
-  # Whether the user has sent the assistant Message::DAILY_LIMIT messages today (UTC).
+  # Whether the user has sent the assistant Message::DAILY_LIMIT messages today (in their time zone).
   def assistant_limit_reached?
     conversation_messages.where(role: :user, created_at: Time.current.all_day).count >= Message::DAILY_LIMIT
   end
