@@ -15,6 +15,7 @@ RSpec.describe Invite do
 
     expect(Invite.usable).to contain_exactly(open)
     expect([ open, used, expired ].map(&:usable?)).to eq [ true, false, false ]
+    expect([ open, used, expired ].map(&:state)).to eq %w[active used expired]
   end
 
   describe "#redeem" do
