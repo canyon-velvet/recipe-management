@@ -331,11 +331,17 @@ en:
       title: "Choose a recipe"
 
   grocery_lists:
-    show:
-      back: "Back to meal plan"
+    grocery_item:
+      recipe_count:
+        one: "%{count} recipe"
+        other: "%{count} recipes"
+    list:
       empty: "Your grocery list is empty"
       empty_hint: "Tick a recipe's grocery checkbox in the meal plan to add its ingredients."
       pantry: "Already have"
+      pantry_hint: "Tap one to put it back on the list."
+      summary_html: "<strong>%{to_buy}</strong> to buy · %{have} already have"
+    show:
       title: "Grocery List"
 
   aisle_editor:

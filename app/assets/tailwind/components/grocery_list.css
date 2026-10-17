@@ -1,19 +1,45 @@
-.grocery-card {
-  @apply rounded-xl border border-gray-200 bg-white overflow-hidden;
-}
+@layer components {
+  /* The grocery list: the header (meal_grid.css's, as on the week's page), how much is left to buy as a bar and a
+     line, then a white card per aisle in shopping order and Already have at the end */
+  .grocery-page          { @apply mx-auto max-w-3xl py-4; }
+  .grocery-progress      { @apply mt-5 flex items-center gap-3; }
+  .grocery-progress-text { @apply text-sm text-gray-600; }
+  .grocery-progress-text strong { @apply text-gray-900; }
+  .grocery-aisles        { @apply mt-7 flex flex-col gap-4; }
+  .grocery-empty         { @apply py-16 text-center text-gray-500; }
 
-.grocery-card-header {
-  @apply px-4 py-2.5 bg-gray-50 font-semibold text-sm text-gray-700 border-b border-gray-200;
-}
+  .grocery-card {
+    @apply overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-100;
+  }
+  .grocery-card-header {
+    @apply flex items-center justify-between border-b border-sectiontext/10 px-5 py-3.5 text-xs font-semibold
+           uppercase tracking-[0.2em] text-sectiontext;
+  }
+  .grocery-aisle-count { @apply font-medium tracking-normal text-gray-500; }
+  .grocery-items       { @apply px-2 py-1.5; }
 
-.grocery-item {
-  @apply flex items-center gap-3 px-4 py-2 border-b border-gray-100 last:border-b-0;
-}
+  /* An item: a round box that fills brown when ticked, the name, and how many recipes use it */
+  .grocery-item-label {
+    @apply flex min-h-12 cursor-pointer items-center gap-3.5 rounded-2xl px-3 py-1.5 hover:bg-sectionbackground/60;
+  }
+  .grocery-check {
+    @apply size-5.5 flex-none cursor-pointer appearance-none rounded-full border-2 border-sectiontext/35
+           checked:border-sectiontext-light checked:bg-sectiontext-light checked:shadow-[inset_0_0_0_3px_white]
+           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sectiontext-light;
+  }
+  .grocery-item-name   { @apply min-w-0 flex-1 text-[15px] text-gray-900; }
+  .grocery-count-badge {
+    @apply flex-none rounded-full bg-sectionbackground px-2.5 py-0.5 text-xs font-medium text-sectiontext;
+  }
 
-.grocery-item--pantry {
-  @apply opacity-50;
-}
-
-.grocery-count-badge {
-  @apply inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-sectiontext-light text-white text-xs font-medium;
+  /* Already have: crossed-out pills under "—— ALREADY HAVE ——" (.recipe-section-heading); tapping one unticks it */
+  .grocery-pantry       { @apply mt-10; }
+  .grocery-pantry-list  { @apply mt-3 flex flex-wrap gap-2; }
+  .grocery-pantry-hint  { @apply mt-2.5 text-xs text-gray-500; }
+  .grocery-item--pantry .grocery-item-label {
+    @apply min-h-10 gap-2 rounded-full bg-gray-100 px-3 py-0 hover:bg-gray-200;
+  }
+  .grocery-item--pantry .grocery-check     { @apply size-4.5; }
+  .grocery-item--pantry .grocery-item-name { @apply text-sm text-gray-500 line-through; }
+  .grocery-item--pantry .grocery-count-badge { @apply hidden; }
 }
