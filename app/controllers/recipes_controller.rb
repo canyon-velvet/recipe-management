@@ -29,6 +29,7 @@ class RecipesController < ApplicationController
 
   def create
     @recipe = current_user.recipes.build(recipe_params)
+    ensure_own_records!
 
     if save_recipe
       redirect_to recipe_path(@recipe), notice: t(@draft ? "flash.recipe_saved_from_draft" : "flash.recipe_created")
@@ -41,7 +42,10 @@ class RecipesController < ApplicationController
   end
 
   def update
-    if @recipe.update(recipe_params)
+    @recipe.assign_attributes(recipe_params)
+    ensure_own_records!
+
+    if @recipe.save
       sync_grocery_lists(@recipe.meal_plans)
       redirect_to recipe_path(@recipe), notice: t("flash.recipe_updated")
     else
@@ -65,6 +69,13 @@ class RecipesController < ApplicationController
   # Reviewing a Ready draft from the Draft box prefills the form; saving it empties the draft.
   def set_draft
     @draft = current_user.drafts.ready.find(params[:draft_id]) if params[:draft_id].present?
+  end
+
+  # The form's source and ingredients must be the user's own. The models refuse to save anyone else's, but by then
+  # the form would show its name, so another user's id is not found at all.
+  def ensure_own_records!
+    records = [ @recipe.source, *@recipe.recipe_ingredients.map(&:ingredient) ].compact
+    raise ActiveRecord::RecordNotFound unless records.all? { |record| record.user_id == current_user.id }
   end
 
   # Both happen or neither does, so a saved draft never stays in the Draft box.
