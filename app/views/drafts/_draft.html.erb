@@ -1,23 +1,32 @@
 <%# locals: (draft:) %>
-<div id="<%= dom_id(draft) %>" class="draft-card">
-  <div class="min-w-0">
-    <h3 class="font-semibold text-gray-900 truncate"><%= draft.title %></h3>
-    <p class="text-sm text-gray-500 mt-1 truncate">
+<%# A draft's row: a tile for where it's at (a spinner while it's read, ✓ when ready, ! when it failed), its title
+    and status, where it's from and when, the reason when it failed, then what can be done with it. Replaced live as
+    the import goes on (DraftBoxBroadcasts). %>
+<li id="<%= dom_id(draft) %>" class="draft-row">
+  <span class="draft-icon draft-icon--<%= draft.status %>" aria-hidden="true">
+    <%= { "ready" => "✓", "failed" => "!" }[draft.status] %>
+  </span>
+
+  <div class="draft-body">
+    <div class="draft-heading">
+      <h2 class="draft-title"><%= draft.title %></h2>
+      <span class="draft-status draft-status--<%= draft.status %>"><%= t("drafts.statuses.#{draft.status}") %></span>
+    </div>
+    <p class="draft-meta">
       <%= draft.source_host || draft.source_url || t("drafts.pasted_text") %> · <%= t(".added", time: time_ago_in_words(draft.created_at)) %>
     </p>
     <% if draft.failed? %>
-      <p class="error-text mt-2"><%= t("drafts.failures.#{draft.failure_reason_key}", default: t("drafts.failures.generic")) %></p>
+      <p class="draft-failure"><%= t("drafts.failures.#{draft.failure_reason_key}", default: t("drafts.failures.generic")) %></p>
     <% end %>
   </div>
 
-  <div class="flex items-center gap-2 flex-none">
-    <span class="draft-status draft-status--<%= draft.status %>"><%= t("drafts.statuses.#{draft.status}") %></span>
+  <div class="draft-actions">
     <% if draft.ready? %>
-      <%= link_to t(".review"), new_recipe_path(draft_id: draft.id), class: "btn-primary btn-sm" %>
+      <%= link_to t(".review"), new_recipe_path(draft_id: draft.id), class: "btn-pill-primary btn-pill-sm" %>
     <% elsif draft.failed? && draft.source_url %>
-      <%= link_to t(".paste_instead"), new_import_path(url: draft.source_url, paste: 1), class: "btn-secondary btn-sm" %>
+      <%= link_to t(".paste_instead"), new_import_path(url: draft.source_url, paste: 1), class: "btn-pill-secondary btn-pill-sm" %>
     <% end %>
-    <%= button_to t(".discard"), draft_path(draft), method: :delete, class: "btn-cancel btn-sm",
+    <%= button_to t(".discard"), draft_path(draft), method: :delete, class: "btn-pill-ghost btn-pill-sm",
                   form: { data: { turbo_confirm: t(".confirm_discard", title: draft.title) } } %>
   </div>
-</div>
+</li>

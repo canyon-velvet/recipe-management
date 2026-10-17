@@ -425,6 +425,7 @@ en:
       not_a_recipe: "We didn't find a recipe here."
     index:
       empty: "No drafts yet."
+      eyebrow: "Your imports"
       subtitle: "Imported recipes wait here until you save or discard them."
       title: "Draft box"
     pasted_text: "Pasted text"

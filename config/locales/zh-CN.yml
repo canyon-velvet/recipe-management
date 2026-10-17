@@ -414,6 +414,7 @@ zh-CN:
       not_a_recipe: "这里没有找到菜谱。"
     index:
       empty: "还没有草稿"
+      eyebrow: "我的导入"
       subtitle: "导入的菜谱会在这里等待，直到你保存或丢弃。"
       title: "草稿箱"
     pasted_text: "粘贴的文本"
