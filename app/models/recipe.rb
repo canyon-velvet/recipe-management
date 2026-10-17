@@ -1,4 +1,6 @@
 class Recipe < ApplicationRecord
+  include NameSearchable
+
   belongs_to :source, autosave: true
   belongs_to :user
   has_many :recipe_ingredients, dependent: :destroy, inverse_of: :recipe
@@ -41,7 +43,6 @@ class Recipe < ApplicationRecord
   # validation comes back with Total still blank and keeps adding up later changes.
   before_save :fill_total_minutes, if: -> { total_minutes.nil? && prep_minutes && cook_minutes }
 
-  scope :search_by_name, ->(query) { where("name ILIKE ?", "%#{query}%") if query.present? }
   scope :tagged, ->(tag_key) {
     where(id: RecipeTag.joins(:tag).where(tags: { key: tag_key }).select(:recipe_id)) if tag_key.present?
   }

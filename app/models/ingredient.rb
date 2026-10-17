@@ -1,4 +1,6 @@
 class Ingredient < ApplicationRecord
+  include NameSearchable
+
   belongs_to :user
   belongs_to :aisle
   has_many :recipe_ingredients, dependent: :restrict_with_error
@@ -11,7 +13,6 @@ class Ingredient < ApplicationRecord
   normalizes :name, with: ->(name) { name.strip }
 
   scope :alphabetical, -> { order(:name) }
-  scope :named, ->(name) { where("lower(name) = lower(?)", name.strip) }
 
   private
 
