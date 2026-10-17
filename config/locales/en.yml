@@ -391,7 +391,7 @@ en:
   preferences:
     remove: "Remove %{value}"
     time_zone:
-      hint: "When “today” and “this week” begin: tonight’s dinner on the home page, and which meal plan is this week’s."
+      hint: "Select your time zone."
       saved: "✓ Saved"
       title: "Time zone"
     index:

@@ -380,7 +380,7 @@ zh-CN:
   preferences:
     remove: "删除%{value}"
     time_zone:
-      hint: "决定“今天”和“本周”从何时开始：首页的今晚晚餐，以及哪份餐计划算作本周。"
+      hint: "选择你所在的时区。"
       saved: "✓ 已保存"
       title: "时区"
     index:
