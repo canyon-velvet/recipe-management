@@ -1,10 +1,12 @@
-<section class="container mx-auto max-w-3xl px-4 py-8">
-  <h1 class="text-2xl font-bold"><%= t(".title") %></h1>
-  <p class="text-sm text-gray-500 mt-1 mb-6"><%= t(".subtitle") %></p>
+<section class="preferences-page">
+  <h1 class="preferences-title"><%= t(".title") %></h1>
+  <p class="preferences-subtitle"><%= t(".subtitle") %></p>
 
-  <div class="space-y-4">
+  <%# One sheet, a row per category, each row its own Turbo Frame %>
+  <div class="preferences-sheet">
     <% Preference::CATEGORIES.each do |category| %>
       <%= render "preferences/card", category: category, preferences: @preferences.fetch(category, []) %>
     <% end %>
   </div>
+  <p class="preferences-hint"><%= t(".add_hint") %></p>
 </section>

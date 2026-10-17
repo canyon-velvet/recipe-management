@@ -1,19 +1,39 @@
 @layer components {
-  /* Preferences page: each category's facts as removable chips, with a box to add one */
-  .preference-title {
-    @apply text-lg font-semibold text-sectiontext;
+  /* Preferences page: one white sheet, a row per category with its name and hint beside its facts as removable
+     chips, and a dashed chip to type a new one in. Avoid, which the assistant warns about, is tinted red. */
+  .preferences-page     { @apply mx-auto max-w-4xl py-10; }
+  .preferences-title    { @apply text-3xl font-bold tracking-tight text-gray-900; }
+  .preferences-subtitle { @apply mt-1 text-sm text-gray-500; }
+  .preferences-sheet {
+    @apply mt-6 overflow-hidden rounded-3xl border border-gray-200 bg-white;
   }
-  .preference-list {
-    @apply flex flex-wrap gap-2 mb-3;
+  .preferences-hint     { @apply mt-3 px-1 text-xs text-gray-500; }
+
+  .preference-row {
+    @apply flex flex-wrap gap-x-8 gap-y-4 px-6 py-5.5;
   }
+  .preference-row + .preference-row { @apply border-t border-sectiontext/12; }
+  .preference-row--avoid            { @apply bg-red-50/40; }
+  .preference-label  { @apply min-w-0 max-w-60 flex-[1_1_12.5rem]; }
+  .preference-title  { @apply text-base font-semibold text-gray-900; }
+  .preference-row--avoid .preference-title { @apply text-red-700; }
+  .preference-hint   { @apply mt-1 text-[13px] leading-relaxed text-gray-500; }
+  .preference-values { @apply min-w-0 flex-[999_1_20rem]; }
+
+  .preference-list { @apply flex flex-wrap gap-2; }
   .preference-chip {
-    @apply inline-flex items-center gap-1 rounded-full border border-gray-300 bg-white py-1 pl-3 pr-1 text-sm text-gray-800;
+    @apply inline-flex h-8.5 items-center gap-0.5 rounded-full bg-sectionbackground py-0 pr-1 pl-3.5 text-sm
+           font-medium text-sectiontext;
   }
+  .preference-row--avoid .preference-chip { @apply bg-red-100 text-red-800; }
   .preference-remove {
-    @apply flex h-5 w-5 items-center justify-center rounded-full leading-none text-gray-400 hover:bg-gray-100
-           hover:text-red-600 cursor-pointer;
+    @apply flex size-6 cursor-pointer items-center justify-center rounded-full leading-none opacity-60
+           hover:bg-white/70 hover:opacity-100;
   }
-  .preference-form {
-    @apply flex gap-2;
+  .preference-input {
+    @apply h-8.5 w-44 rounded-full border border-dashed border-sectiontext/40 bg-transparent px-3.5 text-sm
+           placeholder:text-gray-400 focus:border-solid focus:border-sectiontext-light focus:outline-none
+           focus:ring-2 focus:ring-sectiontext-light/30;
   }
+  .preference-row--avoid .preference-input { @apply border-red-300; }
 }
