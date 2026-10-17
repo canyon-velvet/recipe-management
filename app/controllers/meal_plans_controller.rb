@@ -1,5 +1,6 @@
 class MealPlansController < ApplicationController
   before_action :set_meal_plan, only: [ :show, :destroy ]
+  before_action :set_week_choices, only: [ :new, :create ]
 
   def index
     meal_plans = current_user.meal_plans.order(start_date: :desc)
@@ -19,10 +20,11 @@ class MealPlansController < ApplicationController
     end
   end
 
+  # The first week offered that isn't planned yet, from next week (this week too on a Monday); none if all are
   def new
-    @meal_plan = MealPlan.new
-    @meal_plan.start_date = Date.current.beginning_of_week(:monday)
-    @meal_plan.start_date += 7.days unless @meal_plan.start_date == Date.current
+    earliest = Date.current.monday? ? Date.current : Date.current.next_week(:monday)
+    start_date = (@mondays - @planned_mondays).find { |monday| monday >= earliest }
+    @meal_plan = MealPlan.new(start_date: start_date)
   end
 
   def create
@@ -45,6 +47,11 @@ class MealPlansController < ApplicationController
 
   def set_meal_plan
     @meal_plan = current_user.meal_plans.find(params[:id])
+  end
+
+  def set_week_choices
+    @mondays = MealPlan.upcoming_mondays
+    @planned_mondays = current_user.meal_plans.where(start_date: @mondays).pluck(:start_date)
   end
 
   def meal_plan_params

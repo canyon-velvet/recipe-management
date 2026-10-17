@@ -1,32 +1,58 @@
-<section class="container mx-auto max-w-md px-4 py-8">
-  <h1 class="text-2xl font-bold mb-6"><%= t(".title") %></h1>
+<%# Shown in the meal plan list's pop-up (meal_plans/new_dialog), and as a page of its own from other links %>
+<section class="meal-plan-new-page modal-panel modal-panel--roomy">
+  <%= turbo_frame_tag "new_meal_plan" do %>
+    <p class="home-eyebrow"><%= t(".title") %></p>
+    <h2 id="new_meal_plan_title" class="modal-heading"><%= t(".heading") %></h2>
 
-  <%= form_with model: @meal_plan, class: "space-y-6" do |f| %>
-    <% if @meal_plan.errors.any? %>
-      <div class="bg-red-50 border border-red-300 text-red-700 rounded-md p-3">
-        <ul class="list-disc list-inside text-sm">
-          <% @meal_plan.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
+    <%= form_with model: @meal_plan, class: "space-y-6", data: { turbo_frame: "_top" } do |f| %>
+      <% if @meal_plan.errors.any? %>
+        <div class="bg-red-50 border border-red-300 text-red-700 rounded-md p-3">
+          <ul class="list-disc list-inside text-sm">
+            <% @meal_plan.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%# The next weeks, or "Other…" and a date in any week; a week that already has a plan can't be picked %>
+      <% other = !@mondays.include?(@meal_plan.start_date) %>
+      <fieldset class="field" data-controller="week-picker" data-action="change->week-picker#toggle">
+        <legend class="form-label"><%= t(".week") %></legend>
+        <div class="week-chips">
+          <% @mondays.each_with_index do |monday, index| %>
+            <% planned = @planned_mondays.include?(monday) %>
+            <label class="week-chip">
+              <%= f.radio_button :start_date, monday, disabled: planned, class: "sr-only" %>
+              <span class="week-chip-label"><%= t(".week_labels")[index] %></span>
+              <span class="week-chip-detail"><%= planned ? t(".planned") : format_week_of(monday) %></span>
+            </label>
           <% end %>
-        </ul>
+          <label class="week-chip">
+            <%= f.radio_button :start_date, "", checked: other, class: "sr-only",
+                  data: { week_picker_target: "other" } %>
+            <span class="week-chip-label"><%= t(".other") %></span>
+            <span class="week-chip-detail"><%= t(".pick_a_date") %></span>
+          </label>
+        </div>
+
+        <%= tag.div class: "space-y-1 pt-2", hidden: !other, data: { week_picker_target: "field" } do %>
+          <%= f.date_field :start_date, class: "form-input", disabled: !other, aria: { label: t(".week") },
+                data: { week_picker_target: "input", action: "change->week-picker#snap" } %>
+          <p class="help-text"><%= t(".week_help") %></p>
+        <% end %>
+      </fieldset>
+
+      <div class="field">
+        <%= f.label :name, t(".name"), class: "form-label" %>
+        <%= f.text_field :name, class: "form-input", placeholder: t(".name_placeholder") %>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <%= link_to t("actions.cancel"), meal_plans_path, class: "btn-pill-ghost btn-pill-sm",
+              data: { turbo_frame: "_top", action: "modal#close:prevent" } %>
+        <%= f.submit t(".create"), class: "btn-pill-primary btn-pill-sm cursor-pointer" %>
       </div>
     <% end %>
-
-    <div class="field">
-      <%= f.label :name, t(".name"), class: "form-label" %>
-      <%= f.text_field :name, class: "form-input", placeholder: t(".name_placeholder") %>
-    </div>
-
-    <div class="field" data-controller="week-picker">
-      <%= f.label :start_date, t(".week"), class: "form-label" %>
-      <%= f.date_field :start_date, class: "form-input",
-            data: { week_picker_target: "input", action: "change->week-picker#snap" } %>
-      <p class="help-text"><%= t(".week_help") %></p>
-    </div>
-
-    <div class="flex items-center gap-3 pt-4">
-      <%= f.submit t(".create"), class: "btn-primary" %>
-      <%= link_to t("actions.cancel"), meal_plans_path, class: "btn-cancel" %>
-    </div>
   <% end %>
 </section>

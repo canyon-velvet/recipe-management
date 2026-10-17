@@ -16,6 +16,9 @@ class MealPlan < ApplicationRecord
   # The plan for the week a date falls in (weeks start on Monday)
   scope :for_week_of, ->(date) { where(start_date: date.beginning_of_week(:monday)) }
 
+  # This week's Monday and the next two: the weeks offered for a new plan
+  def self.upcoming_mondays = Array.new(3) { |n| Date.current.beginning_of_week(:monday) + n.weeks }
+
   after_create :create_meal_slots
   after_create :create_grocery_list
 

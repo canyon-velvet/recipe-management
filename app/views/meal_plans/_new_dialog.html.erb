@@ -1,0 +1,11 @@
+<%# Needs a modal controller on an ancestor. The form (meal_plans/new) loads the first time the pop-up opens; it
+    submits to the whole page, which goes to the new plan, or shows the form again with its problem. %>
+<dialog data-modal-target="dialog" data-action="click->modal#backdropClose close->modal#close"
+        class="modal-dialog--roomy" aria-labelledby="new_meal_plan_title">
+  <div class="modal-panel modal-panel--roomy">
+    <button type="button" class="modal-close" data-action="modal#close" aria-label="<%= t("actions.close") %>">×</button>
+    <%= turbo_frame_tag "new_meal_plan", src: new_meal_plan_path, loading: :lazy do %>
+      <p class="help-text"><%= t(".loading") %></p>
+    <% end %>
+  </div>
+</dialog>

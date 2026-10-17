@@ -12,4 +12,14 @@ dialog[open] {
   .modal-title {
     @apply text-lg font-semibold text-gray-900 mb-4;
   }
+
+  /* A roomier pop-up, for a task more than a question (starting a meal plan): wider and rounder, with a larger
+     heading (under a .home-eyebrow label) and a × in the corner. The dialog takes the panel's width and rounding. */
+  .modal-dialog--roomy { @apply w-full max-w-xl rounded-[1.75rem] p-0 backdrop:bg-black/40; }
+  .modal-panel--roomy  { @apply max-w-xl rounded-[1.75rem] p-7; }
+  .modal-heading { @apply mt-2 mb-6 text-2xl font-bold tracking-tight text-gray-900; }
+  .modal-close {
+    @apply absolute top-4 right-4 flex size-11 cursor-pointer items-center justify-center rounded-full text-2xl
+           text-gray-500 hover:bg-gray-100 hover:text-gray-700;
+  }
 }

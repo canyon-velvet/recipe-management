@@ -289,11 +289,18 @@ zh-CN:
       this_week: "本周"
     new:
       create: "创建"
+      heading: "安排一周"
       name: "名称（可选）"
       name_placeholder: "例：第一周"
+      other: "其他…"
+      pick_a_date: "选择日期"
+      planned: "已有计划"
       title: "新建餐计划"
       week: "选择周"
       week_help: "将自动调整到所选日期所在周的周一"
+      week_labels: [ "本周", "下周", "两周后" ]
+    new_dialog:
+      loading: "加载中…"
     show:
       grocery_list: "查看购物清单"
       no_recipes_found: "没有找到菜谱"

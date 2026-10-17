@@ -30,6 +30,32 @@ RSpec.describe "Meal plans", type: :request do
       .to eq [ "October 2026", "Busy week", "September 2026", "Harvest week" ]
   end
 
+  describe "the new plan's weeks" do
+    def week_input(selector) = Nokogiri::HTML(response.body).at("input[name='meal_plan[start_date]']#{selector}")
+    def checked_week = week_input("[checked]")["value"]
+
+    it "chooses next week, or this week on a Monday" do
+      get new_meal_plan_path
+      expect(checked_week).to eq (monday + 7.days).iso8601
+
+      travel_to(monday)
+      get new_meal_plan_path
+      expect(checked_week).to eq monday.iso8601
+    end
+
+    it "can't choose a week that's already planned, and chooses Other… when all are" do
+      plan_week(monday + 7.days)
+
+      get new_meal_plan_path
+      expect(week_input("[value='#{monday + 7.days}']")["disabled"]).to eq "disabled"
+      expect(checked_week).to eq (monday + 14.days).iso8601
+
+      plan_week(monday + 14.days)
+      get new_meal_plan_path
+      expect(checked_week).to eq ""
+    end
+  end
+
   it "marks this week and next week, and shows how many meals each has planned" do
     this_week = plan_week(monday)
     plan_week(monday + 7.days)
