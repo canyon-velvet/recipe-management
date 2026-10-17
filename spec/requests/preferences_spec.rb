@@ -11,7 +11,9 @@ RSpec.describe "Preferences", type: :request do
 
     get preferences_path
 
-    expect(response.body).to include("Diet", "Likes", "Dislikes", "Avoid", "Household", "peanuts")
+    titles = Nokogiri::HTML(response.body).css(".preference-title").map(&:text)
+    expect(titles).to eq [ "Household", "Diet", "Likes", "Dislikes", "Avoid" ] # who you cook for comes first
+    expect(response.body).to include("peanuts")
     expect(response.body).not_to include("shellfish")
   end
 

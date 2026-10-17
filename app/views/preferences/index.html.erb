@@ -3,9 +3,9 @@
   <h1 class="preferences-title"><%= t(".title") %></h1>
   <p class="preferences-subtitle"><%= t(".subtitle") %></p>
 
-  <%# One sheet, a row per category, each row its own Turbo Frame %>
+  <%# One sheet, a row per category, each row its own Turbo Frame; who you cook for comes first %>
   <div class="preferences-sheet">
-    <% Preference::CATEGORIES.each do |category| %>
+    <% Preference::CATEGORIES.partition { |category| category == "household" }.flatten.each do |category| %>
       <%= render "preferences/card", category: category, preferences: @preferences.fetch(category, []) %>
     <% end %>
   </div>
