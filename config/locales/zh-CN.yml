@@ -31,7 +31,6 @@ zh-CN:
     login_required: "请先登录"
     meal_plan_created: "餐计划创建成功"
     meal_plan_deleted: "餐计划已删除"
-    not_authorized: "无权操作"
     rate_limited: "尝试次数过多，请稍后再试"
     recipe_created: "菜谱创建成功"
     recipe_deleted: "菜谱已删除"
