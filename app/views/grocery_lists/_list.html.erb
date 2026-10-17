@@ -6,7 +6,7 @@
 <% to_buy = active_groups.values.sum(&:size) %>
 
 <% if to_buy.zero? && pantry_items.empty? %>
-  <div class="grocery-empty">
+  <div class="page-empty">
     <p class="text-lg"><%= t(".empty") %></p>
     <p class="mt-1 text-sm"><%= t(".empty_hint") %></p>
   </div>

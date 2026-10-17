@@ -6,6 +6,16 @@
   }
 
   .main            { flex: 1; }
+
+  /* A list page (Draft box, Invites, Meal plans, Preferences): a centred column with a header of the small label,
+     a large title and a line under it, actions on the right */
+  .page          { @apply mx-auto max-w-3xl py-10; }
+  .page--wide    { @apply max-w-4xl; }
+  .page-header   { @apply flex flex-wrap items-end justify-between gap-4; }
+  .page-title    { @apply mt-2 text-4xl font-bold tracking-tight text-gray-900; }
+  .page-subtitle { @apply mt-1.5 text-sm text-gray-500; }
+  /* A list with nothing in it yet */
+  .page-empty    { @apply py-16 text-center text-gray-500; }
   .main-wrapper    { @apply py-6 px-8; }
   .main-header     { @apply flex flex-col mb-2; }
   .main-title      { @apply flex items-center justify-between my-2; height: 36px; }

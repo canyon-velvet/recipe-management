@@ -6,7 +6,6 @@
   .grocery-progress-text { @apply text-sm text-gray-600; }
   .grocery-progress-text strong { @apply text-gray-900; }
   .grocery-aisles        { @apply mt-7 flex flex-col gap-4; }
-  .grocery-empty         { @apply py-16 text-center text-gray-500; }
 
   .grocery-card {
     @apply overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-100;

@@ -1,11 +1,6 @@
 @layer components {
-  /* The Draft box: the header as on the meal plan list, then a white row per draft, newest first */
-  .drafts-page     { @apply mx-auto max-w-3xl py-10; }
-  .drafts-header   { @apply flex flex-wrap items-end justify-between gap-4; }
-  .drafts-title    { @apply mt-2 text-4xl font-bold tracking-tight text-gray-900; }
-  .drafts-subtitle { @apply mt-1.5 text-sm text-gray-500; }
+  /* The Draft box (a .page): a white row per draft, newest first */
   .drafts-list     { @apply mt-8 flex flex-col gap-3; }
-  .drafts-empty    { @apply py-16 text-center text-gray-500; }
 
   .draft-row {
     @apply flex flex-wrap items-center gap-4 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-gray-100;
