@@ -24,12 +24,18 @@ module ApplicationHelper
     markdown.render(text).html_safe
   end
 
-  # The navbar's links, as [label, path]: in the bar on a wide page, in ☰ when it's folded.
+  # The navbar's links, as [label, path, icon]: in the bar on a wide page, in ☰ (with the icons) when it's folded.
   def navbar_links
-    links = [ [ t("shared.navbar.home"), root_path ] ]
+    links = [ [ t("shared.navbar.home"), root_path, "home" ] ]
     return links unless logged_in?
 
-    links + [ [ t("shared.navbar.recipes"), recipes_path ], [ t("shared.navbar.meal_plans"), meal_plans_path ] ]
+    links + [ [ t("shared.navbar.recipes"), recipes_path, "recipes" ],
+              [ t("shared.navbar.meal_plans"), meal_plans_path, "meal-plans" ] ]
+  end
+
+  # An icon from app/assets/images/icons, drawn inline so it takes the text's colour (its strokes are currentColor)
+  def inline_icon(name)
+    Rails.root.join("app/assets/images/icons/#{name}.svg").read.html_safe
   end
 
   # Stimulus controllers on <body>, for what any page can open: the Edit-aisles pop-up and the assistant panel.

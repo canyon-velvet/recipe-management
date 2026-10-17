@@ -50,6 +50,45 @@ RSpec.describe "The navbar", type: :system do
     end
   end
 
+  it "shows who's signed in atop the account menu, and an admin's items under their own label" do
+    log_in_as create(:user, :admin, username: "home_cook")
+    click_button "home_cook"
+
+    within(".account-menu") do
+      expect(find(".menu-who")).to have_text("home_cook").and have_text("Signed in")
+      expect(page).to have_css(".menu-label", text: /admin/i)
+      # For screen readers: the admin's items are a group named by the label, and the header isn't in the menu
+      expect(find("[role='group'][aria-labelledby='account_menu_admin']")).to have_link("Invites")
+      expect(page).to have_no_css("[role='menu'] .menu-who")
+      expect(page).to have_css(".menu-item--logout", text: "Log out")
+    end
+  end
+
+  it "leaves the admin's label and items out of everyone else's account menu" do
+    log_in_as create(:user, username: "home_cook")
+    click_button "home_cook"
+
+    within(".account-menu") do
+      expect(page).to have_link("Preferences")
+      expect(page).to have_no_css(".menu-label")
+      expect(page).to have_no_link("Invites")
+    end
+  end
+
+  it "marks the page you're on and the language in use in ☰" do
+    resize(1024)
+    log_in_as user
+    visit meal_plans_path
+    click_button "Menu"
+
+    within(".navbar-menu-list") do
+      expect(page).to have_css(".menu-item--current[aria-current='page']", text: "Meal Plans")
+      expect(page).to have_css("button.menu-item--current[aria-current='true'] svg", visible: :all)
+      expect(page).to have_css("button.menu-item--current", text: "English")
+      expect(page).to have_css(".menu-item", count: 5) # three links, two languages
+    end
+  end
+
   it "closes ☰ when the account menu opens, and the other way round" do
     resize(360)
     log_in_as create(:user, username: "home_cook")
