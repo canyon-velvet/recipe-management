@@ -270,9 +270,8 @@ en:
       placeholder: "Choose tags"
       remove: "Remove"
     ingredient_modal:
-      aisle_prompt: "Choose an aisle"
-      new_aisle: "+ New aisle…"
-      new_aisle_placeholder: "Aisle name"
+      add_aisle: "＋ Add %{name}"
+      aisle_placeholder: "Type to search, or add an aisle"
 
   meal_plans:
     days:
