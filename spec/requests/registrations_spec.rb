@@ -43,7 +43,7 @@ RSpec.describe "Signing up", type: :request do
   end
 
   it "sends someone already logged in home, without using up the invite" do
-    post login_path, params: { username: create(:user).username, password: "password" }
+    log_in_as create(:user)
 
     get register_path(invite_token: invite.token)
     expect(response).to redirect_to(root_path)

@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Aisles", type: :request do
   let(:user) { create(:user) }
 
-  before { post login_path, params: { username: user.username, password: "password" } }
+  before { log_in_as user }
 
   describe "moving an aisle" do
     it "saves its new place, and answers with nothing for the pop-up to redraw" do

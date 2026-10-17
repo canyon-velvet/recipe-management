@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Recipes", type: :request do
   let(:user) { create(:user) }
 
-  before { post login_path, params: { username: user.username, password: "password" } }
+  before { log_in_as user }
 
   it "saves servings and times from the form, filling the total from prep and cook" do
     post recipes_path, params: { recipe: {

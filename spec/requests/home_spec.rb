@@ -4,8 +4,6 @@ RSpec.describe "Home page", type: :request do
   let(:user) { create(:user) }
   let(:monday) { Date.current.beginning_of_week(:monday) }
 
-  def log_in = post(login_path, params: { username: user.username, password: "password" })
-
   def plan_this_week = user.meal_plans.create!(start_date: monday, end_date: monday + 6.days)
 
   def tonight_slot(plan)
@@ -26,7 +24,7 @@ RSpec.describe "Home page", type: :request do
     items = create_list(:ingredient, 3, user: user).map { |ingredient| { ingredient: ingredient } }
     plan.grocery_list.grocery_list_items.create!(items)
     plan.grocery_list.grocery_list_items.last.update!(in_pantry: true)
-    log_in
+    log_in_as user
 
     get root_path
 
@@ -38,7 +36,7 @@ RSpec.describe "Home page", type: :request do
   end
 
   it "offers to plan the week when nothing is planned for tonight" do
-    log_in
+    log_in_as user
 
     get root_path
     expect(response.body).to include("Nothing planned yet", %(href="#{new_meal_plan_path}"))
@@ -54,7 +52,7 @@ RSpec.describe "Home page", type: :request do
     sunday_dinner = create(:recipe, user: user, name: "Sunday roast")
     plan = user.meal_plans.create!(start_date: Date.new(2026, 10, 12), end_date: Date.new(2026, 10, 18))
     plan.meal_slots.find_by!(day_of_week: "sunday", meal_type: "dinner").recipes << sunday_dinner
-    log_in
+    log_in_as user
 
     get root_path
     expect(Nokogiri::HTML(response.body).at_css(".home-tonight").text).to include("Sunday roast")
@@ -65,7 +63,7 @@ RSpec.describe "Home page", type: :request do
   end
 
   it "shows the latest recipes, and leaves the section out for a new account" do
-    log_in
+    log_in_as user
 
     get root_path
     expect(response.body).not_to include("Recently updated")
@@ -76,7 +74,7 @@ RSpec.describe "Home page", type: :request do
   end
 
   it "is in Chinese for a Chinese visitor" do
-    log_in
+    log_in_as user
     patch locale_path, params: { locale: "zh-CN" }
 
     get root_path
