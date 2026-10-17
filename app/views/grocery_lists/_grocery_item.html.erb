@@ -1,11 +1,16 @@
 <%# locals: (item:) %>
-<div id="grocery_item_<%= item.id %>" class="grocery-item <%= 'grocery-item--pantry' if item.in_pantry? %>">
-  <input type="checkbox"
-         class="rounded border-gray-300 text-green-600 focus:ring-green-500 shrink-0"
-         <%= "checked" if item.in_pantry? %>
-         data-action="change->grocery-list#togglePantry"
-         data-grocery-list-url-param="<%= grocery_list_item_path(item) %>"
-         data-grocery-list-pantry-param="<%= !item.in_pantry? %>">
-  <span class="flex-1 text-sm text-gray-800"><%= item.ingredient.name %></span>
-  <span class="grocery-count-badge"><%= item.occurrence_count %></span>
-</div>
+<%# A row in its aisle, or a crossed-out pill in Already have; the whole of it ticks the box. Ticked means already
+    have it. The tag says how many of the week's recipes use it, when more than one. %>
+<li id="grocery_item_<%= item.id %>" class="grocery-item <%= 'grocery-item--pantry' if item.in_pantry? %>">
+  <label class="grocery-item-label">
+    <input type="checkbox" class="grocery-check"
+           <%= "checked" if item.in_pantry? %>
+           data-action="change->grocery-list#togglePantry"
+           data-grocery-list-url-param="<%= grocery_list_item_path(item) %>"
+           data-grocery-list-pantry-param="<%= !item.in_pantry? %>">
+    <span class="grocery-item-name"><%= item.ingredient.name %></span>
+    <% if item.occurrence_count > 1 %>
+      <span class="grocery-count-badge"><%= t(".recipe_count", count: item.occurrence_count) %></span>
+    <% end %>
+  </label>
+</li>

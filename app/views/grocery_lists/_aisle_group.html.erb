@@ -1,7 +1,12 @@
 <%# locals: (aisle:, items:) %>
-<div class="grocery-card grocery-aisle-card">
-  <div class="grocery-card-header"><%= aisle.name %></div>
-  <% items.each do |item| %>
-    <%= render "grocery_lists/grocery_item", item: item %>
-  <% end %>
-</div>
+<section class="grocery-card grocery-aisle-card">
+  <h2 class="grocery-card-header">
+    <span class="grocery-aisle-name"><%= aisle.name %></span>
+    <span class="grocery-aisle-count"><%= items.size %></span>
+  </h2>
+  <ul class="grocery-items">
+    <% items.each do |item| %>
+      <%= render "grocery_lists/grocery_item", item: item %>
+    <% end %>
+  </ul>
+</section>
