@@ -31,9 +31,11 @@
     @apply inline-flex items-center rounded-full px-6 py-3 font-medium bg-sectiontext text-white shadow-lg
            hover:bg-gray-900 transition;
   }
+  /* On hover its border turns bold (an inner ring over it, so the button keeps its size), which shows on a white card
+     too, where the white background alone doesn't */
   .btn-pill-secondary {
     @apply inline-flex items-center rounded-full px-6 py-3 font-medium border border-sectiontext/30 text-sectiontext
-           hover:bg-white transition;
+           hover:border-sectiontext hover:bg-white hover:ring-1 hover:ring-inset hover:ring-sectiontext transition;
   }
   .btn-pill-ghost {
     @apply inline-flex items-center rounded-full px-4 py-3 font-medium text-sectiontext hover:bg-white transition
