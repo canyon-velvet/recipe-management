@@ -67,6 +67,16 @@ RSpec.describe "Meal plans", type: :request do
     expect(response.body.scan("meal-plan-row--current").size).to eq 1
   end
 
+  it "lists why a new plan didn't save above its form" do
+    plan_week(monday)
+
+    post meal_plans_path, params: { meal_plan: { start_date: monday } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    errors = Nokogiri::HTML(response.body).css(".form-errors li").map(&:text)
+    expect(errors).to eq [ "Start date already has a meal plan for this week" ]
+  end
+
   describe "a week's plan" do
     let(:meal_plan) { plan_week(monday) }
 

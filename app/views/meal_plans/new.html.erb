@@ -4,15 +4,7 @@
     <h2 id="new_meal_plan_title" class="modal-heading"><%= t(".heading") %></h2>
 
     <%= form_with model: @meal_plan, class: "space-y-6", data: { turbo_frame: "_top" } do |f| %>
-      <% if @meal_plan.errors.any? %>
-        <div class="bg-red-50 border border-red-300 text-red-700 rounded-md p-3">
-          <ul class="list-disc list-inside text-sm">
-            <% @meal_plan.errors.full_messages.each do |msg| %>
-              <li><%= msg %></li>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
+      <%= render "shared/form_errors", record: @meal_plan %>
 
       <%# The next weeks, or "Other…" and a date in any week; a week that already has a plan can't be picked %>
       <% other = !@mondays.include?(@meal_plan.start_date) %>

@@ -78,9 +78,6 @@
   .recipe-form-main  { @apply min-w-0 space-y-6; }
   .recipe-form-card  { @apply space-y-4 rounded-3xl border border-gray-200 bg-white p-6; }
   .recipe-form-card-title { @apply text-lg font-bold text-gray-900; }
-  .recipe-form-errors {
-    @apply rounded-2xl border border-red-300 bg-red-50 p-4 text-red-700;
-  }
   .recipe-form-details {
     @apply flex flex-col gap-5 rounded-3xl border border-gray-200 bg-white p-6;
   }
