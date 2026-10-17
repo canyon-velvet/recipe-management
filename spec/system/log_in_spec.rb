@@ -5,6 +5,8 @@ RSpec.describe "Logging in", type: :system do
     user = create(:user, password: "secret123")
 
     visit login_path
+    expect(page).to have_css("h1", text: "Log in to your kitchen")
+    expect(page).to have_text("Sign-up is by invitation")
     fill_in "Username", with: user.username
     fill_in "Password", with: "secret123"
     click_button "Log in"

@@ -462,8 +462,11 @@ en:
 
   sessions:
     new:
+      eyebrow: "Welcome back"
+      invite_only: "New here? Sign-up is by invitation: ask for an invite link."
+      lead: "Your recipes, this week's plan and the grocery list are waiting."
       submit: "Log in"
-      title: "Log in"
+      title: "Log in to your kitchen"
 
   registrations:
     invite_only:

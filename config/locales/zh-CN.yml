@@ -451,8 +451,11 @@ zh-CN:
 
   sessions:
     new:
+      eyebrow: "欢迎回来"
+      invite_only: "第一次来？注册需要邀请：请索取邀请链接。"
+      lead: "你的菜谱、本周计划和购物清单都在等你。"
       submit: "登录"
-      title: "登录"
+      title: "登录你的厨房"
 
   registrations:
     invite_only:
