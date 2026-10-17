@@ -1,9 +1,13 @@
-<%# Needs an aisle-editor controller on an ancestor. The list loads the first time the pop-up opens. %>
-<dialog data-aisle-editor-target="dialog"
-        data-action="click->aisle-editor#backdropClose close->aisle-editor#refresh turbo:submit-start->aisle-editor#submitStarted turbo:submit-end->aisle-editor#submitEnded"
-        class="rounded-xl p-0 backdrop:bg-black/40">
-  <div class="modal-panel">
-    <h3 class="modal-title"><%= t("aisle_editor.title") %></h3>
+<%# Needs an aisle-editor controller on an ancestor. The list loads the first time the pop-up opens. Saving a dragged
+    aisle's place (aisle-order) counts like a form's submit, so the pop-up waits for it when closed. %>
+<dialog data-aisle-editor-target="dialog" class="modal-dialog--roomy" aria-labelledby="aisle_editor_title"
+        data-action="click->aisle-editor#backdropClose close->aisle-editor#refresh turbo:submit-start->aisle-editor#submitStarted turbo:submit-end->aisle-editor#submitEnded aisle-order:save-start->aisle-editor#moveStarted aisle-order:save-end->aisle-editor#moveEnded turbo:frame-render->aisle-editor#listRendered">
+  <div class="modal-panel modal-panel--roomy">
+    <button type="button" class="modal-close" data-action="aisle-editor#close"
+            aria-label="<%= t("actions.close") %>">&times;</button>
+    <p class="home-eyebrow"><%= t("aisle_editor.eyebrow") %></p>
+    <h3 id="aisle_editor_title" class="modal-heading"><%= t("aisle_editor.title") %></h3>
+    <p class="modal-lead"><%= t("aisle_editor.lead") %></p>
 
     <%= turbo_frame_tag "aisles", src: aisles_path, loading: :lazy, class: "aisle-editor-frame",
                         data: { aisle_editor_target: "frame" } do %>
@@ -11,7 +15,9 @@
     <% end %>
 
     <div class="flex justify-end pt-4">
-      <button type="button" class="btn-primary" data-action="aisle-editor#close"><%= t("aisle_editor.done") %></button>
+      <button type="button" class="btn-pill-primary" data-action="aisle-editor#close">
+        <%= t("aisle_editor.done") %>
+      </button>
     </div>
   </div>
 </dialog>

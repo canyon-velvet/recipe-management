@@ -30,7 +30,7 @@ RSpec.describe "Confirming a delete", type: :system do
     within("dialog[open]", text: "Edit aisles") { click_button "Delete Bakery" }
     within("dialog[open]", text: "Delete \"Bakery\"?") { click_button "Delete" }
 
-    within("dialog[open]", text: "Edit aisles") { expect(page).to have_no_text("Bakery") }
+    within("dialog[open]", text: "Edit aisles") { expect(page).to have_no_field(with: "Bakery") }
     expect(user.aisles.where(key: "bakery")).to be_empty
   end
 
