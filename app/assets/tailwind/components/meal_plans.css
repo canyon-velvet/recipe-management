@@ -9,8 +9,7 @@
      is a link (.meal-plan-row-link, under the content), and the row under the pointer or with its menu open sits
      above its neighbours, so the menu isn't covered. */
   .meal-plan-row {
-    @apply relative flex flex-wrap items-center gap-5 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-gray-100
-           transition-shadow hover:z-10 hover:shadow-xl focus-within:z-10;
+    @apply relative flex flex-wrap items-center gap-5 transition-shadow hover:z-10 hover:shadow-xl focus-within:z-10;
   }
   .meal-plan-row--current { @apply shadow-xl shadow-sectiontext/15 ring-2 ring-sectiontext-light; }
   .meal-plan-row-link     { @apply absolute inset-0 z-0 rounded-3xl; }
@@ -25,10 +24,7 @@
   .meal-plan-body    { @apply pointer-events-none relative min-w-0 flex-[1_1_14rem]; }
   .meal-plan-heading { @apply flex flex-wrap items-center gap-2; }
   .meal-plan-name    { @apply min-w-0 truncate text-lg font-semibold text-gray-900; }
-  .meal-plan-badge {
-    @apply rounded-full bg-sectionbackground px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider
-           text-sectiontext;
-  }
+  .meal-plan-badge { @apply bg-sectionbackground text-sectiontext; }
   .meal-plan-badge--current { @apply bg-sectiontext text-white; }
   .meal-plan-facts { @apply mt-1 text-sm text-gray-500; }
 

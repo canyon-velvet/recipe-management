@@ -16,4 +16,15 @@
   .page-subtitle { @apply mt-1.5 text-sm text-gray-500; }
   /* A list with nothing in it yet */
   .page-empty    { @apply py-16 text-center text-gray-500; }
+
+  /* A list page's row, a white card (Draft box, Invites, Meal plans). A row with a state (Draft box, Invites) leads
+     with a tile for it, then its title beside a pill naming it; each page colours them per state. */
+  .list-row       { @apply rounded-3xl bg-white p-4 shadow-sm ring-1 ring-gray-100; }
+  .status-tile    { @apply flex size-12 flex-none items-center justify-center rounded-2xl; }
+  .status-body    { @apply min-w-0 flex-[1_1_12rem]; }
+  .status-heading { @apply flex flex-wrap items-center gap-2; }
+  .status-title   { @apply min-w-0 truncate text-lg font-semibold text-gray-900; }
+  .status-pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider;
+  }
 }
