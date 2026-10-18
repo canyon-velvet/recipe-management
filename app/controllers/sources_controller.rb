@@ -1,8 +1,6 @@
 class SourcesController < ApplicationController
   def search
-    sources = current_user.sources.where("name ILIKE ?", "%#{params[:q]}%")
-                          .order(:name)
-                          .limit(20)
+    sources = current_user.sources.search_by_name(params[:q]).order(:name).limit(20)
     render json: sources.map { |s| { id: s.id, name: s.name } }
   end
 

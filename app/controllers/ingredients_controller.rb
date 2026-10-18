@@ -1,8 +1,6 @@
 class IngredientsController < ApplicationController
   def search
-    ingredients = current_user.ingredients.where("name ILIKE ?", "%#{params[:q]}%")
-                                          .order(:name)
-                                          .limit(20)
+    ingredients = current_user.ingredients.search_by_name(params[:q]).order(:name).limit(20)
     render json: ingredients.map { |i| { id: i.id, name: i.name } }
   end
 
