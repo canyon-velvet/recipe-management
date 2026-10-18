@@ -26,6 +26,12 @@ RSpec.describe Draft do
     end
   end
 
+  it "names why it failed by a reason the app can say, else the generic one" do
+    expect(Draft.new(failure_reason: "fetch_failed").failure_reason_key).to eq "fetch_failed"
+    expect(Draft.new(failure_reason: "unexpected").failure_reason_key).to eq "generic" # an error nobody foresaw
+    expect(Draft.new(failure_reason: nil).failure_reason_key).to eq "generic"
+  end
+
   it "takes pasted text up to the length of a page's text" do
     draft = build(:user).drafts.build(source_text: "a" * Draft::MAX_SOURCE_TEXT)
     expect(draft).to be_valid

@@ -23,6 +23,17 @@ RSpec.describe "Assistant panel", type: :request do
       expect(response.body).to include("assistant-open", 'aria-expanded="true"')
     end
 
+    it "shows a draft that failed unexpectedly in the chat with the generic reason" do
+      draft = user.drafts.create!(source_url: "https://example.com/soup", status: :failed, failure_reason: :unexpected)
+      user.current_conversation!.messages.create!(role: :assistant, agent: :import, content: "Importing it now.",
+                                                  draft_ids: [ draft.id ])
+
+      get recipes_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("We couldn&#39;t read a recipe from this.")
+    end
+
     it "adds the message and a pending reply to the user's conversation" do
       post assistant_messages_path, params: { message: { content: "Dinner for 4?" } }, headers: turbo_stream
 

@@ -39,7 +39,9 @@ class Draft < ApplicationRecord
   def title = name || RecipeLink.title(source_url) || source_url || pasted_title || I18n.t("drafts.pasted_text")
 
   # Unknown or missing reasons show the generic message.
-  def failure_reason_key = failure_reason.presence || "generic"
+  def failure_reason_key
+    failure_reason.present? && I18n.exists?(failure_reason, scope: "drafts.failures") ? failure_reason : "generic"
+  end
 
   private
 
