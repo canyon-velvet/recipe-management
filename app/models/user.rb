@@ -39,11 +39,17 @@ class User < ApplicationRecord
   # The user's "avoid" preferences, e.g. ["peanut", "花生"]. Recipes with them are flagged, not hidden.
   def avoided_ingredients = preferences.avoid.pluck(:value)
 
-  # Whether the user has sent the assistant Message::DAILY_LIMIT messages in the last 24 hours. A rolling window, not
-  # "today": the user picks their own time zone, and switching to one where the day has just begun mustn't reset it.
-  def assistant_limit_reached?
-    conversation_messages.where(role: :user, created_at: 24.hours.ago..).count >= Message::DAILY_LIMIT
-  end
+  # The messages the user sent the assistant in the last 24 hours, which count towards Message::DAILY_LIMIT. A rolling
+  # window, not "today": the user picks their own time zone, and switching to one where the day has just begun mustn't
+  # reset it.
+  def assistant_messages_counted = conversation_messages.where(role: :user, created_at: 24.hours.ago..)
+
+  def assistant_messages_left = [ Message::DAILY_LIMIT - assistant_messages_counted.count, 0 ].max
+
+  def assistant_limit_reached? = assistant_messages_left.zero?
+
+  # When the next message frees up: 24 hours after the oldest one still counted.
+  def assistant_message_freed_at = assistant_messages_counted.minimum(:created_at)&.+(24.hours)
 
   # "New chat": a fresh conversation, unless the current one is still empty.
   def start_conversation

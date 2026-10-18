@@ -42,10 +42,15 @@
       <% end %>
 
       <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
-        <% if (waiting = draft_counts.values.sum).positive? %>
-          <%= link_to t(".draft_box_count", count: waiting), drafts_path, class: "import-draft-count",
-                data: { turbo_frame: "_top" } %>
-        <% end %>
+        <%# What's waiting in the Draft box, and how many more imports this hour (in amber once few are left) %>
+        <div class="import-notes">
+          <% if (waiting = draft_counts.values.sum).positive? %>
+            <%= link_to t(".draft_box_count", count: waiting), drafts_path, class: "import-draft-count",
+                  data: { turbo_frame: "_top" } %>
+          <% end %>
+          <%= tag.p t(".imports_left", count: imports_left, total: StartImportService::HOURLY_LIMIT),
+                    class: [ "import-limit", ("import-limit--low" if imports_left <= StartImportService::FEW_LEFT) ] %>
+        </div>
         <div class="ml-auto flex gap-2">
           <%= link_to t("actions.cancel"), recipes_path, class: "btn-pill-ghost btn-pill-sm",
                 data: { turbo_frame: "_top", action: "modal#close:prevent" } %>

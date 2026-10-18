@@ -4,6 +4,8 @@ class Message < ApplicationRecord
   MAX_LENGTH = 4_000
   # How many messages a user can send the assistant in any 24 hours. Each costs a Claude call.
   DAILY_LIMIT = 50
+  # From this many left, the assistant panel says how many, and when more come.
+  FEW_LEFT = 10
 
   belongs_to :conversation
   has_one :run, dependent: :destroy

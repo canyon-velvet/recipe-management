@@ -1,4 +1,9 @@
 en:
+  time:
+    formats:
+      # A time of day, e.g. when more assistant messages come: "9:14 am"
+      clock: "%-l:%M %P"
+
   app_name: "Recipe Manager"
   # Under the icon on a phone's home screen, where a longer name is cut off
   short_app_name: "Recipes"
@@ -366,6 +371,9 @@ en:
     failed: "Sorry, something went wrong. Please try again."
     importing: "Importing the recipe…"
     limit_reached: "You've sent %{count} messages in the last 24 hours. Please come back later."
+    messages_left:
+      one: "1 message left · more from %{time}"
+      other: "%{count} messages left · more from %{time}"
     new_chat: "New chat"
     open: "Open assistant"
     placeholder: "Ask about recipes…"
@@ -460,6 +468,7 @@ en:
       too_long: "The pasted text is too long. Paste just the ingredients and steps."
     new:
       draft_box_count: "%{count} in your Draft box"
+      imports_left: "%{count} of %{total} imports left this hour"
       heading: "Bring in a recipe"
       hint: "Paste a link to a recipe page. It's read in the background and waits in your Draft box for you to review."
       link: "Recipe link"

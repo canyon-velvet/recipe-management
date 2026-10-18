@@ -36,6 +36,10 @@
   .import-paste-body   { @apply mt-3 space-y-2; }
   /* How many imports wait in the Draft box, beside Cancel and Import */
   .import-draft-count  { @apply text-sm text-gray-500 hover:text-sectiontext; }
+  /* Under it, how many imports are left this hour; amber once few are */
+  .import-notes        { @apply flex flex-col gap-0.5; }
+  .import-limit        { @apply text-sm text-gray-500; }
+  .import-limit--low   { @apply font-semibold text-amber-800; }
 
   /* "Ready to review" notices, stacked in the bottom-right corner */
   .toast-stack {

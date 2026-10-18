@@ -1,4 +1,9 @@
 zh-CN:
+  time:
+    formats:
+      # A time of day, e.g. when more assistant messages come: "9:14 am"
+      clock: "%H:%M"
+
   app_name: "食谱管理"
   short_app_name: "食谱管理"
   locale_name: "中文"
@@ -355,6 +360,7 @@ zh-CN:
     failed: "抱歉，出了点问题，请再试一次。"
     importing: "正在导入菜谱…"
     limit_reached: "24 小时内的 %{count} 条消息已经用完了，请稍后再来。"
+    messages_left: "还剩 %{count} 条消息 · %{time} 起恢复"
     new_chat: "新对话"
     open: "打开助手"
     placeholder: "问问菜谱…"
@@ -449,6 +455,7 @@ zh-CN:
       too_long: "粘贴的文字太长了，只粘贴用料和步骤即可。"
     new:
       draft_box_count: "草稿箱里有 %{count} 个"
+      imports_left: "本小时还可导入 %{count} 次（共 %{total} 次）"
       heading: "添加一道菜谱"
       hint: "粘贴菜谱网页的链接。系统会在后台读取，完成后在草稿箱等你确认。"
       link: "菜谱链接"
