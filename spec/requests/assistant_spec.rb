@@ -49,7 +49,7 @@ RSpec.describe "Assistant panel", type: :request do
         .not_to change(Message, :count)
 
       expect(response).to have_http_status(:too_many_requests)
-      expect(response.body).to include('target="assistant_messages"', "today&#39;s 50 messages")
+      expect(response.body).to include('target="assistant_messages"', "50 messages in the last 24 hours")
       expect(WriteReplyJob).not_to have_been_enqueued
     end
 

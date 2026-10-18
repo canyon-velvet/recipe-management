@@ -353,7 +353,7 @@ zh-CN:
     empty: "问我今晚做什么、冰箱里的食材能做什么，或者贴一个菜谱链接来导入。"
     failed: "抱歉，出了点问题，请再试一次。"
     importing: "正在导入菜谱…"
-    limit_reached: "今天的 %{count} 条消息已经用完了，明天再来吧。"
+    limit_reached: "24 小时内的 %{count} 条消息已经用完了，请稍后再来。"
     new_chat: "新对话"
     open: "打开助手"
     placeholder: "问问菜谱…"
