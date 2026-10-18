@@ -31,7 +31,7 @@ class Recipe < ApplicationRecord
                          allow_nil: true
   end
   validate :must_have_steps
-  validate :source_must_belong_to_user
+  validates :source, same_user: true
 
   # One canonical form per page, so the same recipe link can't be saved twice in different spellings.
   normalizes :source_url, with: ->(url) { RecipeLink.normalize(url) }
@@ -102,10 +102,6 @@ class Recipe < ApplicationRecord
 
   def must_have_steps
     errors.add(:steps, :blank) if kept_steps.empty?
-  end
-
-  def source_must_belong_to_user
-    errors.add(:source, :invalid) if source && user && source.user_id != user_id
   end
 
   def renumber_steps

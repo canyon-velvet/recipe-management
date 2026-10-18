@@ -91,6 +91,15 @@ RSpec.describe Recipe do
     end
   end
 
+  it "takes a source, and its ingredients an aisle, only of the same user" do
+    user, other_user = create_list(:user, 2)
+
+    expect(build(:recipe, user: user, source: create(:source, user: other_user)).tap(&:validate).errors.attribute_names).to include(:source)
+    expect(build(:recipe, user: user, source: create(:source, user: user))).to be_valid
+    expect(build(:ingredient, user: user, aisle: other_user.aisles.first).tap(&:validate).errors.attribute_names).to include(:aisle)
+    expect(build(:ingredient, user: user, aisle: user.aisles.first)).to be_valid
+  end
+
   it "caps how long what's typed can be, the recipe's and its rows'" do
     user = create(:user)
     recipe = build(:recipe, user: user, name: "n" * 201, description: "d" * 20_001)
