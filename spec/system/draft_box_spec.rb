@@ -15,7 +15,7 @@ RSpec.describe "The Draft box", type: :system do
 
   it "shows each draft as a row with where it's at and what can be done with it" do
     expect(page).to have_css("h1", text: "Draft box")
-    expect(page.all(".draft-title").map(&:text).first).to eq "Soup" # newest first, titled from its link
+    expect(page.all(".draft-row .status-title").map(&:text).first).to eq "Soup" # newest first, titled from its link
 
     expect(row("Apple cake")).to have_css(".draft-icon--ready")
     expect(row("Apple cake")).to have_link("Review")

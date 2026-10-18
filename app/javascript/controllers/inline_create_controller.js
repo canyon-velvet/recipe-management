@@ -20,9 +20,11 @@ export default class extends Controller {
   }
 
   // The pop-up sits inside the recipe form, so Enter in one of its boxes would submit the recipe. It saves the pop-up
-  // instead, unless the aisle box already used the Enter (to pick or add an aisle).
+  // instead, unless the aisle box already used the Enter (to pick or add an aisle). The Enter that confirms an input
+  // method's text (e.g. Pinyin) isn't a save: isComposing in most browsers, keyCode 229 in Safari.
   submitOnEnter(event) {
     if (event.defaultPrevented || event.target.tagName !== "INPUT") return
+    if (event.isComposing || event.keyCode === 229) return
     this.save(event)
   }
 

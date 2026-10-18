@@ -1,4 +1,6 @@
 class Recipe < ApplicationRecord
+  include NameSearchable
+
   belongs_to :source, autosave: true
   belongs_to :user
   has_many :recipe_ingredients, dependent: :destroy, inverse_of: :recipe
@@ -17,7 +19,11 @@ class Recipe < ApplicationRecord
   # A draft's source the user doesn't have yet; it's created when the recipe saves.
   attr_accessor :new_source_name
 
-  validates :name, presence: true
+  # The longest description (with its tips) that can be saved, and so previewed
+  MAX_DESCRIPTION = 20_000
+
+  validates :name, presence: true, length: { maximum: 200 }
+  validates :description, length: { maximum: MAX_DESCRIPTION }
   validates :source_url, http_url: true, allow_blank: true
   validates :source_url, uniqueness: { scope: :user_id }, allow_nil: true
   COUNT_LIMITS.each do |attribute, max|
@@ -41,7 +47,6 @@ class Recipe < ApplicationRecord
   # validation comes back with Total still blank and keeps adding up later changes.
   before_save :fill_total_minutes, if: -> { total_minutes.nil? && prep_minutes && cook_minutes }
 
-  scope :search_by_name, ->(query) { where("name ILIKE ?", "%#{query}%") if query.present? }
   scope :tagged, ->(tag_key) {
     where(id: RecipeTag.joins(:tag).where(tags: { key: tag_key }).select(:recipe_id)) if tag_key.present?
   }

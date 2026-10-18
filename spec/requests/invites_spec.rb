@@ -1,12 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "Invites", type: :request do
-  def log_in(user) = post(login_path, params: { username: user.username, password: "password" })
-
   context "for an admin" do
     let(:admin) { create(:user, :admin) }
 
-    before { log_in admin }
+    before { log_in_as admin }
 
     it "lists invites with the links that can still be used" do
       open = create(:invite, note: "Mum")
@@ -15,7 +13,7 @@ RSpec.describe "Invites", type: :request do
       get invites_path
 
       expect(response.body).to include("Mum", "Old friend", "Expired 1 day ago", register_url(invite_token: open.token))
-      statuses = Nokogiri::HTML(response.body).css(".invite-status").map(&:text)
+      statuses = Nokogiri::HTML(response.body).css(".status-pill").map(&:text)
       expect(statuses).to eq %w[Expired Active] # newest first
     end
 
@@ -40,7 +38,7 @@ RSpec.describe "Invites", type: :request do
 
   it "is only for admins" do
     invite = create(:invite)
-    log_in create(:user)
+    log_in_as create(:user)
 
     get invites_path
     expect(response).to redirect_to(root_path)

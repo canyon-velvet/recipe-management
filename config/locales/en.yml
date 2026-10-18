@@ -6,11 +6,11 @@ en:
 
   actions:
     add: "Add"
-    back: "Back"
     cancel: "Cancel"
     close: "Close"
     delete: "Delete"
     edit: "Edit"
+    more: "More actions"
     save: "Save"
 
   date:
@@ -34,7 +34,6 @@ en:
     login_required: "Please log in first."
     meal_plan_created: "Meal plan created."
     meal_plan_deleted: "Meal plan deleted."
-    not_authorized: "You don't have permission to do that."
     rate_limited: "Too many attempts. Please try again later."
     recipe_created: "Recipe created."
     recipe_deleted: "Recipe deleted."

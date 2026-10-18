@@ -35,6 +35,19 @@ RSpec.describe "Creating an ingredient from the recipe form", type: :system do
     expect(user.ingredients.find_by!(name: "sausage").aisle.key).to eq "meat_seafood"
   end
 
+  it "doesn't save on the Enter that finishes typing Chinese (Pinyin) in Safari" do
+    open_create_ingredient("doufu")
+
+    # Safari ends the input method's composition with this Enter (keyCode 229). Saving would cancel it at once.
+    saved = !page.evaluate_script(<<~JS)
+      document.getElementById("new_ingredient_name").dispatchEvent(
+        new KeyboardEvent("keydown", { key: "Enter", keyCode: 229, bubbles: true, cancelable: true }))
+    JS
+
+    expect(saved).to be false
+    expect(page).to have_css("dialog[open]", text: "Create ingredient")
+  end
+
   it "adds the typed aisle when there isn't one, just before Other, and offers it next time" do
     open_create_ingredient("pretzels")
 
