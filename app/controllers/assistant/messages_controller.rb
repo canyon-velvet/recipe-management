@@ -3,9 +3,12 @@ module Assistant
   # and WriteReplyJob streams the reply into it.
   class MessagesController < BaseController
     def create
-      return render_limit_notice if current_user.assistant_limit_reached?
-
-      question, reply = current_user.current_conversation!.ask(params.expect(message: [ :content ])[:content])
+      content = params.expect(message: [ :content ])[:content]
+      # Checked and saved under the user's lock, so messages sent at once can't all slip in under the limit
+      question, reply = current_user.with_lock do
+        current_user.current_conversation!.ask(content) unless current_user.assistant_limit_reached?
+      end
+      return render_limit_notice unless question
       return head :unprocessable_entity unless reply
 
       WriteReplyJob.perform_later(reply, I18n.locale.to_s)
