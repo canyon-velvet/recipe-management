@@ -5,7 +5,6 @@ zh-CN:
 
   actions:
     add: "添加"
-    back: "返回"
     cancel: "取消"
     close: "关闭"
     delete: "删除"

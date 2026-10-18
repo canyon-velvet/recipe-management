@@ -15,18 +15,6 @@
   header .topnav-item-container { @apply relative flex flex-row ml-8; }
   header .topnav-item    { @apply relative flex items-center h-12 mx-0; }
 
-  header .topnav-link {
-    @apply text-white font-semibold opacity-70 hover:opacity-100 py-4 px-3;
-  }
-
-  header .topnav-link.active,
-  header .topnav-link:hover {
-    @apply font-semibold opacity-100 shadow-inner;
-    background-color: #99cced1f;
-  }
-
-  header .topnav-icon    { @apply fill-white opacity-70 text-inherit inline; }
-
   .nav-link {
     @apply block text-sectiontext font-light hover:font-medium px-2 py-1 text-base whitespace-nowrap;
     text-decoration: none;
