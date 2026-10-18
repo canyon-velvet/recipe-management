@@ -229,7 +229,7 @@ en:
       matching: "matching “%{query}”"
       new_recipe: "New recipe"
       search_and_filter: "Search & filter"
-      search_placeholder: "Search recipes"
+      search_placeholder: "Search recipes or ingredients"
       title: "All recipes"
     new:
       review_hint: "Check what was read, then save. Ingredients and sources marked New are created when you save."
@@ -324,7 +324,7 @@ en:
       remove: "Remove %{recipe} from the plan"
     recipe_search_modal:
       prompt: "Type to search"
-      search_placeholder: "Search recipes..."
+      search_placeholder: "Search recipes or ingredients..."
       title: "Choose a recipe"
 
   grocery_lists:

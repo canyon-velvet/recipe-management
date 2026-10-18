@@ -47,6 +47,13 @@ class Recipe < ApplicationRecord
   # validation comes back with Total still blank and keeps adding up later changes.
   before_save :fill_total_minutes, if: -> { total_minutes.nil? && prep_minutes && cook_minutes }
 
+  # The recipe list's and the meal plan's search: recipes whose name (NameSearchable), or one of whose ingredients,
+  # contains the text. Anything but text (?q[]=…) is no search.
+  scope :search_by_name_or_ingredient, ->(query) {
+    next unless query.is_a?(String) && query.present?
+
+    search_by_name(query).or(with_ingredient(query))
+  }
   scope :tagged, ->(tag_key) {
     where(id: RecipeTag.joins(:tag).where(tags: { key: tag_key }).select(:recipe_id)) if tag_key.present?
   }

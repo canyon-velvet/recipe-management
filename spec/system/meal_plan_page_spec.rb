@@ -36,7 +36,7 @@ RSpec.describe "A week's plan", type: :system do
     slot = meal_plan.meal_slots.find_by!(day_of_week: "sunday", meal_type: "breakfast")
     within("#meal_slot_#{slot.id}") { click_button "＋ Add" }
     within("dialog[open]") do
-      fill_in placeholder: "Search recipes...", with: "oats"
+      fill_in placeholder: "Search recipes or ingredients...", with: "oats"
       find("li", text: "Overnight oats").click
     end
     within("#meal_slot_#{slot.id}") { expect(page).to have_link(recipe_name) }
