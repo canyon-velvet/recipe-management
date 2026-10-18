@@ -10,8 +10,9 @@
     </svg>
   </button>
 
-  <%# Who's signed in (above the menu itself, which holds only its items), the everyday items, the admin's items as a
-      group named by its label, and Log out %>
+  <%# Who's signed in (above the menu itself, which holds only its items), the everyday items (importing a recipe
+      first, from any page, above the Draft box it lands in), the admin's items as a group named by its label, and
+      Log out %>
   <div data-dropdown-target="menu" class="account-menu menu-card hidden">
     <div class="menu-who">
       <span class="menu-avatar" aria-hidden="true"><%= current_user.username.first.upcase %></span>
@@ -21,6 +22,9 @@
       </span>
     </div>
     <div role="menu">
+      <%= link_to new_import_path, class: "menu-item", role: "menuitem" do %>
+        <%= inline_icon "import" %> <%= t(".import_recipe") %>
+      <% end %>
       <%= link_to drafts_path, class: "menu-item", role: "menuitem" do %>
         <%= inline_icon "drafts" %>
         <span class="flex-1"><%= t(".draft_box") %></span>

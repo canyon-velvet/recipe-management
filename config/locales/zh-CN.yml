@@ -178,6 +178,7 @@ zh-CN:
       background_jobs: "后台任务"
       draft_box: "草稿箱"
       drafts_need_attention: "有草稿需要处理"
+      import_recipe: "导入菜谱"
       invites: "邀请"
       logout: "退出"
       preferences: "饮食偏好"

@@ -183,6 +183,7 @@ en:
       background_jobs: "Background jobs"
       draft_box: "Draft box"
       drafts_need_attention: "Some drafts need your attention"
+      import_recipe: "Import a recipe"
       invites: "Invites"
       logout: "Log out"
       preferences: "Preferences"
