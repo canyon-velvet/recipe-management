@@ -19,7 +19,11 @@ class Recipe < ApplicationRecord
   # A draft's source the user doesn't have yet; it's created when the recipe saves.
   attr_accessor :new_source_name
 
-  validates :name, presence: true
+  # The longest description (with its tips) that can be saved, and so previewed
+  MAX_DESCRIPTION = 20_000
+
+  validates :name, presence: true, length: { maximum: 200 }
+  validates :description, length: { maximum: MAX_DESCRIPTION }
   validates :source_url, http_url: true, allow_blank: true
   validates :source_url, uniqueness: { scope: :user_id }, allow_nil: true
   COUNT_LIMITS.each do |attribute, max|

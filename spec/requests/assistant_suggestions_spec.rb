@@ -10,7 +10,7 @@ RSpec.describe "Suggested preferences in the assistant's replies", type: :reques
 
   before do
     allow(CleanRecipeService).to receive(:available?).and_return(true)
-    post login_path, params: { username: user.username, password: "password" }
+    log_in_as user
   end
 
   it "saves the suggestion when the user clicks Save, and shows it saved" do

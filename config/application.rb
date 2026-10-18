@@ -33,7 +33,9 @@ module RecipeManagement
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    # config.time_zone = "Central Time (US & Canada)"
+    # The zone a new user starts in (users.time_zone's default), and the one used outside a user's requests. Each
+    # request runs in its user's own zone (ApplicationController#use_time_zone).
+    config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
     config.i18n.available_locales = [ :en, :"zh-CN" ]

@@ -4,7 +4,7 @@ RSpec.describe "Meal plans", type: :request do
   let(:user) { create(:user) }
   let(:monday) { Date.new(2026, 10, 12) }
 
-  before { post login_path, params: { username: user.username, password: "password" } }
+  before { log_in_as user }
 
   around { |example| travel_to(monday + 4.days) { example.run } }
 
@@ -67,6 +67,25 @@ RSpec.describe "Meal plans", type: :request do
     expect(response.body.scan("meal-plan-row--current").size).to eq 1
   end
 
+  it "counts every row's recipes and planned meals in the same few queries, however many weeks there are" do
+    def queries_for_list
+      count = 0
+      counter = ->(*, payload) { count += 1 unless payload[:name] == "SCHEMA" || payload[:cached] }
+      ActiveSupport::Notifications.subscribed(counter, "sql.active_record") { get meal_plans_path }
+      count
+    end
+
+    plan_one = plan_week(monday)
+    plan_one.meal_slots.first.recipes << create(:recipe, user: user)
+    one_week = queries_for_list
+
+    3.times { |n| plan_week(monday - (n + 1).weeks).meal_slots.first.recipes << create(:recipe, user: user) }
+
+    expect(queries_for_list).to eq one_week
+    expect(response.body.scan("1 recipe").size).to eq 4
+    expect(response.body.scan("1 of 28 meals").size).to eq 4
+  end
+
   describe "a week's plan" do
     let(:meal_plan) { plan_week(monday) }
 
@@ -84,6 +103,14 @@ RSpec.describe "Meal plans", type: :request do
       expect(page.at_css(".meal-plan-to-buy").text).to eq "2 to buy"
       expect(page.css(".meal-day").size).to eq 7
       expect(page.at_css(".meal-pill--on-list .meal-pill-name").text).to eq "Mapo tofu"
+    end
+
+    it "names the recipe search pop-up by its heading" do
+      get meal_plan_path(meal_plan)
+
+      page = Nokogiri::HTML(response.body)
+      heading_id = page.at_css("dialog[data-recipe-select-target=dialog]")["aria-labelledby"]
+      expect(page.at_css("[id='#{heading_id}']").text).to eq "Choose a recipe"
     end
 
     it "speaks Chinese too" do
