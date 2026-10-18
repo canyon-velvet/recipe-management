@@ -2,6 +2,6 @@
 # the preview matches it and imported text can't run HTML in the browser.
 class MarkdownPreviewsController < ApplicationController
   def create
-    render html: helpers.render_markdown(params[:text].to_s.first(Recipe::MAX_DESCRIPTION))
+    render html: helpers.render_markdown(params[:text].to_s)
   end
 end

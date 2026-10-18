@@ -7,7 +7,6 @@ class RecipeIngredient < ApplicationRecord
   attr_accessor :new_ingredient_name, :new_aisle_id
 
   validates :ingredient_id, uniqueness: { scope: :recipe_id }
-  validates :quantity, :unit, length: { maximum: 50 }
   validate :ingredient_must_belong_to_recipe_owner
   validate :ingredient_must_be_listed_once
 
