@@ -1,8 +1,8 @@
-<dialog data-recipe-select-target="dialog"
+<dialog data-recipe-select-target="dialog" aria-labelledby="recipe_search_title"
         data-action="click->recipe-select#backdropClose"
         class="rounded-xl p-0 backdrop:bg-black/40">
   <div class="modal-panel" style="min-width: 320px;">
-    <h3 class="modal-title"><%= t(".title") %></h3>
+    <h3 id="recipe_search_title" class="modal-title"><%= t(".title") %></h3>
 
     <input type="text"
            class="form-input mb-3"

@@ -3,6 +3,10 @@ class User < ApplicationRecord
 
   has_many :recipes, dependent: :destroy
   has_many :meal_plans, dependent: :destroy
+  has_many :meal_slots, through: :meal_plans
+  has_many :meal_slot_recipes, through: :meal_slots
+  has_many :grocery_lists, through: :meal_plans
+  has_many :grocery_list_items, through: :grocery_lists
   has_many :sources, dependent: :destroy
   has_many :ingredients, dependent: :destroy
   has_many :aisles, dependent: :destroy

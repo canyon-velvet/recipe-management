@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Preferences", type: :request do
   let(:user) { create(:user) }
 
-  before { post login_path, params: { username: user.username, password: "password" } }
+  before { log_in_as user }
 
   it "lists the user's preferences under every category" do
     create(:preference, user: user, category: "avoid", value: "peanuts")
