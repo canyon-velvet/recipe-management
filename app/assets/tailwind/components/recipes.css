@@ -24,7 +24,6 @@
   }
   .recipes-results { @apply order-2 min-w-0 md:order-none md:col-start-2 md:row-start-2; }
   .recipes-grid    { @apply grid gap-6 sm:grid-cols-2 xl:grid-cols-3; }
-  .recipes-empty   { @apply py-16 text-center text-gray-500; }
 
   /* Tag catalog: each kind's tags with emoji and counts, one selectable at a time */
   .tag-catalog { @apply mt-3 flex flex-col; }

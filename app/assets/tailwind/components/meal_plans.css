@@ -1,11 +1,8 @@
 @layer components {
-  /* Meal plan list: the weeks newest first, grouped by month under "—— OCTOBER 2026 ——" (.recipe-section-heading) */
-  .meal-plans-page   { @apply mx-auto max-w-3xl py-10; }
-  .meal-plans-header { @apply flex flex-wrap items-end justify-between gap-4; }
-  .meal-plans-title  { @apply mt-2 text-4xl font-bold tracking-tight text-gray-900; }
+  /* Meal plan list (a .page): the weeks newest first, grouped by month under "—— OCTOBER 2026 ——"
+     (.recipe-section-heading) */
   .meal-plans-month  { @apply mt-12; }
   .meal-plans-list   { @apply mt-5 flex flex-col gap-3; }
-  .meal-plans-empty  { @apply py-16 text-center text-gray-500; }
 
   /* A week's row, all white: the Monday's date in a cream tile, the name and how full the week is, then the grocery
      list and the ⋮ menu (below the rest on a phone). This week's row is outlined. As with a recipe card, the whole row

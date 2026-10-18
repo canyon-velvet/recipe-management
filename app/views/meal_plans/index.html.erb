@@ -2,11 +2,11 @@
 <% content_for :head do %>
   <meta name="turbo-cache-control" content="no-cache">
 <% end %>
-<section class="meal-plans-page" data-controller="modal">
-  <div class="meal-plans-header">
+<section class="page" data-controller="modal">
+  <div class="page-header">
     <div>
       <p class="home-eyebrow"><%= t(".eyebrow") %></p>
-      <h1 class="meal-plans-title"><%= t(".title") %></h1>
+      <h1 class="page-title"><%= t(".title") %></h1>
     </div>
     <%= link_to "＋ #{t('.new_meal_plan')}", new_meal_plan_path, class: "btn-pill-primary btn-pill-sm",
           data: { action: "modal#open:prevent" } %>
@@ -28,6 +28,6 @@
 
     <%= render "shared/pagination", pagy: @pagy %>
   <% else %>
-    <p class="meal-plans-empty"><%= t(".empty") %></p>
+    <p class="page-empty"><%= t(".empty") %></p>
   <% end %>
 </section>

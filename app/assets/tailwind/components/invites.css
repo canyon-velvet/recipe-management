@@ -1,9 +1,6 @@
 @layer components {
-  /* Invites page: the header as on the Draft box, a rounded bar to create a link (a note and the button inside it),
-     then a white row per invite, newest first */
-  .invites-page     { @apply mx-auto max-w-3xl py-10; }
-  .invites-title    { @apply mt-2 text-4xl font-bold tracking-tight text-gray-900; }
-  .invites-subtitle { @apply mt-1.5 text-sm text-gray-500; }
+  /* Invites page (a .page): a rounded bar to create a link (a note and the button inside it), then a white row per
+     invite, newest first */
   /* On a phone the button goes under the note, full width, in a rounded box rather than a pill */
   .invite-form {
     @apply mt-6 flex flex-wrap items-center gap-2 rounded-3xl bg-white p-1.5 shadow-sm ring-1 ring-gray-200
@@ -14,7 +11,6 @@
     @apply h-11 min-w-0 flex-[1_1_14rem] border-0 bg-transparent px-4 text-[15px] focus:outline-none;
   }
   .invites-list  { @apply mt-7 flex flex-col gap-3; }
-  .invites-empty { @apply py-16 text-center text-gray-500; }
 
   .invite-row     { @apply rounded-3xl bg-white p-4 shadow-sm ring-1 ring-gray-100; }
   .invite-main    { @apply flex flex-wrap items-center gap-4; }

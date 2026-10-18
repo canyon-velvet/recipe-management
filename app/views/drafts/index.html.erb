@@ -1,9 +1,9 @@
-<section class="drafts-page" data-controller="modal">
-  <div class="drafts-header">
+<section class="page" data-controller="modal">
+  <div class="page-header">
     <div>
       <p class="home-eyebrow"><%= t(".eyebrow") %></p>
-      <h1 class="drafts-title"><%= t(".title") %></h1>
-      <p class="drafts-subtitle"><%= t(".subtitle") %></p>
+      <h1 class="page-title"><%= t(".title") %></h1>
+      <p class="page-subtitle"><%= t(".subtitle") %></p>
     </div>
     <%= link_to "＋ #{t('recipes.index.import_recipe')}", new_import_path, class: "btn-pill-primary btn-pill-sm",
           data: { action: "modal#open:prevent" } %>
@@ -17,6 +17,6 @@
       <% end %>
     </ol>
   <% else %>
-    <p class="drafts-empty"><%= t(".empty") %></p>
+    <p class="page-empty"><%= t(".empty") %></p>
   <% end %>
 </section>
