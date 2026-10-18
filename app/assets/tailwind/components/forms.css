@@ -6,6 +6,8 @@
   .form-textarea  { @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:outline-none focus:ring focus:ring-sectiontext-light/40; }
   .help-text      { @apply text-xs text-gray-500; }
   .error-text     { @apply text-xs text-red-600; }
+  /* Why a form didn't save, listed above it (shared/form_errors) */
+  .form-errors    { @apply rounded-2xl border border-red-300 bg-red-50 p-4 text-red-700; }
   .panel          { @apply rounded-xl border border-gray-200 bg-gray-50 p-4; }
 
   /* Markdown tab bar */

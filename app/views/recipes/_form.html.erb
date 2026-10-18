@@ -6,7 +6,7 @@
   <%= hidden_field_tag :draft_id, draft.id if draft %>
 
   <div class="recipe-form-main">
-    <%= render "recipes/form_errors", recipe: recipe %>
+    <%= render "shared/form_errors", record: recipe %>
 
     <section class="recipe-form-card">
       <div class="field">
