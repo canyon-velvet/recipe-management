@@ -41,11 +41,15 @@ class RecipesController < ApplicationController
   def edit
   end
 
+  # In one transaction, so an edit that fails saves nothing: assigning tag_ids to a saved recipe writes them at once.
   def update
-    @recipe.assign_attributes(recipe_params)
-    ensure_own_records!
+    saved = Recipe.transaction do
+      @recipe.assign_attributes(recipe_params)
+      ensure_own_records!
+      @recipe.save || raise(ActiveRecord::Rollback)
+    end
 
-    if @recipe.save
+    if saved
       sync_grocery_lists(@recipe.meal_plans)
       redirect_to recipe_path(@recipe), notice: t("flash.recipe_updated")
     else

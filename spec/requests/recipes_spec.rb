@@ -53,6 +53,20 @@ RSpec.describe "Recipes", type: :request do
     )
   end
 
+  it "saves none of an edit that fails, its tags included" do
+    recipe = create(:recipe, user: user, name: "Apple cake")
+    tag = create(:tag, key: "spicy", kind: "flavor")
+
+    patch recipe_path(recipe), params: { recipe: { name: "", tag_ids: [ "", tag.id ] } }
+    expect(response).to have_http_status(:unprocessable_content)
+
+    patch recipe_path(recipe), params: { recipe: { source_id: create(:source).id, tag_ids: [ "", tag.id ] } }
+    expect(response).to have_http_status(:not_found)
+
+    expect(recipe.reload.tags).to be_empty
+    expect(recipe.name).to eq "Apple cake"
+  end
+
   describe "another user's source or ingredient in the form" do
     let(:other_user) { create(:user) }
     let(:their_source) { create(:source, user: other_user, name: "Their secret source") }
