@@ -67,6 +67,20 @@ RSpec.describe "The navbar", type: :system do
     end
   end
 
+  it "imports a recipe from the account menu on any page, its first item, above the Draft box" do
+    log_in_as create(:user, username: "home_cook")
+    visit meal_plans_path
+    click_button "home_cook"
+
+    within(".account-menu") do
+      expect(all("[role='menuitem']").map(&:text).first(2).map(&:squish)).to eq [ "Import a recipe", "Draft box" ]
+      click_link "Import a recipe"
+    end
+
+    expect(page).to have_current_path(new_import_path)
+    expect(page).to have_field("Recipe link")
+  end
+
   it "leaves the admin's label and items out of everyone else's account menu" do
     log_in_as create(:user, username: "home_cook")
     click_button "home_cook"
