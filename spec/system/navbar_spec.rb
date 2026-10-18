@@ -28,12 +28,15 @@ RSpec.describe "The navbar", type: :system do
     expect(page).to have_button("菜单") # the page is now in Chinese
   end
 
-  it "fits a phone's width, even with a long username" do
+  it "fits the narrowest phone's width, even with a long username and drafts waiting" do
     allow(CleanRecipeService).to receive(:available?).and_return(true) # ✦ shows too
-    resize(360)
-    log_in_as create(:user, username: "a_rather_long_username_for_a_phone")
+    resize(320)
+    user = create(:user, username: "a_rather_long_username_for_a_phone")
+    user.drafts.create!(source_url: "https://example.com/pancakes", status: :ready) # the account's dot shows too
+    log_in_as user
 
-    expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 360
+    expect(page).to have_css(".account-dot")
+    expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 320
   end
 
   [ 768, 1024 ].each do |width|

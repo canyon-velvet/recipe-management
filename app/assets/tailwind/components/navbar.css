@@ -10,6 +10,10 @@
     @apply flex text-sectiontext font-semibold text-base tracking-widest uppercase whitespace-nowrap;
     font-family: "Montserrat", sans-serif;
   }
+  /* On the narrowest phones (under 360px) a smaller logo leaves room for ✦, the account (with its dot) and ☰ */
+  @media (width < 22.5rem) {
+    header .logo-text { @apply text-sm tracking-wide; }
+  }
 
   header .links          { @apply px-4 flex flex-row space-x-4; }
   header .topnav-item-container { @apply relative flex flex-row ml-8; }

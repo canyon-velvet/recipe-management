@@ -125,4 +125,14 @@ RSpec.describe "The recipe list", type: :system do
     expect(page).to have_button("Search & filter · Soup")
     expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 390
   end
+
+  it "keeps a card with a long name within the narrowest phone, its name cut short" do
+    create(:recipe, user: user, name: "Grandma's slow-braised pork belly with preserved mustard greens and rice")
+    resize(320)
+    log_in_as user
+    visit recipes_path
+
+    expect(page).to have_css(".recipe-card-title", text: "Grandma's slow-braised")
+    expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 320
+  end
 end
