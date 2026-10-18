@@ -16,13 +16,4 @@
   .page-subtitle { @apply mt-1.5 text-sm text-gray-500; }
   /* A list with nothing in it yet */
   .page-empty    { @apply py-16 text-center text-gray-500; }
-  .main-wrapper    { @apply py-6 px-8; }
-  .main-header     { @apply flex flex-col mb-2; }
-  .main-title      { @apply flex items-center justify-between my-2; height: 36px; }
-  .main-actions    { @apply flex items-center space-x-2; }
-  .main-actions a  {
-    @apply inline-flex items-center justify-center rounded-lg font-medium px-4 py-2 text-sm
-           bg-sectiontext-light text-white hover:bg-sectiontext focus:outline-none
-           focus:ring-2 focus:ring-sectiontext-light/50 focus:ring-offset-2;
-  }
 }
