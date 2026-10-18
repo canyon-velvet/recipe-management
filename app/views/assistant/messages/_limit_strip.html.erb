@@ -1,0 +1,12 @@
+<%# locals: (user:) %>
+<%# Above the box, once few messages are left (Message::FEW_LEFT): how many, and when the next frees up. Empty
+    otherwise. Its fixed id lets each message sent redraw it. %>
+<% left = user.assistant_messages_left %>
+<div id="assistant_limit">
+  <% if left <= Message::FEW_LEFT %>
+    <p class="assistant-limit" role="status">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+      <%= t("assistant.messages_left", count: left, time: l(user.assistant_message_freed_at, format: :clock)) %>
+    </p>
+  <% end %>
+</div>

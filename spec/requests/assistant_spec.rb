@@ -34,6 +34,22 @@ RSpec.describe "Assistant panel", type: :request do
       expect(response.body).to include("We couldn&#39;t read a recipe from this.")
     end
 
+    it "says how many messages are left once few are, and when more come" do
+      conversation = user.current_conversation!
+      travel_to(Time.zone.local(2026, 10, 19, 9, 14)) { conversation.messages.create!(role: :user, content: "Hi") }
+      travel_to(Time.zone.local(2026, 10, 19, 12)) do
+        (Message::DAILY_LIMIT - 12).times { conversation.messages.create!(role: :user, content: "Hi") }
+      end
+      travel_to Time.zone.local(2026, 10, 19, 20)
+
+      get recipes_path
+      expect(Nokogiri::HTML(response.body).at_css("#assistant_limit").text.squish).to be_empty # 11 left
+
+      post assistant_messages_path, params: { message: { content: "One more?" } }, headers: turbo_stream
+      # The strip is redrawn with the reply: the oldest message counted frees one up 24 hours after it was sent
+      expect(response.body).to include('action="replace" target="assistant_limit"', "10 messages left · more from 9:14 am")
+    end
+
     it "adds the message and a pending reply to the user's conversation" do
       post assistant_messages_path, params: { message: { content: "Dinner for 4?" } }, headers: turbo_stream
 

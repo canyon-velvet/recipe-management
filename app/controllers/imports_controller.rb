@@ -3,6 +3,8 @@
 class ImportsController < ApplicationController
   before_action :set_form, only: [ :new, :create ]
 
+  helper_method :imports_left
+
   def new
   end
 
@@ -24,4 +26,6 @@ class ImportsController < ApplicationController
     @paste = params[:paste].present? || @text.present?
     @can_paste = CleanRecipeService.available?
   end
+
+  def imports_left = @imports_left ||= StartImportService.imports_left(current_user)
 end
