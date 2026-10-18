@@ -4,12 +4,10 @@ RSpec.describe "Assistant panel", type: :request do
   let(:user) { create(:user) }
   let(:turbo_stream) { { "Accept" => "text/vnd.turbo-stream.html" } }
 
-  def log_in = post(login_path, params: { username: user.username, password: "password" })
-
   context "with an Anthropic API key" do
     before do
       allow(CleanRecipeService).to receive(:available?).and_return(true)
-      log_in
+      log_in_as user
     end
 
     it "shows the ✦ button and the panel, closed until the cookie says it's open" do
@@ -83,7 +81,7 @@ RSpec.describe "Assistant panel", type: :request do
   context "without an Anthropic API key" do
     before do
       allow(CleanRecipeService).to receive(:available?).and_return(false)
-      log_in
+      log_in_as user
     end
 
     it "leaves the assistant out" do
