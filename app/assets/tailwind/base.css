@@ -3,5 +3,19 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    /* A word too long for its line (a pasted link, an imported URL) breaks onto the next, rather than widening the
+       page past a phone's screen. Only such words: the rest wrap at spaces as usual. */
+    overflow-wrap: break-word;
+  }
+}
+
+/* iPhone and iPad zoom the page in when a box with text under 16px gets the keyboard, and the page then scrolls
+   sideways. On iOS only (-webkit-touch-callout is iOS's alone), every box is 16px. Outside any layer, so it wins over
+   the components' text-sm. */
+@supports (-webkit-touch-callout: none) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
   }
 }
