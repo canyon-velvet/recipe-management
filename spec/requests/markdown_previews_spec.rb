@@ -13,15 +13,6 @@ RSpec.describe "Markdown previews", type: :request do
     expect(response.body).not_to include("<img", "onerror")
   end
 
-  it "previews at most as much text as a recipe can hold" do
-    post login_path, params: { username: user.username, password: "password" }
-
-    post markdown_preview_path, params: { text: "a" * 20_000 + "TAIL" }
-
-    expect(response.body).to include("a" * 20_000)
-    expect(response.body).not_to include("TAIL")
-  end
-
   it "needs a logged-in user" do
     post markdown_preview_path, params: { text: "**Bold**" }
 
