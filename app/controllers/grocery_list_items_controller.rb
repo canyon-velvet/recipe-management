@@ -16,8 +16,6 @@ class GroceryListItemsController < ApplicationController
   private
 
   def set_item
-    @item = GroceryListItem.includes(ingredient: :aisle, grocery_list: :meal_plan).find(params[:id])
-    meal_plan = @item.grocery_list.meal_plan
-    redirect_to meal_plans_path, alert: t("flash.not_authorized") unless meal_plan.user_id == current_user.id
+    @item = current_user.grocery_list_items.includes(ingredient: :aisle, grocery_list: :meal_plan).find(params[:id])
   end
 end

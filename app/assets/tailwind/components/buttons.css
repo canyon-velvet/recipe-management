@@ -1,10 +1,4 @@
 @layer components {
-  .btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg font-medium px-4 py-2 text-sm
-           bg-sectiontext-light text-white hover:bg-sectiontext focus:outline-none
-           focus:ring-2 focus:ring-sectiontext-light/50 focus:ring-offset-2;
-  }
-
   .btn-secondary {
     @apply inline-flex items-center justify-center rounded-lg font-medium px-4 py-2 text-sm
            bg-white text-gray-900 border border-gray-300 hover:bg-gray-50
@@ -24,7 +18,6 @@
   }
 
   .btn-sm { @apply px-3 py-1.5 text-sm; }
-  .btn-lg { @apply px-5 py-3 text-base; }
 
   /* Large rounded buttons for a page's main calls to action (the home page) */
   .btn-pill-primary {

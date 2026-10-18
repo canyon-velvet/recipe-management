@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Recipes", type: :request do
   let(:user) { create(:user) }
 
-  before { post login_path, params: { username: user.username, password: "password" } }
+  before { log_in_as user }
 
   it "saves servings and times from the form, filling the total from prep and cook" do
     post recipes_path, params: { recipe: {
@@ -40,6 +40,17 @@ RSpec.describe "Recipes", type: :request do
     details = page.at_css(".recipe-form-details")
     expect(details.at_css("input[type=submit]")["value"]).to eq "Update recipe"
     expect(details.css("label").map { _1.text.squish }).to include("Tags", "Servings", "Source", "Recipe link")
+  end
+
+  it "names each card's ⋮ menu button for screen readers" do
+    create(:recipe, user: user)
+
+    get recipes_path
+
+    button = Nokogiri::HTML(response.body).at_css(".recipe-card [data-controller=dropdown] > button")
+    expect(button.attributes.transform_values(&:value)).to include(
+      "type" => "button", "aria-label" => "More actions", "aria-haspopup" => "true", "aria-expanded" => "false"
+    )
   end
 
   describe "another user's source or ingredient in the form" do

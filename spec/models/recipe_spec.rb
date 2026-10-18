@@ -90,4 +90,19 @@ RSpec.describe Recipe do
       expect(recipe.description_and_tips).to eq [ "Some **Tips** inside a sentence.", nil ]
     end
   end
+
+  it "caps how long what's typed can be, the recipe's and its rows'" do
+    user = create(:user)
+    recipe = build(:recipe, user: user, name: "n" * 201, description: "d" * 20_001)
+    recipe.steps.first.body = "s" * 5_001
+    recipe.recipe_ingredients.build(ingredient: create(:ingredient, user: user), quantity: "q" * 51, unit: "u" * 51)
+
+    expect(recipe).not_to be_valid
+    expect(recipe.errors.attribute_names).to include(:name, :description, :"steps.body",
+                                                     :"recipe_ingredients.quantity", :"recipe_ingredients.unit")
+    expect(build(:ingredient, user: user, name: "i" * 101)).not_to be_valid
+    expect(build(:source, user: user, name: "s" * 201)).not_to be_valid
+    expect(user.aisles.build(name: "a" * 51, position: 1)).not_to be_valid
+    expect(build(:recipe, user: user, name: "n" * 200, description: "d" * 20_000)).to be_valid
+  end
 end

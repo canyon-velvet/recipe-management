@@ -8,6 +8,7 @@ class Aisle < ApplicationRecord
 
   validates :key, uniqueness: { scope: :user_id }, allow_nil: true
   validates :name, uniqueness: { scope: :user_id, case_sensitive: false }, if: :custom_name?
+  validates :name, length: { maximum: 50 }
   validate :name_must_differ_from_default_aisles, if: :custom_name?
   validates :position, presence: true
 
