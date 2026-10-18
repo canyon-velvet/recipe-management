@@ -364,7 +364,7 @@ en:
     empty: "Ask me what to cook tonight, what you can make with what's in the fridge, or paste a recipe link to import."
     failed: "Sorry, something went wrong. Please try again."
     importing: "Importing the recipe…"
-    limit_reached: "You've sent today's %{count} messages. Please come back tomorrow."
+    limit_reached: "You've sent %{count} messages in the last 24 hours. Please come back later."
     new_chat: "New chat"
     open: "Open assistant"
     placeholder: "Ask about recipes…"

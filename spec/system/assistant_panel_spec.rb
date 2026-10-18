@@ -205,7 +205,7 @@ RSpec.describe "Assistant panel", type: :system do
     fill_in "Ask about recipes…", with: "One more?"
     find_field("Ask about recipes…").send_keys(:enter)
 
-    expect(page).to have_css(".assistant-notice", text: "today's 50 messages")
+    expect(page).to have_css(".assistant-notice", text: "50 messages in the last 24 hours")
     expect(page).to have_field("Ask about recipes…", with: "One more?")
 
     # Trying again moves the notice rather than stacking another
