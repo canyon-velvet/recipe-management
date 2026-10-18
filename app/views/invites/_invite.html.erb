@@ -2,7 +2,7 @@
 <%# An invite and what became of it: a tile for its state (a link while it can be used, ✓ once used, a clock once
     expired), who it's for and its state, and when it expires or who used it. Until it's used or expires, its link can
     be copied to send; until it's used, it can be deleted, which stops the link working. %>
-<% state = invite.used? ? "used" : (invite.usable? ? "active" : "expired") %>
+<% state = invite.state %>
 <li id="<%= dom_id(invite) %>" class="list-row">
   <div class="invite-main">
     <span class="status-tile invite-icon invite-icon--<%= state %>" aria-hidden="true">

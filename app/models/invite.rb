@@ -17,6 +17,8 @@ class Invite < ApplicationRecord
 
   def used? = used_at.present?
   def usable? = !used? && expires_at.future?
+  # What became of it: "active" while it can be used, then "used" or "expired" (the Invites page's tile and pill)
+  def state = used? ? "used" : (usable? ? "active" : "expired")
 
   # Saves the new user and marks the invite used, together, if the invite can still be used. Locked, so two sign-ups
   # with the same link can't both get in: the second waits, then sees it used. False if it wasn't saved: the user has
