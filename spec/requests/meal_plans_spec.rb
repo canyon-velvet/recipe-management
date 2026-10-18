@@ -4,7 +4,7 @@ RSpec.describe "Meal plans", type: :request do
   let(:user) { create(:user) }
   let(:monday) { Date.new(2026, 10, 12) }
 
-  before { post login_path, params: { username: user.username, password: "password" } }
+  before { log_in_as user }
 
   around { |example| travel_to(monday + 4.days) { example.run } }
 
