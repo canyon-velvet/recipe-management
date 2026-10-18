@@ -1,0 +1,11 @@
+<%# locals: (record:) %>
+<%# Why a form's record didn't save, listed above the form %>
+<% if record.errors.any? %>
+  <div class="form-errors">
+    <ul class="list-disc list-inside text-sm">
+      <% record.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

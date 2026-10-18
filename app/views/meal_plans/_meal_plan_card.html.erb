@@ -1,7 +1,7 @@
 <%# locals: (meal_plan:) %>
 <%# The whole row links to the week (the link lies under the content); the grocery list and ⋮ take their own clicks. %>
 <% planned = meal_plan.planned_meal_count %>
-<div class="meal-plan-row <%= 'meal-plan-row--current' if meal_plan.this_week? %>">
+<div class="list-row meal-plan-row <%= 'meal-plan-row--current' if meal_plan.this_week? %>">
   <%= link_to "", meal_plan_path(meal_plan), class: "meal-plan-row-link", "aria-label": meal_plan.display_name %>
 
   <div class="meal-plan-date">
@@ -13,9 +13,9 @@
     <div class="meal-plan-heading">
       <h3 class="meal-plan-name"><%= meal_plan.display_name %></h3>
       <% if meal_plan.this_week? %>
-        <span class="meal-plan-badge meal-plan-badge--current"><%= t(".this_week") %></span>
+        <span class="status-pill meal-plan-badge meal-plan-badge--current"><%= t(".this_week") %></span>
       <% elsif meal_plan.next_week? %>
-        <span class="meal-plan-badge"><%= t(".next_week") %></span>
+        <span class="status-pill meal-plan-badge"><%= t(".next_week") %></span>
       <% end %>
     </div>
     <p class="meal-plan-facts">

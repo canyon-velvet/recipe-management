@@ -3,9 +3,9 @@
     expired), who it's for and its state, and when it expires or who used it. Until it's used or expires, its link can
     be copied to send; until it's used, it can be deleted, which stops the link working. %>
 <% state = invite.used? ? "used" : (invite.usable? ? "active" : "expired") %>
-<li id="<%= dom_id(invite) %>" class="invite-row">
+<li id="<%= dom_id(invite) %>" class="list-row">
   <div class="invite-main">
-    <span class="invite-icon invite-icon--<%= state %>" aria-hidden="true">
+    <span class="status-tile invite-icon invite-icon--<%= state %>" aria-hidden="true">
       <% case state %>
       <% when "active" %>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
@@ -16,10 +16,10 @@
       <% end %>
     </span>
 
-    <div class="invite-body">
-      <div class="invite-heading">
-        <h2 class="invite-title"><%= invite.note.presence || t(".untitled") %></h2>
-        <span class="invite-status invite-status--<%= state %>"><%= t(".statuses.#{state}") %></span>
+    <div class="status-body">
+      <div class="status-heading">
+        <h2 class="status-title"><%= invite.note.presence || t(".untitled") %></h2>
+        <span class="status-pill invite-status--<%= state %>"><%= t(".statuses.#{state}") %></span>
       </div>
       <p class="invite-meta">
         <% case state %>

@@ -2,15 +2,15 @@
 <%# A draft's row: a tile for where it's at (a spinner while it's read, ✓ when ready, ! when it failed), its title
     and status, where it's from and when, the reason when it failed, then what can be done with it. Replaced live as
     the import goes on (DraftBoxBroadcasts). %>
-<li id="<%= dom_id(draft) %>" class="draft-row">
-  <span class="draft-icon draft-icon--<%= draft.status %>" aria-hidden="true">
+<li id="<%= dom_id(draft) %>" class="list-row draft-row">
+  <span class="status-tile draft-icon draft-icon--<%= draft.status %>" aria-hidden="true">
     <%= { "ready" => "✓", "failed" => "!" }[draft.status] %>
   </span>
 
-  <div class="draft-body">
-    <div class="draft-heading">
-      <h2 class="draft-title"><%= draft.title %></h2>
-      <span class="draft-status draft-status--<%= draft.status %>"><%= t("drafts.statuses.#{draft.status}") %></span>
+  <div class="status-body">
+    <div class="status-heading">
+      <h2 class="status-title"><%= draft.title %></h2>
+      <span class="status-pill draft-status--<%= draft.status %>"><%= t("drafts.statuses.#{draft.status}") %></span>
     </div>
     <p class="draft-meta">
       <%= draft.source_host || draft.source_url || t("drafts.pasted_text") %> · <%= t(".added", time: time_ago_in_words(draft.created_at)) %>

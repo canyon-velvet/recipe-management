@@ -6,4 +6,25 @@
   }
 
   .main            { flex: 1; }
+
+  /* A list page (Draft box, Invites, Meal plans, Preferences): a centred column with a header of the small label,
+     a large title and a line under it, actions on the right */
+  .page          { @apply mx-auto max-w-3xl py-10; }
+  .page--wide    { @apply max-w-4xl; }
+  .page-header   { @apply flex flex-wrap items-end justify-between gap-4; }
+  .page-title    { @apply mt-2 text-4xl font-bold tracking-tight text-gray-900; }
+  .page-subtitle { @apply mt-1.5 text-sm text-gray-500; }
+  /* A list with nothing in it yet */
+  .page-empty    { @apply py-16 text-center text-gray-500; }
+
+  /* A list page's row, a white card (Draft box, Invites, Meal plans). A row with a state (Draft box, Invites) leads
+     with a tile for it, then its title beside a pill naming it; each page colours them per state. */
+  .list-row       { @apply rounded-3xl bg-white p-4 shadow-sm ring-1 ring-gray-100; }
+  .status-tile    { @apply flex size-12 flex-none items-center justify-center rounded-2xl; }
+  .status-body    { @apply min-w-0 flex-[1_1_12rem]; }
+  .status-heading { @apply flex flex-wrap items-center gap-2; }
+  .status-title   { @apply min-w-0 truncate text-lg font-semibold text-gray-900; }
+  .status-pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider;
+  }
 }

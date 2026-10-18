@@ -1,7 +1,7 @@
-<section class="invites-page">
+<section class="page">
   <p class="home-eyebrow"><%= t(".eyebrow") %></p>
-  <h1 class="invites-title"><%= t(".title") %></h1>
-  <p class="invites-subtitle"><%= t(".subtitle", days: Invite::LIFETIME.in_days.to_i) %></p>
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <p class="page-subtitle"><%= t(".subtitle", days: Invite::LIFETIME.in_days.to_i) %></p>
 
   <%= form_with model: @invite, class: "invite-form" do |f| %>
     <%= f.text_field :note, class: "invite-note", maxlength: 100, autocomplete: "off",
@@ -17,6 +17,6 @@
       <%= render partial: "invites/invite", collection: @invites %>
     </ol>
   <% else %>
-    <p class="invites-empty"><%= t(".empty") %></p>
+    <p class="page-empty"><%= t(".empty") %></p>
   <% end %>
 </section>
