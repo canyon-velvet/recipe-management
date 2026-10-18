@@ -86,6 +86,14 @@ RSpec.describe "Meal plans", type: :request do
       expect(page.at_css(".meal-pill--on-list .meal-pill-name").text).to eq "Mapo tofu"
     end
 
+    it "names the recipe search pop-up by its heading" do
+      get meal_plan_path(meal_plan)
+
+      page = Nokogiri::HTML(response.body)
+      heading_id = page.at_css("dialog[data-recipe-select-target=dialog]")["aria-labelledby"]
+      expect(page.at_css("[id='#{heading_id}']").text).to eq "Choose a recipe"
+    end
+
     it "speaks Chinese too" do
       patch locale_path, params: { locale: "zh-CN" }
 
