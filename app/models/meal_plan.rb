@@ -16,6 +16,15 @@ class MealPlan < ApplicationRecord
   # The plan for the week a date falls in (weeks start on Monday)
   scope :for_week_of, ->(date) { where(start_date: date.beginning_of_week(:monday)) }
 
+  # Each plan with its counts below loaded alongside it, so a list of plans doesn't query them row by row
+  scope :with_counts, -> {
+    slot_recipes = "FROM meal_slot_recipes JOIN meal_slots ON meal_slots.id = meal_slot_recipes.meal_slot_id " \
+                   "WHERE meal_slots.meal_plan_id = meal_plans.id"
+    select("meal_plans.*",
+           "(SELECT COUNT(*) #{slot_recipes}) AS assigned_recipe_count",
+           "(SELECT COUNT(DISTINCT meal_slots.id) #{slot_recipes}) AS planned_meal_count")
+  }
+
   # This week's Monday and the next two: the weeks offered for a new plan
   def self.upcoming_mondays = Array.new(3) { |n| Date.current.beginning_of_week(:monday) + n.weeks }
 
@@ -27,11 +36,15 @@ class MealPlan < ApplicationRecord
   end
 
   def assigned_recipe_count
+    return self[:assigned_recipe_count] if has_attribute?(:assigned_recipe_count)
+
     MealSlotRecipe.joins(:meal_slot).where(meal_slots: { meal_plan_id: id }).count
   end
 
   # The meals with at least one recipe, out of MEALS_PER_WEEK
   def planned_meal_count
+    return self[:planned_meal_count] if has_attribute?(:planned_meal_count)
+
     meal_slots.joins(:meal_slot_recipes).distinct.count
   end
 

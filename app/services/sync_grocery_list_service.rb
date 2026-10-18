@@ -4,7 +4,14 @@ class SyncGroceryListService
     @grocery_list = meal_plan.grocery_list
   end
 
+  # Under the list's lock, so two syncs at once (ticking two recipes quickly) don't both add the same item
   def call
+    @grocery_list.with_lock { sync }
+  end
+
+  private
+
+  def sync
     # Count checked recipe occurrences: { recipe_id => count }
     recipe_counts = MealSlotRecipe
       .joins(:meal_slot)

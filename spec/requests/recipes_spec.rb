@@ -42,6 +42,17 @@ RSpec.describe "Recipes", type: :request do
     expect(details.css("label").map { _1.text.squish }).to include("Tags", "Servings", "Source", "Recipe link")
   end
 
+  it "names each card's ⋮ menu button for screen readers" do
+    create(:recipe, user: user)
+
+    get recipes_path
+
+    button = Nokogiri::HTML(response.body).at_css(".recipe-card [data-controller=dropdown] > button")
+    expect(button.attributes.transform_values(&:value)).to include(
+      "type" => "button", "aria-label" => "More actions", "aria-haspopup" => "true", "aria-expanded" => "false"
+    )
+  end
+
   describe "another user's source or ingredient in the form" do
     let(:other_user) { create(:user) }
     let(:their_source) { create(:source, user: other_user, name: "Their secret source") }
