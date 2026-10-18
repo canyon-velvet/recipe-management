@@ -23,7 +23,8 @@
     @apply w-full rounded-xl border-0 bg-gray-100 px-3 py-2 text-sm focus:ring-2 focus:ring-sectiontext/30;
   }
   .recipes-results { @apply order-2 min-w-0 md:order-none md:col-start-2 md:row-start-2; }
-  .recipes-grid    { @apply grid gap-6 sm:grid-cols-2 xl:grid-cols-3; }
+  /* One column on a phone that a long title can't widen (it truncates), two from sm, three from xl */
+  .recipes-grid    { @apply grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3; }
 
   /* Tag catalog: each kind's tags with emoji and counts, one selectable at a time */
   .tag-catalog { @apply mt-3 flex flex-col; }

@@ -8,13 +8,15 @@
     </svg>
   </button>
 
-  <div data-dropdown-target="menu" class="navbar-menu-list hidden">
-    <% navbar_links.each do |label, path| %>
+  <%# The links with their icons (the page you're on in brown), then the languages under a label %>
+  <div data-dropdown-target="menu" class="navbar-menu-list menu-card hidden">
+    <% navbar_links.each do |label, path, icon| %>
       <% current = current_page?(path) %>
-      <%= link_to label, path, class: "navbar-menu-item #{'navbar-menu-item--active' if current}",
-                               aria: { current: ("page" if current) } %>
+      <%= link_to path, class: "menu-item #{'menu-item--current' if current}", aria: { current: ("page" if current) } do %>
+        <%= inline_icon icon %> <%= label %>
+      <% end %>
     <% end %>
-    <p class="navbar-menu-heading"><%= t("shared.locale_switcher.label") %></p>
+    <p class="menu-label"><%= t("shared.locale_switcher.label") %></p>
     <%= render "shared/locale_options" %>
   </div>
 </div>

@@ -28,12 +28,15 @@ RSpec.describe "The navbar", type: :system do
     expect(page).to have_button("菜单") # the page is now in Chinese
   end
 
-  it "fits a phone's width, even with a long username" do
+  it "fits the narrowest phone's width, even with a long username and drafts waiting" do
     allow(CleanRecipeService).to receive(:available?).and_return(true) # ✦ shows too
-    resize(360)
-    log_in_as create(:user, username: "a_rather_long_username_for_a_phone")
+    resize(320)
+    user = create(:user, username: "a_rather_long_username_for_a_phone")
+    user.drafts.create!(source_url: "https://example.com/pancakes", status: :ready) # the account's dot shows too
+    log_in_as user
 
-    expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 360
+    expect(page).to have_css(".account-dot")
+    expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 320
   end
 
   [ 768, 1024 ].each do |width|
@@ -47,6 +50,45 @@ RSpec.describe "The navbar", type: :system do
       click_link "Meal Plans"
       expect(page).to have_css("h1", text: "Meal Plans")
       expect(page).to have_css(".assistant-panel")
+    end
+  end
+
+  it "shows who's signed in atop the account menu, and an admin's items under their own label" do
+    log_in_as create(:user, :admin, username: "home_cook")
+    click_button "home_cook"
+
+    within(".account-menu") do
+      expect(find(".menu-who")).to have_text("home_cook").and have_text("Signed in")
+      expect(page).to have_css(".menu-label", text: /admin/i)
+      # For screen readers: the admin's items are a group named by the label, and the header isn't in the menu
+      expect(find("[role='group'][aria-labelledby='account_menu_admin']")).to have_link("Invites")
+      expect(page).to have_no_css("[role='menu'] .menu-who")
+      expect(page).to have_css(".menu-item--logout", text: "Log out")
+    end
+  end
+
+  it "leaves the admin's label and items out of everyone else's account menu" do
+    log_in_as create(:user, username: "home_cook")
+    click_button "home_cook"
+
+    within(".account-menu") do
+      expect(page).to have_link("Preferences")
+      expect(page).to have_no_css(".menu-label")
+      expect(page).to have_no_link("Invites")
+    end
+  end
+
+  it "marks the page you're on and the language in use in ☰" do
+    resize(1024)
+    log_in_as user
+    visit meal_plans_path
+    click_button "Menu"
+
+    within(".navbar-menu-list") do
+      expect(page).to have_css(".menu-item--current[aria-current='page']", text: "Meal Plans")
+      expect(page).to have_css("button.menu-item--current[aria-current='true'] svg", visible: :all)
+      expect(page).to have_css("button.menu-item--current", text: "English")
+      expect(page).to have_css(".menu-item", count: 5) # three links, two languages
     end
   end
 

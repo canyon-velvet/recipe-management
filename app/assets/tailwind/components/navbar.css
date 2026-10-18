@@ -10,6 +10,10 @@
     @apply flex text-sectiontext font-semibold text-base tracking-widest uppercase whitespace-nowrap;
     font-family: "Montserrat", sans-serif;
   }
+  /* On the narrowest phones (under 360px) a smaller logo leaves room for ✦, the account (with its dot) and ☰ */
+  @media (width < 22.5rem) {
+    header .logo-text { @apply text-sm tracking-wide; }
+  }
 
   header .links          { @apply px-4 flex flex-row space-x-4; }
   header .topnav-item-container { @apply relative flex flex-row ml-8; }
@@ -70,43 +74,42 @@
   .navbar-menu-toggle {
     @apply flex items-center text-sectiontext hover:text-gray-900 p-1 rounded;
   }
-  .navbar-menu-list {
-    @apply absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-40 py-1;
-  }
-  .navbar-menu-item {
-    @apply block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50;
-  }
-  .navbar-menu-item--active { @apply font-semibold text-sectiontext; }
-  /* "Language", above the language buttons */
-  .navbar-menu-heading {
-    @apply mt-1 border-t border-gray-100 px-4 pt-2 pb-1 text-xs uppercase tracking-wide text-gray-400;
-  }
-
   /* Language switcher */
   .locale-toggle {
     @apply flex items-center gap-1 text-sectiontext text-sm font-light hover:text-gray-900 px-2 py-1 rounded;
   }
-
-  .locale-menu {
-    @apply absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-40 py-1;
-  }
-
-  .locale-option {
-    @apply block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50;
-  }
-
-  .locale-option--active { @apply font-semibold text-sectiontext; }
 
   /* Account menu */
   .account-toggle {
     @apply flex items-center gap-1 text-sectiontext text-sm font-light hover:text-gray-900 px-2 py-1 rounded;
   }
 
-  .account-menu {
-    @apply absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-40 py-1;
+  /* The navbar's menus (account, ☰, 🌐): a rounded card of rows with icons, under their button's right edge */
+  .menu-card {
+    @apply absolute right-0 z-40 mt-3 w-64 rounded-2xl border border-gray-100 bg-white p-2 shadow-xl;
   }
-
-  .account-menu-item {
-    @apply block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50;
+  .menu-card--narrow { @apply w-44; }
+  /* The account menu's top: who's signed in */
+  .menu-who        { @apply mb-1 flex items-center gap-3 border-b border-gray-100 px-2 pt-1 pb-3; }
+  .menu-avatar {
+    @apply inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-sectiontext text-sm font-semibold
+           text-white;
   }
+  .menu-who-name   { @apply block truncate text-sm font-semibold text-gray-900; }
+  .menu-who-status { @apply block text-xs text-gray-500; }
+  .menu-item {
+    @apply flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-gray-700
+           hover:bg-sectionbackground hover:text-gray-900;
+  }
+  .menu-item svg { @apply shrink-0 text-sectiontext-light; }
+  /* The page you're on, or the language in use */
+  .menu-item--current,
+  .menu-item--current svg { @apply font-semibold text-sectiontext; }
+  .menu-item--current     { @apply hover:text-sectiontext; } /* stays brown, like its icon */
+  .menu-item--logout,
+  .menu-item--logout svg  { @apply text-rose-700; }
+  .menu-item--logout      { @apply hover:bg-rose-50 hover:text-rose-800; }
+  /* A group's name ("Admin", "Language") */
+  .menu-label   { @apply px-3 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-500; }
+  .menu-divider { @apply my-1 border-t border-gray-100; }
 }

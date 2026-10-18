@@ -179,12 +179,14 @@ en:
       all_recipes: "All recipes →"
   shared:
     account_menu:
+      admin: "Admin"
       background_jobs: "Background jobs"
       draft_box: "Draft box"
       drafts_need_attention: "Some drafts need your attention"
       invites: "Invites"
       logout: "Log out"
       preferences: "Preferences"
+      signed_in: "Signed in"
     locale_switcher:
       label: "Language"
     markdown_editor:

@@ -10,21 +10,44 @@
     </svg>
   </button>
 
-  <div data-dropdown-target="menu" class="account-menu hidden" role="menu">
-    <%= link_to drafts_path, class: "account-menu-item", role: "menuitem" do %>
-      <%= t(".draft_box") %>
-      <%= render "drafts/menu_count", counts: draft_counts %>
-    <% end %>
-    <%= link_to t(".preferences"), preferences_path, class: "account-menu-item", role: "menuitem" %>
-    <button type="button" class="account-menu-item" role="menuitem" data-action="dropdown#hide aisle-editor#open">
-      <%= t("aisle_editor.title") %>
-    </button>
-    <% if current_user.admin? %>
-      <%= link_to t(".invites"), invites_path, class: "account-menu-item", role: "menuitem" %>
-      <%= link_to t(".background_jobs"), sidekiq_path, data: { turbo: false },
-                  class: "account-menu-item", role: "menuitem" %>
-    <% end %>
-    <%= link_to t(".logout"), logout_path, data: { turbo_method: :delete },
-                class: "account-menu-item", role: "menuitem" %>
+  <%# Who's signed in (above the menu itself, which holds only its items), the everyday items, the admin's items as a
+      group named by its label, and Log out %>
+  <div data-dropdown-target="menu" class="account-menu menu-card hidden">
+    <div class="menu-who">
+      <span class="menu-avatar" aria-hidden="true"><%= current_user.username.first.upcase %></span>
+      <span class="min-w-0">
+        <span class="menu-who-name"><%= current_user.username %></span>
+        <span class="menu-who-status"><%= t(".signed_in") %></span>
+      </span>
+    </div>
+    <div role="menu">
+      <%= link_to drafts_path, class: "menu-item", role: "menuitem" do %>
+        <%= inline_icon "drafts" %>
+        <span class="flex-1"><%= t(".draft_box") %></span>
+        <%= render "drafts/menu_count", counts: draft_counts %>
+      <% end %>
+      <%= link_to preferences_path, class: "menu-item", role: "menuitem" do %>
+        <%= inline_icon "preferences" %> <%= t(".preferences") %>
+      <% end %>
+      <button type="button" class="menu-item" role="menuitem" data-action="dropdown#hide aisle-editor#open">
+        <%= inline_icon "aisles" %> <%= t("aisle_editor.title") %>
+      </button>
+      <% if current_user.admin? %>
+        <div role="group" aria-labelledby="account_menu_admin">
+          <p id="account_menu_admin" class="menu-label" role="none"><%= t(".admin") %></p>
+          <%= link_to invites_path, class: "menu-item", role: "menuitem" do %>
+            <%= inline_icon "invites" %> <%= t(".invites") %>
+          <% end %>
+          <%= link_to sidekiq_path, class: "menu-item", role: "menuitem", data: { turbo: false } do %>
+            <%= inline_icon "jobs" %> <%= t(".background_jobs") %>
+          <% end %>
+        </div>
+      <% end %>
+      <div class="menu-divider" role="separator"></div>
+      <%= link_to logout_path, class: "menu-item menu-item--logout", role: "menuitem",
+                               data: { turbo_method: :delete } do %>
+        <%= inline_icon "logout" %> <%= t(".logout") %>
+      <% end %>
+    </div>
   </div>
 </div>
