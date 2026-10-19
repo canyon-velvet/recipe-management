@@ -20,11 +20,17 @@ RSpec.describe "Meals' recipes and the grocery list", type: :request do
     expect(slot("tuesday").meal_slot_recipes.sole.add_to_grocery_list).to be true
   end
 
-  it "adds a recipe to a meal once" do
+  # The pop-up closes on a redrawn meal; an error left it open with nothing said
+  def redraws(slot)
+    Nokogiri::HTML(response.body).css("turbo-stream").map { _1["target"] }.include?("meal_slot_#{slot.id}")
+  end
+
+  it "adds a recipe to a meal once, and redraws the meal when it's picked again, as it's there" do
     add curry, to: slot("monday")
     add curry, to: slot("monday")
 
-    expect(response).to have_http_status(:unprocessable_content)
+    expect(response).to have_http_status(:ok)
+    expect(redraws(slot("monday"))).to be true
     expect(slot("monday").recipes).to eq [ curry ]
   end
 
@@ -35,7 +41,8 @@ RSpec.describe "Meals' recipes and the grocery list", type: :request do
 
     add curry, to: slot("monday")
 
-    expect(response).to have_http_status(:unprocessable_content)
+    expect(response).to have_http_status(:ok)
+    expect(redraws(slot("monday"))).to be true
     expect(slot("monday").recipes).to eq [ curry ]
   end
 
