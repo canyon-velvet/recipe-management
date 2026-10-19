@@ -48,9 +48,11 @@ RSpec.describe "Assistant panel", type: :system do
   it "keeps the page in step with the panel on Back, and gives focus back to ✦ on close" do
     log_in_as user
     click_link "All Recipes"
+    expect(page).to have_current_path(recipes_path) # arrived, so the next click is a visit of its own in the history
     expect(page).to have_no_css("body.assistant-open")
 
     click_link "Meal Plans"
+    expect(page).to have_current_path(meal_plans_path)
     click_button "Open assistant"
     expect(page).to have_css("body.assistant-open")
 

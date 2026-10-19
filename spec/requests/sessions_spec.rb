@@ -61,7 +61,9 @@ RSpec.describe "Logging out", type: :request do
 
       # Without an expiry the cookie lasts until the browser closes, and iOS drops it whenever a Home Screen app quits
       session_cookie = response.headers["Set-Cookie"].lines.find { |line| line.start_with?("_recipe_management_session=") }
-      expect(session_cookie).to include("expires=#{(Time.now.utc + 30.days.to_i).httpdate}")
+      # 30 days on the calendar, as Rack adds them: across a change of the clocks that's an hour more or less than
+      # 30 × 24 hours
+      expect(session_cookie).to include("expires=#{(Time.now + 30.days).httpdate}")
     end
   end
 end
