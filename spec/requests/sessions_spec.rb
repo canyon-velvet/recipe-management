@@ -1,5 +1,36 @@
 require "rails_helper"
 
+RSpec.describe "Logging in", type: :request do
+  let(:user) { create(:user, username: "home_cook") }
+  # The test env's cache stores nothing; the limits need one that counts.
+  let(:cache) { ActiveSupport::Cache::MemoryStore.new }
+
+  before do
+    allow(SessionsController.cache_store).to receive(:increment) { |*args, **options| cache.increment(*args, **options) }
+  end
+
+  def log_in(username, password, from:)
+    post login_path, params: { username: username, password: password }, env: { "REMOTE_ADDR" => from }
+  end
+
+  it "stops guesses at one account's password after 10 in 15 minutes, even from different addresses" do
+    10.times { |n| log_in("Home_Cook", "wrong", from: "203.0.113.#{n}") }
+
+    log_in(user.username, "password", from: "198.51.100.1")
+    expect(response).to redirect_to(login_path)
+    expect(flash[:alert]).to eq "Too many attempts. Please try again later."
+    expect(session[:user_id]).to be_nil
+
+    log_in(create(:user).username, "password", from: "198.51.100.1") # another account isn't held up
+    expect(session[:user_id]).to be_present
+
+    travel 16.minutes do
+      log_in(user.username, "password", from: "198.51.100.2")
+      expect(session[:user_id]).to eq user.id
+    end
+  end
+end
+
 RSpec.describe "Logging out", type: :request do
   it "ends the whole session but keeps the chosen language" do
     user = create(:user)
