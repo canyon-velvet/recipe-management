@@ -21,7 +21,9 @@ RSpec.describe "Meals' recipes and the grocery list", type: :request do
   end
 
   # The pop-up closes on a redrawn meal; an error left it open with nothing said
-  def redraws(slot) = Nokogiri::HTML(response.body).css("turbo-stream").map { _1["target"] }.include?("meal_slot_#{slot.id}")
+  def redraws(slot)
+    Nokogiri::HTML(response.body).css("turbo-stream").map { _1["target"] }.include?("meal_slot_#{slot.id}")
+  end
 
   it "adds a recipe to a meal once, and redraws the meal when it's picked again, as it's there" do
     add curry, to: slot("monday")
