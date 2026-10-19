@@ -1,0 +1,16 @@
+# Solid Cache, in the app's database. It holds the rate limits' counters, which expire on their own, so it stays small;
+# anything older than a week, or past the size cap, is cleared.
+default: &default
+  store_options:
+    max_age: <%= 1.week.to_i %>
+    max_size: <%= 256.megabytes %>
+    namespace: <%= Rails.env %>
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

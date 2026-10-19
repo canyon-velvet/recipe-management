@@ -43,7 +43,7 @@ RSpec.describe "Asking the assistant", type: :system do
   end
 
   # Write the replies and read the import in the background in this process (the test env only records jobs), so the
-  # panel streams and updates live, as it does with Sidekiq.
+  # panel streams and updates live, as it does with Solid Queue.
   around do |example|
     queue_adapter = ActiveJob::Base.queue_adapter
     ActiveJob::Base.queue_adapter = :async

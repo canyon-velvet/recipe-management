@@ -1,5 +1,3 @@
-require "sidekiq/web"
-
 Rails.application.routes.draw do
   # Authentication
   get "login", to: "sessions#new"
@@ -71,9 +69,9 @@ Rails.application.routes.draw do
   end
   resources :meal_slot_recipes, only: [ :destroy, :update ]
 
-  # Sidekiq dashboard: queued, running, retrying and failed jobs. Admins only; anyone else gets a 404.
+  # The jobs dashboard (Mission Control): queued, running and failed jobs. Admins only; anyone else gets a 404.
   constraints ->(request) { User.find_by(id: request.session[:user_id])&.admin? } do
-    mount Sidekiq::Web => "/sidekiq", as: :sidekiq
+    mount MissionControl::Jobs::Engine, at: "/jobs", as: :jobs_dashboard
   end
 
   # Health check

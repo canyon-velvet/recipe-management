@@ -26,16 +26,8 @@ Rails.application.configure do
   end
 
   # Change to :null_store to avoid any caching.
-  # Redis, shared with the Sidekiq process, so cache-backed limits like rate_limit see every request.
-  config.cache_store = :redis_cache_store, {
-    url: ENV.fetch("REDIS_CACHE_URL", "redis://localhost:6379/1"),
-    namespace: "recipe_management:#{Rails.env}",
-    expires_in: 1.week,
-    # When Redis is down the cache (and cache-backed rate limits) quietly stop working instead of raising; report it.
-    error_handler: ->(method:, returning:, exception:) {
-      Rails.error.report(exception, handled: true, context: { cache_method: method, returning: returning })
-    }
-  }
+  # Solid Cache (config/cache.yml), in the database, as in production, so cache-backed limits like rate_limit count.
+  config.cache_store = :solid_cache_store
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -49,8 +41,8 @@ Rails.application.configure do
   # Append comments with runtime information tags to SQL queries in logs.
   config.active_record.query_log_tags_enabled = true
 
-  # Jobs run in a separate Sidekiq process (see Procfile.dev), queued in Redis.
-  config.active_job.queue_adapter = :sidekiq
+  # Jobs are queued in the database and run inside Puma, as in production (config/puma.rb, Procfile.dev).
+  config.active_job.queue_adapter = :solid_queue
 
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true

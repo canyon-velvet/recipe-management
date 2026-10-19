@@ -93,8 +93,8 @@ RSpec.describe WriteReplyService do
     expect(client.requests.sole[:messages].pluck(:content)).to eq [ "What can I make with eggs?", "Next?" ]
   end
 
-  it "ends an interrupted reply as failed when Sidekiq re-runs its job, instead of Thinking… forever" do
-    interrupted = Class.new(Interrupt) # like Sidekiq::Shutdown: not a StandardError, so no rescue catches it
+  it "ends an interrupted reply as failed when its job runs again, instead of Thinking… forever" do
+    interrupted = Class.new(Interrupt) # like a job stopped at shutdown: not a StandardError, so no rescue catches it
     expect { write(FakeClaude.new([ "Half an ans" ], error: interrupted.new)) }.to raise_error(interrupted)
     expect(reply.reload).to have_attributes(status: "pending")
 

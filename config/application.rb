@@ -40,5 +40,8 @@ module RecipeManagement
 
     config.i18n.available_locales = [ :en, :"zh-CN" ]
     config.i18n.default_locale = :en
+
+    # The jobs dashboard is for admins only, by its route (config/routes.rb), so it needs no password of its own.
+    config.mission_control.jobs.http_basic_auth_enabled = false
   end
 end

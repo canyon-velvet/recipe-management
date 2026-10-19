@@ -34,6 +34,14 @@ port ENV.fetch("PORT", 3000)
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
 
+# Run the background jobs (Solid Queue, config/queue.yml) inside Puma when SOLID_QUEUE_IN_PUMA is set: on Render, and in
+# Procfile.dev. As threads of this process rather than forked processes (Solid Queue's default), which would each need
+# their own memory on the 512 MB server; the jobs mostly wait on Claude and on fetching pages, which threads suit.
+if ENV["SOLID_QUEUE_IN_PUMA"]
+  plugin :solid_queue
+  solid_queue_mode :async
+end
+
 # Specify the PID file. Defaults to tmp/pids/server.pid in development.
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
