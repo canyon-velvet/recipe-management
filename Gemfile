@@ -32,9 +32,13 @@ gem "redcarpet", "~> 3.6"
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
-# Redis backs background jobs (Sidekiq), Action Cable and Rails.cache; the redis gem is the client for the latter two
-gem "sidekiq", "~> 8.0"
-gem "redis", "~> 6.0"
+# Background jobs, Action Cable and Rails.cache, each kept in the app's Postgres database: no Redis. The jobs run
+# inside Puma (config/puma.rb).
+gem "solid_queue", "~> 1.2"
+gem "solid_cable", "~> 3.0"
+gem "solid_cache", "~> 1.0"
+# Admins' dashboard of the jobs: queued, running, failed
+gem "mission_control-jobs", "~> 1.1"
 
 # Fetches imported recipe pages without letting a link reach private or internal addresses (SSRF)
 gem "ssrf_filter", "~> 1.6"

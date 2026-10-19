@@ -18,7 +18,7 @@ RSpec.describe "Importing a recipe from a link", type: :system do
   end
 
   # Run the import job in the background in this process (the test env only records jobs), so the Draft box shows
-  # Reading… and then updates live, as it does with Sidekiq.
+  # Reading… and then updates live, as it does with Solid Queue.
   around do |example|
     queue_adapter = ActiveJob::Base.queue_adapter
     ActiveJob::Base.queue_adapter = :async

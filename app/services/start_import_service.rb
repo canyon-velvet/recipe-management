@@ -129,9 +129,9 @@ class StartImportService
     end
   end
 
-  # Counted in Rails.cache (Redis), so the web and worker processes share it. Every import started counts, so
-  # discarding drafts or reading a failed one again doesn't free any up; only one that failed before Claude read it
-  # is given back (give_back). One refused here is taken back off, so it doesn't use up a place.
+  # Counted in Rails.cache (Solid Cache, in the database), so the import form and the assistant's jobs share it. Every
+  # import started counts, so discarding drafts or reading a failed one again doesn't free any up; only one that failed
+  # before Claude read it is given back (give_back). One refused here is taken back off, so it doesn't use up a place.
   def over_hourly_limit?
     key = self.class.counter_key(@user)
     return false if Rails.cache.increment(key, 1, expires_in: 1.hour).to_i <= self.class.hourly_limit(@user)

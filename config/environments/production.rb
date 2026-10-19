@@ -45,20 +45,11 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
 
   # Replace the default in-process memory cache store with a durable alternative.
-  # Cache in its own Redis database (1), apart from Sidekiq's jobs (0). On Render both share one database (a Blueprint
-  # can't add the /1), kept apart by the namespace; it only holds rate-limit counters, which expire.
-  config.cache_store = :redis_cache_store, {
-    url: ENV.fetch("REDIS_CACHE_URL", "redis://localhost:6379/1"),
-    namespace: "recipe_management:#{Rails.env}",
-    expires_in: 1.week,
-    # When Redis is down the cache (and cache-backed rate limits) quietly stop working instead of raising; report it.
-    error_handler: ->(method:, returning:, exception:) {
-      Rails.error.report(exception, handled: true, context: { cache_method: method, returning: returning })
-    }
-  }
+  # Solid Cache (config/cache.yml), in the app's database; it holds the rate limits' counters.
+  config.cache_store = :solid_cache_store
 
-  # Jobs run in a separate Sidekiq process, queued in Redis (REDIS_URL).
-  config.active_job.queue_adapter = :sidekiq
+  # Jobs are queued in the app's database and run inside Puma (config/puma.rb), so no separate worker is needed.
+  config.active_job.queue_adapter = :solid_queue
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

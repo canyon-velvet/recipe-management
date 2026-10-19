@@ -42,7 +42,7 @@
           <%= link_to invites_path, class: "menu-item", role: "menuitem" do %>
             <%= inline_icon "invites" %> <%= t(".invites") %>
           <% end %>
-          <%= link_to sidekiq_path, class: "menu-item", role: "menuitem", data: { turbo: false } do %>
+          <%= link_to jobs_dashboard_path, class: "menu-item", role: "menuitem", data: { turbo: false } do %>
             <%= inline_icon "jobs" %> <%= t(".background_jobs") %>
           <% end %>
         </div>

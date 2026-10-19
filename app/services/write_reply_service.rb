@@ -14,8 +14,8 @@ class WriteReplyService
 
   def call
     return unless @reply.pending?
-    # A pending reply that already has a run was interrupted: Sidekiq re-queues a job it kills on shutdown, and the
-    # kill skips the rescues below. Ending it as failed beats "Thinking…" forever; the user can ask again.
+    # A pending reply that already has a run was interrupted: Solid Queue puts back a job still running when it shuts
+    # down, and the stop skips the rescues below. Ending it as failed beats "Thinking…" forever; the user can ask again.
     if @reply.run
       @run = @reply.run
       return fail_reply("interrupted")

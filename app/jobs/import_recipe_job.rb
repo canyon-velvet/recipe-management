@@ -1,4 +1,4 @@
-# Reads an imported recipe into its Draft in the background (Sidekiq), so the user never waits on a page or Claude.
+# Reads an imported recipe into its Draft in the background, so the user never waits on a page or Claude.
 class ImportRecipeJob < ApplicationJob
   queue_as :default
 

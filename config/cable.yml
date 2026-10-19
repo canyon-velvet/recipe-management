@@ -1,14 +1,14 @@
-# Redis pub/sub, so a broadcast from another process (the Sidekiq worker, a console) reaches browsers
-# connected to the web process. REDIS_URL defaults to the local Redis.
+# Solid Cable, in the app's database, so a broadcast from anywhere (a job, a console) reaches the browsers connected to
+# the web server: each message is written to a table, which the server checks every 0.1 seconds.
 development:
-  adapter: redis
-  url: <%= ENV.fetch("REDIS_URL", "redis://localhost:6379/0") %>
-  channel_prefix: recipe_management_development
+  adapter: solid_cable
+  polling_interval: 0.1.seconds
+  message_retention: 1.day
 
 test:
   adapter: test
 
 production:
-  adapter: redis
-  url: <%= ENV.fetch("REDIS_URL", "redis://localhost:6379/0") %>
-  channel_prefix: recipe_management_production
+  adapter: solid_cable
+  polling_interval: 0.1.seconds
+  message_retention: 1.day
