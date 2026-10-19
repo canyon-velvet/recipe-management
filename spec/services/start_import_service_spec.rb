@@ -60,6 +60,15 @@ RSpec.describe StartImportService do
       expect(start_from([ too_big ]).error).to eq :unreadable_screenshot
     end
 
+    it "reads a failed draft's screenshots again only while it's failed" do
+      draft = start_from([ screenshot ]).draft
+
+      expect(described_class.new(user: user, draft: draft).call.error).to eq :already_in_draft_box
+      draft.update!(status: :failed, failure_reason: :cleanup_failed)
+      expect(described_class.new(user: user, draft: draft).call).to be_success
+      expect(draft.reload).to have_attributes(status: "reading", title: "奶油烤鸡")
+    end
+
     it "needs Claude to read them" do
       allow(CleanRecipeService).to receive(:available?).and_return(false)
 

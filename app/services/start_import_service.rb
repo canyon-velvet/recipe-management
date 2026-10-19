@@ -86,6 +86,7 @@ class StartImportService
 
   # A failed draft from screenshots, read again from the screenshots it kept, under the user's name for it
   def screenshots_again
+    return failure(:already_in_draft_box) unless @draft.failed?
     return failure(:needs_claude) unless CleanRecipeService.available?
 
     @draft.assign_attributes(status: :reading, failure_reason: nil, data: { "name" => @draft.name })
