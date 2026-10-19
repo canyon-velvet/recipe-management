@@ -4,6 +4,8 @@
 class StartImportService
   # Imports a user can start in an hour, from the import form and the assistant together: each can cost a Claude call.
   HOURLY_LIMIT = 20
+  # An admin (the app's owner) imports more.
+  ADMIN_HOURLY_LIMIT = 50
   # From this many left, the import page shows the count in amber.
   FEW_LEFT = 5
 
@@ -14,7 +16,9 @@ class StartImportService
   end
 
   # How many more imports the user can start this hour (shown on the import page).
-  def self.imports_left(user) = [ HOURLY_LIMIT - Rails.cache.read(counter_key(user), raw: true).to_i, 0 ].max
+  def self.hourly_limit(user) = user.admin? ? ADMIN_HOURLY_LIMIT : HOURLY_LIMIT
+
+  def self.imports_left(user) = [ hourly_limit(user) - Rails.cache.read(counter_key(user), raw: true).to_i, 0 ].max
 
   def self.counter_key(user) = "imports:#{user.id}"
 
@@ -76,7 +80,7 @@ class StartImportService
   # discarding drafts or reading a failed one again doesn't free any up; only one that failed before Claude read it
   # is given back (give_back).
   def over_hourly_limit?
-    Rails.cache.increment(self.class.counter_key(@user), 1, expires_in: 1.hour).to_i > HOURLY_LIMIT
+    Rails.cache.increment(self.class.counter_key(@user), 1, expires_in: 1.hour).to_i > self.class.hourly_limit(@user)
   end
 
   def failure(error, recipe: nil) = Result.new(draft: nil, error: error, recipe: recipe)

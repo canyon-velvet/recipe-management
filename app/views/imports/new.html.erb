@@ -48,7 +48,7 @@
             <%= link_to t(".draft_box_count", count: waiting), drafts_path, class: "import-draft-count",
                   data: { turbo_frame: "_top" } %>
           <% end %>
-          <%= tag.p t(".imports_left", count: imports_left, total: StartImportService::HOURLY_LIMIT),
+          <%= tag.p t(".imports_left", count: imports_left, total: StartImportService.hourly_limit(current_user)),
                     class: [ "import-limit", ("import-limit--low" if imports_left <= StartImportService::FEW_LEFT) ] %>
         </div>
         <div class="ml-auto flex gap-2">
