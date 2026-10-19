@@ -39,3 +39,8 @@ itself if its settings changed.
 
 Admins can see the jobs (queued, running, failed, and retry or discard them) from the account menu →
 **Background jobs**.
+
+A deploy gives the jobs still running (an import, an assistant reply) 50 seconds to finish before the old server
+stops. One still running after that is marked failed a few minutes later (`ProcessPrunedError`): its draft stays
+"Reading…", or its reply "Thinking…". **Retry** it in Background jobs (the reply then shows as failed, and the import
+carries on), or the user can discard the draft or ask again. Deploying when nobody is importing or chatting avoids it.

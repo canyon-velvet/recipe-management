@@ -22,6 +22,9 @@ services:
     region: ohio
     autoDeployTrigger: "off"
     healthCheckPath: /up
+    # A deploy stops the old server with SIGTERM; it gets this long (Render's default is 30) to finish the jobs still
+    # running (Solid Queue's shutdown_timeout, 50 seconds, config/environments/production.rb).
+    maxShutdownDelaySeconds: 60
     # Before each deploy goes live: create or migrate the database, and seed the tags. db/seeds.rb can run every time:
     # it adds no users in production, and leaves what users changed alone.
     preDeployCommand: ./bin/rails db:prepare db:seed

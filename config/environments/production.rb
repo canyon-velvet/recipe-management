@@ -50,6 +50,9 @@ Rails.application.configure do
 
   # Jobs are queued in the app's database and run inside Puma (config/puma.rb), so no separate worker is needed.
   config.active_job.queue_adapter = :solid_queue
+  # When a deploy stops the old server, a reply or import still running gets this long to finish (Solid Queue's own
+  # default is 5 seconds; Claude often takes longer). Render waits 60 seconds before killing it (render.yaml).
+  config.solid_queue.shutdown_timeout = 50.seconds
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
