@@ -10,8 +10,8 @@ class StartImportService
   FEW_LEFT = 5
 
   # error: :blank, :invalid_link, :too_long (pasted text), :needs_claude, :already_saved (with the recipe),
-  # :already_in_draft_box, :rate_limited, or for screenshots :title_blank, :too_many_screenshots or
-  # :unreadable_screenshot
+  # :already_in_draft_box, :rate_limited, :source_blank (pasted text or screenshots), or for screenshots :title_blank,
+  # :too_many_screenshots or :unreadable_screenshot
   Result = Data.define(:draft, :error, :recipe) do
     def success? = error.nil?
   end
@@ -39,9 +39,10 @@ class StartImportService
   end
 
   # title and screenshots: pictures of one recipe (e.g. an AI's summary of a 小红书 video), named by the user, since
-  # the pictures don't say which recipe they are. draft: a failed draft to read again (Try again), from its own link,
-  # pasted text or screenshots.
-  def initialize(user:, url: nil, text: nil, title: nil, screenshots: [], draft: nil)
+  # the pictures don't say which recipe they are. source_name: where pasted text or screenshots are from (a link's site
+  # is its source), kept on the draft for its review. draft: a failed draft to read again (Try again), from its own
+  # link, pasted text or screenshots, keeping where it's from.
+  def initialize(user:, url: nil, text: nil, title: nil, screenshots: [], source_name: nil, draft: nil)
     @user = user
     @draft = draft
     @url = RecipeLink.normalize(draft ? draft.source_url : url)
@@ -49,12 +50,14 @@ class StartImportService
     @text = (draft ? draft.source_text : text).to_s.gsub("\r\n", "\n").strip.presence
     @title = title.to_s.squish.presence
     @screenshots = screenshots
+    @source_name = source_name.to_s.squish.presence
   end
 
   def call
     return screenshots_again if @draft&.screenshot_count&.positive?
     return failure(:blank) if @url.nil? && @text.nil? && @screenshots.empty?
     return failure(:needs_claude) if (@text || @screenshots.any?) && !CleanRecipeService.available?
+    return failure(:source_blank) if @draft.nil? && (@text || @screenshots.any?) && @source_name.nil?
     return from_screenshots if @screenshots.any?
 
     recipe = @url && @user.recipes.find_by(source_url: @url)
@@ -88,7 +91,8 @@ class StartImportService
     return failure(:unreadable_screenshot) if @screenshots.any? { |file| file.size > DraftImage::MAX_BYTES }
 
     images = @screenshots.map.with_index(1) { |file, position| DraftImage.from_upload(file, position: position) }
-    draft = @user.drafts.new(data: { "name" => @title }, screenshot_count: images.size, images: images)
+    draft = @user.drafts.new(data: { "name" => @title, "source_name" => @source_name },
+                             screenshot_count: images.size, images: images)
     draft.valid? ? start(draft) : failure(:unreadable_screenshot)
   end
 
@@ -97,7 +101,8 @@ class StartImportService
     return failure(:already_in_draft_box) unless @draft.failed?
     return failure(:needs_claude) unless CleanRecipeService.available?
 
-    @draft.assign_attributes(status: :reading, failure_reason: nil, data: { "name" => @draft.name })
+    @draft.assign_attributes(status: :reading, failure_reason: nil,
+                             data: @draft.data.slice("name", "source_name"))
     start(@draft)
   end
 
@@ -105,11 +110,16 @@ class StartImportService
   # in); any other draft for that link means it's already being imported.
   def draft_to_read
     existing = @draft || (@url && @user.drafts.find_by(source_url: @url))
-    return @user.drafts.new(source_url: @url, source_text: @text) unless existing
+    return @user.drafts.new(source_url: @url, source_text: @text, data: where_from) unless existing
     return unless existing.failed?
 
-    existing.tap { |draft| draft.assign_attributes(status: :reading, failure_reason: nil, source_text: @text, data: {}) }
+    existing.tap do |draft|
+      draft.assign_attributes(status: :reading, failure_reason: nil, source_text: @text,
+                              data: where_from.presence || draft.data.slice("source_name"))
+    end
   end
+
+  def where_from = { "source_name" => @source_name }.compact
 
   # :taken means another request for the same link just won the race.
   def invalid(draft)

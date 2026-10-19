@@ -25,13 +25,20 @@ RSpec.describe "The Draft box", type: :system do
     expect(row("Soup")).to have_no_link("Review")
   end
 
-  it "opens Text for a blocked link, with the link filled in" do
+  it "opens Text for a blocked link, from its site, and reads the pasted text into the same draft" do
     allow(CleanRecipeService).to receive(:available?).and_return(true)
     within(row("xiaohongshu")) { click_link "Paste text instead" }
 
     expect(page).to have_checked_field("Text")
-    expect(page).to have_field("Recipe link", with: "https://www.xiaohongshu.com/explore/1")
+    expect(page).to have_checked_field("小红书 New", visible: :all) # its site, a source the user doesn't have yet
     expect(page).to have_field("Recipe text", focused: true)
+    fill_in "Recipe text", with: "红烧肉\n五花肉 500克"
+    click_button "Import"
+
+    expect(page).to have_text("Importing… the recipe will wait in your Draft box.")
+    draft = user.drafts.find_by(source_url: "https://www.xiaohongshu.com/explore/1")
+    expect(draft).to have_attributes(status: "reading", source_text: "红烧肉\n五花肉 500克",
+                                     data: { "source_name" => "小红书" })
   end
 
   it "tries a failed import again, beside pasting the text instead" do

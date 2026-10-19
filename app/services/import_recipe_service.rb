@@ -18,7 +18,9 @@ class ImportRecipeService
     show_title(extracted&.title)
     data = CleanRecipeService.available? ? cleaned(extracted) : structured(extracted)
     data["name"] = @draft.name if screenshots? # the user's name for it
-    data["source_name"] = extracted&.site_name || RecipeLink.site_name(@draft.source_url)
+    # Where the user said pasted text or screenshots are from, or else the page's site
+    data["source_name"] = @draft.data["source_name"].presence || extracted&.site_name ||
+                          RecipeLink.site_name(@draft.source_url)
     @draft.update!(status: :ready, data: data, failure_reason: nil)
     @draft.images.delete_all
   rescue ImportFailure => e

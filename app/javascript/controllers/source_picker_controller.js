@@ -2,12 +2,14 @@ import { Controller } from "@hotwired/stimulus"
 
 // The source picker (shared/source_picker): chips to tap, and Other… to open a search box (autocomplete, with
 // inline-create for a new source). What's picked there joins the chips, checked. A source the user doesn't have yet
-// (newChip) is sent by name (newName) only while its chip is checked.
+// (newChip) is sent by name (newName) only while its chip is checked. With no chips to tap (requiredMessage), the
+// search box stops the form, saying so, until a source is picked or created there.
 export default class extends Controller {
   static targets = ["chips", "other", "search", "newChip", "newName"]
-  static values = { field: String }
+  static values = { field: String, requiredMessage: String }
 
   connect() {
+    this.searchInput.setCustomValidity(this.requiredMessageValue)
     this.changed()
   }
 
@@ -21,6 +23,9 @@ export default class extends Controller {
       this.chip(id, name)
     radio.checked = true
     this.searchInput.value = ""
+    // A chip is picked now, also once Turbo restores this page from its cache (connect runs again)
+    this.requiredMessageValue = ""
+    this.searchInput.setCustomValidity("")
     this.searchTarget.hidden = true
     this.changed()
   }

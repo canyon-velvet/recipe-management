@@ -1,27 +1,19 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Screenshot, in the import form. The picked pictures are shrunk on the phone, to LONG_SIDE pixels on their long side
-// as JPEG, so they upload quickly; they show as thumbnails to remove or add to, in the order they'll be read. The
-// recipe's name is required while Screenshot is chosen, and the link box, hidden then, is left out (a half-typed link
-// there would otherwise stop the form sending, with nothing to say why).
+// as JPEG, so they upload quickly; they show as thumbnails to remove or add to, in the order they'll be read.
 const LONG_SIDE = 1600
 
 export default class extends Controller {
-  static targets = ["mode", "url", "title", "input", "picker", "list", "add", "submit"]
+  static targets = ["input", "picker", "list", "add", "submit"]
   static values = { max: Number, removeLabel: String }
 
   connect() {
     this.shots = []
-    this.modeChanged()
   }
 
   disconnect() {
     this.shots.forEach(({ url }) => URL.revokeObjectURL(url))
-  }
-
-  modeChanged() {
-    this.urlTarget.disabled = this.modeTarget.checked
-    if (this.hasTitleTarget) this.titleTarget.required = this.modeTarget.checked
   }
 
   // The picker's choice replaces the input's files; they're added to the ones picked before. Until they're shrunk,

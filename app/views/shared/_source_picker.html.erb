@@ -1,14 +1,18 @@
 <%# locals: (field:, selected:, new_name: nil, new_name_field: nil) %>
 <%# Where a recipe is from, without typing: the user's most-used sources as chips (radio buttons named field) to tap,
     and Other… to search the rest or create one, which then joins the chips, checked. A source the user doesn't have
-    yet (new_name, e.g. a draft's site) is a chip of its own, sent as new_name_field and created on save. %>
+    yet (new_name, e.g. a draft's site) is a chip of its own, sent as new_name_field and created on save. With no
+    chips (no sources yet), the search box is open, and the form can't go until a source is picked or created there. %>
+<% chips = source_chips(selected) %>
+<% search_open = chips.empty? && new_name.nil? %>
 <fieldset class="field" data-controller="inline-create source-picker" data-source-picker-field-value="<%= field %>"
+     data-source-picker-required-message-value="<%= t("shared.source_picker.required") if search_open %>"
      data-inline-create-create-url-value="<%= sources_path %>"
      data-inline-create-error-text-value="<%= t("recipes.form.save_failed") %>">
   <legend class="form-label"><%= Recipe.human_attribute_name(:source) %></legend>
 
   <div class="source-chips" data-source-picker-target="chips" data-action="change->source-picker#changed">
-    <% source_chips(selected).each do |source| %>
+    <% chips.each do |source| %>
       <label class="source-chip">
         <%= radio_button_tag field, source.id, source == selected, id: nil, class: "sr-only", required: true %>
         <%= source.name %>
@@ -26,17 +30,19 @@
             data-action="source-picker#other"><%= t("shared.source_picker.other") %></button>
   </div>
 
-  <div class="relative mt-2" hidden data-source-picker-target="search"
-       data-controller="autocomplete"
-       data-autocomplete-url-value="<%= search_sources_path %>"
-       data-autocomplete-create-label-value="<%= t("recipes.form.create_source") %>"
-       data-action="autocomplete:requestCreate->inline-create#openModal autocomplete:selected->source-picker#add">
+  <%= tag.div class: "relative mt-2", hidden: !search_open,
+              data: { source_picker_target: "search", controller: "autocomplete",
+                      autocomplete_url_value: search_sources_path,
+                      autocomplete_create_label_value: t("recipes.form.create_source"),
+                      action: "autocomplete:requestCreate->inline-create#openModal " \
+                              "autocomplete:selected->source-picker#add" } do %>
     <input type="hidden" data-autocomplete-target="hiddenField">
-    <input type="text" class="form-input" autocomplete="off" placeholder="<%= t("recipes.form.search_source") %>"
-           aria-label="<%= t("recipes.form.search_source") %>"
-           data-autocomplete-target="input" data-action="input->autocomplete#onInput click@window->autocomplete#outside">
+    <%= tag.input type: "text", class: "form-input", autocomplete: "off",
+                  placeholder: t("recipes.form.search_source"), aria: { label: t("recipes.form.search_source") },
+                  data: { autocomplete_target: "input",
+                          action: "input->autocomplete#onInput click@window->autocomplete#outside" } %>
     <ul data-autocomplete-target="list" class="autocomplete-list hidden"></ul>
-  </div>
+  <% end %>
 
   <%= render "recipes/source_modal" %>
 </fieldset>
