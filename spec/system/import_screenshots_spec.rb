@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Importing from screenshots", type: :system do
   let(:user) { create(:user) }
+  let!(:douyin) { create(:source, user: user, name: "抖音") }
 
   before do
     allow(CleanRecipeService).to receive(:available?).and_return(true)
@@ -21,6 +22,7 @@ RSpec.describe "Importing from screenshots", type: :system do
                   make_visible: true
       expect(page).to have_css(".import-shot", count: 2)
 
+      choose "抖音", allow_label_click: true
       click_button "Remove screenshot 2"
       expect(page).to have_css(".import-shot", count: 1)
       attach_file "Add more", screenshot("small_screenshot.png"), make_visible: true
@@ -32,6 +34,7 @@ RSpec.describe "Importing from screenshots", type: :system do
     expect(page).to have_text("Importing… the recipe will wait in your Draft box.")
     expect(page).to have_css(".draft-row", text: /奶油烤鸡.*2 screenshots/m)
     draft = user.drafts.sole
+    expect(draft.data["source_name"]).to eq "抖音"
     expect(draft.images.map(&:content_type)).to eq %w[image/jpeg image/jpeg]
     # The tall one is 1179 × 2556: shrunk to 1600 on its long side. The small one keeps its size.
     expect(draft.images.map { jpeg_size(_1.data) }).to eq [ [ 738, 1600 ], [ 300, 500 ] ]
@@ -42,6 +45,7 @@ RSpec.describe "Importing from screenshots", type: :system do
       fill_in "Recipe link", with: "xhslink.com/abc" # no https://, so not a valid link
       choose "Screenshot", allow_label_click: true
       fill_in "Recipe name", with: "奶油烤鸡"
+      choose "抖音", allow_label_click: true
       attach_file "Choose screenshots", screenshot("small_screenshot.png"), make_visible: true
       expect(page).to have_css(".import-shot", count: 1)
       click_button "Import"

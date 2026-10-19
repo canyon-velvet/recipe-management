@@ -18,38 +18,48 @@
       </div>
     <% end %>
 
-    <%# Link, Screenshot or Text, one at a time. Text keeps the link box above the paste box, so a pasted recipe keeps
-        its link (a blocked link's "Paste text instead" fills it in). Screenshot swaps the link box for the recipe's
-        name and the pictures, shrunk on the phone before they're sent (screenshots controller). %>
+    <%# Link, Screenshot or Text, one at a time. Each one's fields are a panel (a fieldset) shown, sent and checked only
+        while it's chosen (import-form controller): Link's link box; Screenshot's name, source and pictures, shrunk on
+        the phone before they're sent (screenshots controller); Text's source and paste box. A blocked link's "Paste
+        text instead" opens Text with that link kept, so the same draft is read again, and its site as the source. %>
     <%= form_with url: imports_path, class: "import-form space-y-4",
-                  data: { turbo_frame: "_top", controller: "screenshots",
+                  data: { turbo_frame: "_top", controller: "import-form screenshots",
                           screenshots_max_value: Draft::MAX_SCREENSHOTS,
                           screenshots_remove_label_value: t(".remove_screenshot") } do |f| %>
-      <fieldset class="import-modes" data-action="change->screenshots#modeChanged">
+      <fieldset class="import-modes" data-action="change->import-form#modeChanged">
         <legend class="sr-only"><%= t(".mode") %></legend>
         <% ImportsController::MODES.each do |mode| %>
           <label class="import-mode">
             <%= f.radio_button :mode, mode, checked: @mode == mode, class: "sr-only",
-                               data: { screenshots_target: ("mode" if mode == "screenshot") } %>
+                               data: { import_form_target: "mode" } %>
             <%= inline_icon mode %> <%= t(".modes.#{mode}") %>
           </label>
         <% end %>
       </fieldset>
 
-      <div class="field import-link">
-        <%= f.label :url, t(".link"), class: "form-label" %>
-        <%= f.url_field :url, value: @url, placeholder: "https://...", class: "form-input",
-                          autofocus: @mode == "link", data: { screenshots_target: "url" } %>
-      </div>
+      <%= import_panel "link", @mode do %>
+        <div class="field">
+          <%= f.label :url, t(".link"), class: "form-label" %>
+          <%= f.url_field :url, value: @url, placeholder: "https://...", class: "form-input",
+                            autofocus: @mode == "link" %>
+        </div>
+      <% end %>
 
-      <div class="import-shots">
-        <% if @has_claude %>
+      <% if @has_claude %>
+        <%= import_panel "screenshot", @mode do %>
           <div class="field">
             <%= f.label :title, t(".title"), class: "form-label" %>
             <%= f.text_field :title, value: @title, placeholder: t(".title_placeholder"), class: "form-input",
-                             autofocus: @mode == "screenshot", data: { screenshots_target: "title" } %>
+                             required: true, autofocus: @mode == "screenshot" %>
           </div>
+        <% end %>
 
+        <%= import_panel "text screenshot", @mode do %>
+          <%= render "shared/source_picker", field: "source_id", selected: @source, new_name: @new_source_name,
+                                             new_name_field: "new_source_name" %>
+        <% end %>
+
+        <%= import_panel "screenshot", @mode do %>
           <div class="import-shots-picker" data-screenshots-target="picker">
             <%= f.file_field :screenshots, multiple: true, accept: "image/*", class: "sr-only",
                              data: { screenshots_target: "input", action: "screenshots#add" } %>
@@ -66,21 +76,23 @@
             </div>
             <p class="import-shots-note help-text"><%= t(".screenshots_note") %></p>
           </div>
-        <% else %>
-          <p class="help-text"><%= t(".screenshots_need_claude") %></p>
         <% end %>
-      </div>
 
-      <div class="import-text">
-        <% if @has_claude %>
-          <%= f.label :text, t(".text"), class: "form-label" %>
-          <%= f.text_area :text, value: @text, rows: 8, class: "form-textarea", autofocus: @mode == "text",
-                          maxlength: Draft::MAX_SOURCE_TEXT, placeholder: t(".paste_placeholder") %>
-          <p class="help-text"><%= t(".paste_hint") %></p>
-        <% else %>
-          <p class="help-text"><%= t(".paste_needs_claude") %></p>
+        <%= import_panel "text", @mode do %>
+          <%# The blocked link whose text this is, kept so its draft is read again %>
+          <%= hidden_field_tag :url, @url, id: nil if @mode == "text" && @url.present? %>
+          <div class="field">
+            <%= f.label :text, t(".text"), class: "form-label" %>
+            <%= f.text_area :text, value: @text, rows: 8, class: "form-textarea", autofocus: @mode == "text",
+                            maxlength: Draft::MAX_SOURCE_TEXT, placeholder: t(".paste_placeholder") %>
+            <p class="help-text"><%= t(".paste_hint") %></p>
+          </div>
         <% end %>
-      </div>
+      <% else %>
+        <%= import_panel "text screenshot", @mode do %>
+          <p class="help-text"><%= t(".needs_claude") %></p>
+        <% end %>
+      <% end %>
 
       <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
         <%# What's waiting in the Draft box, and how many more imports this hour (in amber once few are left) %>
