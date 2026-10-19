@@ -6,7 +6,6 @@ class RecipeIngredient < ApplicationRecord
   # A draft's ingredient the user doesn't have yet: its name and the aisle chosen for it in the review form.
   attr_accessor :new_ingredient_name, :new_aisle_id
 
-  validates :ingredient_id, uniqueness: { scope: :recipe_id }
   validate :ingredient_must_belong_to_recipe_owner
   validate :ingredient_must_be_listed_once
 
@@ -38,17 +37,25 @@ class RecipeIngredient < ApplicationRecord
           .find { |other| other.new_record? && other.name.casecmp?(new_ingredient_name.strip) }
   end
 
-  # Two rows with the same ingredient would hit the unique index on save; the uniqueness validation above only
-  # sees saved rows, not unsaved siblings or ingredients that are themselves new.
+  # Two rows with the same ingredient would hit the unique index on save. Checked among the recipe's rows, saved or
+  # not, rather than in the database: there, a row being removed in the same save would still count (remove Egg, add
+  # Egg again), and an ingredient that is itself new has no id yet.
   def ingredient_must_be_listed_once
     return unless ingredient
 
     duplicate = recipe.recipe_ingredients.any? do |other|
       next false if other.equal?(self) || other.marked_for_destruction? || other.ingredient.nil?
 
-      other.ingredient.equal?(ingredient) || (ingredient.persisted? && other.ingredient_id == ingredient.id)
+      other.ingredient.equal?(ingredient) || (ingredient.persisted? && other.ingredient_id == ingredient.id) ||
+        moving_onto?(other)
     end
     errors.add(:ingredient, :taken) if duplicate
+  end
+
+  # A saved row changing to the ingredient another saved row is changing from: the rows save one by one, so this one
+  # could meet the other's old ingredient still in the database.
+  def moving_onto?(other)
+    persisted? && ingredient_id_changed? && other.persisted? && other.ingredient_id_in_database == ingredient_id
   end
 
   def ingredient_must_belong_to_recipe_owner

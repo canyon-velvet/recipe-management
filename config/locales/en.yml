@@ -124,7 +124,6 @@ en:
         total_minutes: "Total time (min)"
       recipe/recipe_ingredients:
         ingredient: "Ingredient"
-        ingredient_id: "Ingredient"
       recipe/steps:
         body: "Step"
         position: "Step number"

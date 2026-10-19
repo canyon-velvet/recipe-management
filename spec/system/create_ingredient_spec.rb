@@ -73,6 +73,22 @@ RSpec.describe "Creating an ingredient from the recipe form", type: :system do
     end
   end
 
+  it "keeps a name typed without picking it from the list: yours if you have it, else a new one in Other" do
+    salt = create(:ingredient, user: user, name: "Salt")
+    recipe.recipe_ingredients.create!(ingredient: create(:ingredient, user: user, name: "Egg"), quantity: "2")
+    visit edit_recipe_path(recipe)
+
+    first(:field, placeholder: "Search ingredients...").fill_in(with: "salt") # typed over Egg, not picked
+    click_button "+ Add ingredient"
+    all(:field, placeholder: "Search ingredients...").last.fill_in(with: "Saffron") # no quantity either
+    click_button "Update recipe"
+
+    expect(page).to have_current_path(recipe_path(recipe))
+    expect(recipe.recipe_ingredients.reload.map(&:ingredient)).to contain_exactly(salt, user.ingredients.find_by!(name: "Saffron"))
+    expect(user.ingredients.find_by!(name: "Saffron").aisle.key).to eq "other"
+    expect(recipe.recipe_ingredients.find_by!(ingredient: salt).quantity).to eq "2"
+  end
+
   it "starts empty again after it's closed" do
     open_create_ingredient("sausage")
     within("dialog[open]") do

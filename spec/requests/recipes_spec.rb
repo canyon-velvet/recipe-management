@@ -67,6 +67,73 @@ RSpec.describe "Recipes", type: :request do
     expect(recipe.name).to eq "Apple cake"
   end
 
+  it "keeps a removed ingredient removed when an edit fails, so saving again doesn't bring it back" do
+    recipe = create(:recipe, user: user, name: "Omelette")
+    egg_row = recipe.recipe_ingredients.create!(ingredient: create(:ingredient, user: user, name: "Egg"))
+
+    patch recipe_path(recipe), params: { recipe: {
+      name: "", recipe_ingredients_attributes: { "0" => { id: egg_row.id, _destroy: "1" } }
+    } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    id_field = Nokogiri::HTML(response.body)
+      .at_css("input[name^='recipe[recipe_ingredients_attributes]'][name$='[id]'][value='#{egg_row.id}']")
+    row = id_field.ancestors("[data-nested-form-row]").first
+    expect(row["class"].split).to include("hidden")
+    expect(ActiveModel::Type::Boolean.new.cast(row.at_css("input[name$='[_destroy]']")["value"])).to be true
+  end
+
+  it "shows a typed new ingredient's aisle as Other when an edit fails, not the first aisle" do
+    recipe = create(:recipe, user: user)
+
+    patch recipe_path(recipe), params: { recipe: {
+      name: "", recipe_ingredients_attributes: { "0" => { ingredient_id: "", new_ingredient_name: "Saffron" } }
+    } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    aisle_select = Nokogiri::HTML(response.body).at_css("select[name$='[new_aisle_id]']")
+    expect(aisle_select.at_css("option[selected]").text).to eq "Other"
+  end
+
+  it "saves an ingredient removed and added again in the same edit, once" do
+    recipe = create(:recipe, user: user)
+    egg = create(:ingredient, user: user, name: "Egg")
+    egg_row = recipe.recipe_ingredients.create!(ingredient: egg, quantity: "2")
+
+    patch recipe_path(recipe), params: { recipe: { recipe_ingredients_attributes: {
+      "0" => { id: egg_row.id, _destroy: "1" }, "1" => { ingredient_id: egg.id, quantity: "3" }
+    } } }
+
+    expect(response).to redirect_to(recipe_path(recipe))
+    expect(recipe.recipe_ingredients.reload.map { [ _1.ingredient, _1.quantity ] }).to eq [ [ egg, "3" ] ]
+  end
+
+  it "still won't list an ingredient twice" do
+    recipe = create(:recipe, user: user)
+    egg = create(:ingredient, user: user, name: "Egg")
+    recipe.recipe_ingredients.create!(ingredient: egg)
+
+    patch recipe_path(recipe), params: { recipe: { recipe_ingredients_attributes: { "1" => { ingredient_id: egg.id } } } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(recipe.recipe_ingredients.reload.size).to eq 1
+  end
+
+  it "refuses, rather than fails on, a row taking the ingredient another row is changing from" do
+    recipe = create(:recipe, user: user)
+    egg, milk = %w[Egg Milk].map { |name| create(:ingredient, user: user, name: name) }
+    egg_row, milk_row = [ egg, milk ].map { |ingredient| recipe.recipe_ingredients.create!(ingredient: ingredient) }
+
+    # The rows save one by one, so Egg's row would become Milk while Milk's row still is
+    patch recipe_path(recipe), params: { recipe: { recipe_ingredients_attributes: {
+      "0" => { id: egg_row.id, ingredient_id: milk.id },
+      "1" => { id: milk_row.id, ingredient_id: create(:ingredient, user: user, name: "Flour").id }
+    } } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(recipe.recipe_ingredients.reload.map(&:ingredient)).to contain_exactly(egg, milk)
+  end
+
   describe "another user's source or ingredient in the form" do
     let(:other_user) { create(:user) }
     let(:their_source) { create(:source, user: other_user, name: "Their secret source") }
