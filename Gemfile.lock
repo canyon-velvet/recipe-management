@@ -397,6 +397,7 @@ DEPENDENCIES
   factory_bot_rails (~> 6.5)
   importmap-rails
   kamal
+  marcel (~> 1.0)
   pagy (~> 43.7)
   pg (~> 1.7)
   playwright-ruby-client (= 1.63.0)

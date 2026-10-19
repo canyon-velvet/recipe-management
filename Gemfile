@@ -42,6 +42,9 @@ gem "ssrf_filter", "~> 1.6"
 # Claude cleans imported recipes (official Anthropic SDK)
 gem "anthropic", "~> 1.80"
 
+# Tells an imported screenshot's type from its bytes
+gem "marcel", "~> 1.0"
+
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
