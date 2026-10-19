@@ -30,4 +30,11 @@ RSpec.describe "Importing", type: :request do
     expect(limit_line.text).to eq "3 of 20 imports left this hour"
     expect(limit_line["class"]).to include("import-limit--low")
   end
+
+  it "counts an admin's imports out of #{StartImportService::ADMIN_HOURLY_LIMIT}" do
+    delete logout_path
+    log_in_as create(:user, :admin)
+
+    expect(limit_line.text).to eq "50 of 50 imports left this hour"
+  end
 end

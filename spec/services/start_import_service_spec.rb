@@ -23,6 +23,17 @@ RSpec.describe StartImportService do
     expect(user.drafts.count).to eq described_class::HOURLY_LIMIT
   end
 
+  it "lets an admin start #{described_class::ADMIN_HOURLY_LIMIT} imports an hour" do
+    admin = create(:user, :admin)
+    imports = Array.new(described_class::ADMIN_HOURLY_LIMIT) do |i|
+      described_class.new(user: admin, url: "https://example.com/#{i}").call
+    end
+
+    expect(imports).to all(be_success)
+    expect(described_class.new(user: admin, url: "https://example.com/one-more").call.error).to eq :rate_limited
+    expect(described_class.imports_left(admin)).to eq 0
+  end
+
   it "counts imports whose drafts were discarded, and failed drafts read again" do
     stub_const("StartImportService::HOURLY_LIMIT", 2)
     start(url: "https://example.com/discarded").draft.destroy!
