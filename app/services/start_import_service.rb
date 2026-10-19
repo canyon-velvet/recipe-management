@@ -18,6 +18,13 @@ class StartImportService
 
   def self.counter_key(user) = "imports:#{user.id}"
 
+  # An import that failed before Claude read anything (ImportRecipeService) cost nothing, so it's given back. Only
+  # while the hour it was counted in is still running: an expired counter isn't taken below zero.
+  def self.give_back(user)
+    key = counter_key(user)
+    Rails.cache.decrement(key, 1) if Rails.cache.read(key, raw: true).to_i.positive?
+  end
+
   def initialize(user:, url: nil, text: nil)
     @user = user
     @url = RecipeLink.normalize(url)
@@ -66,7 +73,8 @@ class StartImportService
   end
 
   # Counted in Rails.cache (Redis), so the web and worker processes share it. Every import started counts, so
-  # discarding drafts or reading a failed one again doesn't free any up.
+  # discarding drafts or reading a failed one again doesn't free any up; only one that failed before Claude read it
+  # is given back (give_back).
   def over_hourly_limit?
     Rails.cache.increment(self.class.counter_key(@user), 1, expires_in: 1.hour).to_i > HOURLY_LIMIT
   end
