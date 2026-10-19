@@ -2,6 +2,10 @@
 # recipe text was pasted, has Claude clean it up, and leaves the draft Ready with its data, or Failed with the
 # reason. Without an Anthropic API key, a page's structured recipe is used as it is.
 class ImportRecipeService
+  # Failures before Claude read anything (the page wouldn't open or blocked us, or there's no Claude to read it): the
+  # import cost nothing, so its count is given back to the user.
+  UNREAD_FAILURES = %i[blocked fetch_failed needs_claude].freeze
+
   def initialize(draft)
     @draft = draft
   end
@@ -16,6 +20,7 @@ class ImportRecipeService
     @draft.update!(status: :ready, data: data, failure_reason: nil)
   rescue ImportFailure => e
     @draft.update!(status: :failed, failure_reason: e.reason)
+    StartImportService.give_back(@draft.user) if UNREAD_FAILURES.include?(e.reason)
   rescue CleanRecipeService::TemporaryError
     raise # ImportRecipeJob retries these
   rescue StandardError => e

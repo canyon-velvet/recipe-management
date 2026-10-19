@@ -32,6 +32,38 @@ RSpec.describe StartImportService do
     expect(start(url: "https://example.com/third").error).to eq :rate_limited
   end
 
+  describe "an import that fails before Claude reads it" do
+    def read(draft) = ImportRecipeService.new(draft).call
+
+    it "gives its count back, so discarding it costs nothing and pasting the text instead costs one" do
+      draft = start(url: "https://www.xiachufang.com/recipe/1").draft
+      expect(described_class.imports_left(user)).to eq described_class::HOURLY_LIMIT - 1
+
+      # The site answers with a captcha page
+      allow(FetchPageService).to receive(:new).and_raise(FetchPageService::Error.new(:blocked, "challenge page"))
+      read(draft)
+
+      expect(draft.reload.failure_reason).to eq "blocked"
+      expect(described_class.imports_left(user)).to eq described_class::HOURLY_LIMIT
+      allow(CleanRecipeService).to receive(:available?).and_return(true) # pasted text needs Claude
+      expect(start(url: "https://www.xiachufang.com/recipe/1", text: "红烧肉\n五花肉 500克\n炖一小时")).to be_success
+      expect(described_class.imports_left(user)).to eq described_class::HOURLY_LIMIT - 1
+    end
+
+    it "keeps counting one Claude did read, which cost a call" do
+      draft = start(url: "https://example.com/not-food").draft
+      allow(FetchPageService).to receive(:new).and_return(instance_double(FetchPageService, call: "<html></html>"))
+      allow(ExtractRecipeService).to receive(:new).and_return(instance_double(ExtractRecipeService, call: nil))
+      allow(CleanRecipeService).to receive(:available?).and_return(true)
+      allow(CleanRecipeService).to receive(:new).and_raise(CleanRecipeService::Error.new(:not_a_recipe))
+
+      read(draft)
+
+      expect(draft.reload.failure_reason).to eq "not_a_recipe"
+      expect(described_class.imports_left(user)).to eq described_class::HOURLY_LIMIT - 1
+    end
+  end
+
   it "doesn't count what it refuses before starting" do
     stub_const("StartImportService::HOURLY_LIMIT", 1)
 
