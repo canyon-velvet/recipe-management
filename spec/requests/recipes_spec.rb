@@ -83,6 +83,18 @@ RSpec.describe "Recipes", type: :request do
     expect(ActiveModel::Type::Boolean.new.cast(row.at_css("input[name$='[_destroy]']")["value"])).to be true
   end
 
+  it "shows a typed new ingredient's aisle as Other when an edit fails, not the first aisle" do
+    recipe = create(:recipe, user: user)
+
+    patch recipe_path(recipe), params: { recipe: {
+      name: "", recipe_ingredients_attributes: { "0" => { ingredient_id: "", new_ingredient_name: "Saffron" } }
+    } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    aisle_select = Nokogiri::HTML(response.body).at_css("select[name$='[new_aisle_id]']")
+    expect(aisle_select.at_css("option[selected]").text).to eq "Other"
+  end
+
   describe "another user's source or ingredient in the form" do
     let(:other_user) { create(:user) }
     let(:their_source) { create(:source, user: other_user, name: "Their secret source") }

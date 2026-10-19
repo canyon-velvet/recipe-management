@@ -20,7 +20,9 @@
     <% if new_ingredient %>
       <div class="flex items-center gap-2 mt-1">
         <span class="new-badge"><%= t("recipes.form.new_badge") %></span>
-        <%= form.select :new_aisle_id, aisles.map { |aisle| [ aisle.name, aisle.id ] }, {},
+        <%# The aisle it's being created in: the draft's choice, or Other for one typed in the form %>
+        <%= form.select :new_aisle_id, aisles.map { |aisle| [ aisle.name, aisle.id ] },
+                        { selected: form.object.ingredient&.aisle_id || form.object.new_aisle_id },
                         class: "form-select py-1 text-sm", aria: { label: Ingredient.human_attribute_name(:aisle) } %>
       </div>
     <% end %>
