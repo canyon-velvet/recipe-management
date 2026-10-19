@@ -4,8 +4,8 @@ It runs on [Render](https://render.com), described in [`render.yaml`](../render.
 
 - **Web service** (Docker): Thruster in front of Puma.
 - **Background worker**: Sidekiq, which runs imports and the assistant's replies.
-- **Postgres** and **Key Value** (Redis): for jobs, live updates and rate limits. Both are reachable only from the
-  services.
+- **Postgres** for the data, and **Key Value** (Redis) for jobs, live updates and rate limits. Both are reachable only
+  from the services.
 
 The smallest paid plans come to about $30 a month, plus Claude usage.
 
@@ -23,15 +23,19 @@ The smallest paid plans come to about $30 a month, plus Claude usage.
    User.create!(username: "me", password: IO.console.getpass("Password: "), admin: true)
    ```
 4. Log in, then invite people from the account menu → **Invites**. Signing up is by invite link only.
-5. In the [Anthropic console](https://console.anthropic.com), set a monthly spend limit on the API key. The app limits
-   each user's imports and assistant messages, but nothing caps the total.
+5. In the Claude Console, set a monthly spend limit on the workspace the API key belongs to (or on the organization).
+   The app limits each user's imports and assistant messages, but nothing caps the total.
 
 To use your own domain, add it in Render, then set `APP_HOSTS` on the web service (comma-separated) so the app
 accepts it.
 
 ## Each release
 
-Deploys are manual: a merge to main doesn't deploy. Use **Manual Deploy** on both services, **the web service first,
-then the worker**. Only the web service migrates the database (its pre-deploy command), so a worker that went first
-would run the new code on the old database, and imports and the assistant's replies would fail until the web service
-caught up.
+Deploys are manual: a merge to main doesn't deploy. Use **Manual Deploy** on the web service, wait until its deploy is
+**Live**, then Manual Deploy the worker. Only the web service migrates the database (its pre-deploy command), so a
+worker that went live first would run the new code on the old database, and imports and the assistant's replies would
+fail until the migration ran.
+
+The exception is a merge that changes `render.yaml`: Render syncs the Blueprint and redeploys the services whose
+settings changed, by itself and in no particular order. Afterwards, Manual Deploy whichever service it didn't redeploy
+(the web service first, as above), so both run the same code.

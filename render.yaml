@@ -8,9 +8,10 @@
 # Render ignores sync: false there.
 #
 # Deploys are manual (autoDeployTrigger: off): a merge to main doesn't deploy the app. To release, use Manual Deploy
-# on both the web service and the worker, so they run the same code: the web service first, as only its pre-deploy
-# command migrates the database. A merge that changes this file is the exception:
-# Render syncs the Blueprint and redeploys the services it changes (unless the Blueprint's Auto Sync is off).
+# on both the web service and the worker, so they run the same code: the web service first, and the worker once the
+# web service's deploy is Live, as only its pre-deploy command migrates the database. A merge that changes this file
+# is the exception: Render syncs the Blueprint and redeploys the services it changes (unless the Blueprint's Auto
+# Sync is off).
 
 services:
   - type: web
