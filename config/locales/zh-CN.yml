@@ -216,7 +216,6 @@ zh-CN:
       copy: "复制链接"
       copied: "已复制"
       stop: "停止分享"
-      done: "完成"
 
   recipes:
     confirm_delete: "确定要删除这个菜谱吗？"

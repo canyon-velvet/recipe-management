@@ -9,7 +9,7 @@ RSpec.describe "Sharing a recipe", type: :system do
     log_in_as user
   end
 
-  it "shares from the recipe page in a pop-up, copies the link, and stops sharing" do
+  it "shares from the recipe page in a pop-up, copies the link, cancels, and stops sharing" do
     visit recipe_path(recipe)
     click_link "Share"
 
@@ -20,7 +20,7 @@ RSpec.describe "Sharing a recipe", type: :system do
       expect(page).to have_field("Share link", with: link, readonly: true)
       click_button "Copy link"
       expect(page).to have_button("Copied")
-      click_link "Done"
+      click_link "Cancel"
     end
     expect(page).to have_no_css("dialog[open]")
     expect(page).to have_current_path(recipe_path(recipe))
@@ -31,7 +31,10 @@ RSpec.describe "Sharing a recipe", type: :system do
 
     visit recipe_path(recipe)
     click_link "Share"
-    within("dialog[open]") { click_button "Stop sharing" }
+    within("dialog[open]") do
+      expect(page).to have_css(".share-footer button.btn-pill-danger", text: "Stop sharing")
+      click_button "Stop sharing"
+    end
     expect(page).to have_text("Stopped sharing. The link no longer works.")
     expect(page).to have_current_path(recipe_path(recipe))
     expect(recipe.reload.share_token).to be_nil

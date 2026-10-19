@@ -221,7 +221,6 @@ en:
       copy: "Copy link"
       copied: "Copied"
       stop: "Stop sharing"
-      done: "Done"
 
   recipes:
     confirm_delete: "Delete this recipe?"

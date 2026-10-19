@@ -1,5 +1,6 @@
 <%# A shared recipe's link, to send from the phone's share sheet (where the browser has one) or to copy, and a way to
-    stop sharing it. Shown in the pop-up Share opens (the recipe page, the recipe list), and as a page of its own. %>
+    stop sharing it; Cancel closes it. Shown in the pop-up Share opens (the recipe page, the recipe list), and as a
+    page of its own. %>
 <% content_for :title, t(".title", name: @recipe.name) %>
 <section class="modal-page modal-panel modal-panel--roomy">
   <%= turbo_frame_tag "share_recipe" do %>
@@ -21,9 +22,8 @@
 
     <div class="share-footer">
       <%= button_to t(".stop"), recipe_share_path(@recipe), method: :delete,
-                    class: "btn-pill-ghost btn-pill-sm cursor-pointer text-red-600",
-                    form: { data: { turbo_frame: "_top" } } %>
-      <%= link_to t(".done"), recipe_path(@recipe), class: "btn-pill-secondary btn-pill-sm",
+                    class: "btn-pill-danger btn-pill-sm cursor-pointer", form: { data: { turbo_frame: "_top" } } %>
+      <%= link_to t("actions.cancel"), recipe_path(@recipe), class: "btn-pill-secondary btn-pill-sm",
                   data: { turbo_frame: "_top", action: "modal#close:prevent" } %>
     </div>
   <% end %>
