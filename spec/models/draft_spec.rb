@@ -27,9 +27,10 @@ RSpec.describe Draft do
   end
 
   it "names why it failed by a reason the app can say, else the generic one" do
-    expect(Draft.new(failure_reason: "fetch_failed").failure_reason_key).to eq "fetch_failed"
-    expect(Draft.new(failure_reason: "unexpected").failure_reason_key).to eq "generic" # an error nobody foresaw
-    expect(Draft.new(failure_reason: nil).failure_reason_key).to eq "generic"
+    expect(Draft.new(failure_reason: "fetch_failed").failure_message).to eq "We couldn't open this page."
+    generic = "We couldn't read a recipe from this."
+    expect(Draft.new(failure_reason: "unexpected").failure_message).to eq generic # an error nobody foresaw
+    expect(Draft.new(failure_reason: nil).failure_message).to eq generic
   end
 
   it "takes pasted text up to the length of a page's text" do

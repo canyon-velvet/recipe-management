@@ -13,12 +13,7 @@ class SyncGroceryListService
 
   def sync
     # Count checked recipe occurrences: { recipe_id => count }
-    recipe_counts = MealSlotRecipe
-      .joins(:meal_slot)
-      .where(meal_slots: { meal_plan_id: @meal_plan.id })
-      .where(add_to_grocery_list: true)
-      .group(:recipe_id)
-      .count
+    recipe_counts = MealSlotRecipe.in_meal_plan(@meal_plan).for_grocery_list.group(:recipe_id).count
 
     # Sum occurrence counts per ingredient
     ingredient_counts = {}

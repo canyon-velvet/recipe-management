@@ -9,6 +9,7 @@
 #   (servings and the minutes, Recipe::COUNT_LIMITS, are nil when the source doesn't say)
 class Draft < ApplicationRecord
   include DraftBoxBroadcasts
+  include HasRecipeLink
 
   # Pasted text is sent to Claude, so it gets the same cap as a page's text.
   MAX_SOURCE_TEXT = ExtractRecipeService::MAX_TEXT_CHARS
@@ -21,12 +22,8 @@ class Draft < ApplicationRecord
 
   enum :status, { reading: "reading", ready: "ready", failed: "failed" }, validate: true
 
-  validates :source_url, http_url: true, allow_blank: true
-  validates :source_url, uniqueness: { scope: :user_id }, allow_nil: true
   validates :source_text, length: { maximum: MAX_SOURCE_TEXT }
   validate :data_must_be_an_object
-
-  normalizes :source_url, with: ->(url) { RecipeLink.normalize(url) }
 
   scope :newest_first, -> { order(created_at: :desc, id: :desc) }
 
@@ -42,9 +39,10 @@ class Draft < ApplicationRecord
   # Until the recipe is read: a readable form of the link, or the first line of pasted text.
   def title = name || RecipeLink.title(source_url) || source_url || pasted_title || I18n.t("drafts.pasted_text")
 
-  # Unknown or missing reasons show the generic message.
-  def failure_reason_key
-    failure_reason.present? && I18n.exists?(failure_reason, scope: "drafts.failures") ? failure_reason : "generic"
+  # Why it failed, in the language in use. Unknown or missing reasons show the generic message.
+  def failure_message
+    key = failure_reason.present? && I18n.exists?(failure_reason, scope: "drafts.failures") ? failure_reason : "generic"
+    I18n.t(key, scope: "drafts.failures")
   end
 
   private

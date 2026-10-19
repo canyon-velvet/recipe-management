@@ -20,17 +20,13 @@ class Recipe < ApplicationRecord
   attr_accessor :new_source_name
 
   validates :name, presence: true
-  validates :source_url, http_url: true, allow_blank: true
-  validates :source_url, uniqueness: { scope: :user_id }, allow_nil: true
+  include HasRecipeLink # its link validations here, so the form lists the errors top to bottom (name, then link)
   COUNT_LIMITS.each do |attribute, max|
     validates attribute, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: max },
                          allow_nil: true
   end
   validate :must_have_steps
   validates :source, same_user: true
-
-  # One canonical form per page, so the same recipe link can't be saved twice in different spellings.
-  normalizes :source_url, with: ->(url) { RecipeLink.normalize(url) }
 
   accepts_nested_attributes_for :recipe_ingredients, allow_destroy: true, reject_if: :blank_ingredient_row?
   accepts_nested_attributes_for :steps, allow_destroy: true,

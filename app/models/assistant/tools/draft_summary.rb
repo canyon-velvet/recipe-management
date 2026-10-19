@@ -5,7 +5,7 @@ module Assistant
     module DraftSummary
       def self.of(draft)
         summary = { title: draft.title, status: draft.status, added: draft.created_at.iso8601 }
-        summary[:why_it_failed] = I18n.t(draft.failure_reason_key, scope: "drafts.failures") if draft.failed?
+        summary[:why_it_failed] = draft.failure_message if draft.failed?
         summary
       end
     end
