@@ -224,7 +224,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
   - Keep refactors and renames free of behavior changes, so they can be reviewed quickly.
   - When PRs depend on each other, stack the branches and state the merge order in each PR description.
   - If a PR grows beyond its stated scope, split off the extra work into its own PR instead of expanding it.
-- **Always run a code review before opening a PR, and before every push to an open one.** Use the `code-reviewer` agent on the branch's commits against its base. Besides the usual review, always check correctness and security. Fix what it finds (or say in the PR why not) before the PR goes up.
+- **Always run a code review before opening a PR, and before every push to an open one.** Use the `code-reviewer` agent, passing it the range to review: the branch against its base (e.g. `origin/<base>...HEAD`; for a stacked PR, the branch below it), or the new commits for a push. Besides the usual review, always check correctness and security. Fix what it finds (or say in the PR why not) before opening the PR or pushing.
 
 ## When in Doubt
 - Prefer Rails conventions over custom solutions
