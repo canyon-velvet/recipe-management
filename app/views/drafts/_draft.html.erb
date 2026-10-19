@@ -13,7 +13,7 @@
       <span class="status-pill draft-status--<%= draft.status %>"><%= t("drafts.statuses.#{draft.status}") %></span>
     </div>
     <p class="draft-meta">
-      <%= draft.source_host || draft.source_url || t("drafts.pasted_text") %> · <%= t(".added", time: time_ago_in_words(draft.created_at)) %>
+      <%= draft_source(draft) %> · <%= t(".added", time: time_ago_in_words(draft.created_at)) %>
     </p>
     <% if draft.failed? %>
       <p class="draft-failure"><%= t("drafts.failures.#{draft.failure_reason_key}", default: t("drafts.failures.generic")) %></p>

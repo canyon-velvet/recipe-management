@@ -1,4 +1,4 @@
-# Has Claude turn what an import read (a page's structured recipe and text, or pasted text) into Draft data:
+# Has Claude turn what an import read (a page's structured recipe and text, pasted text, or screenshots) into Draft data:
 # ingredients split into name / quantity / unit and placed in one of the user's aisles, steps split, tags
 # suggested from the fixed list, all in the recipe's original language. Structured outputs make the reply
 # always match RecipeCleanup's schema.
@@ -37,6 +37,8 @@ class CleanRecipeService
 
     Keep the recipe's original language: don't translate names, ingredients or steps.
     Use only what the source says; don't invent ingredients, amounts or steps.
+    The source may be screenshots instead of text, such as an AI's summary of a recipe video: read the recipe from
+    them, in the order given, as one recipe.
     Take the ingredients only from the source's ingredient list (e.g. "Ingredients" or "用料"), exactly as listed.
     Never add an ingredient that is only mentioned in the steps, such as oil, salt or a seasoning used while
     cooking. If the source has no ingredient list, return no ingredients.
@@ -61,11 +63,13 @@ class CleanRecipeService
 
   def self.available? = api_key.present?
 
-  # recipe: ExtractRecipeService's structured fields (or nil); text: page text or pasted text.
-  def initialize(user:, recipe:, text:, client: nil)
+  # recipe: ExtractRecipeService's structured fields (or nil); text: page text or pasted text; images: screenshots,
+  # each { media_type:, data: } with data as bytes.
+  def initialize(user:, recipe:, text:, images: [], client: nil)
     @user = user
     @recipe = recipe
     @text = text
+    @images = images
     @client = client
   end
 
@@ -87,7 +91,7 @@ class CleanRecipeService
       model: MODEL,
       max_tokens: MAX_TOKENS,
       system_: SYSTEM_PROMPT,
-      messages: [ { role: "user", content: user_message } ],
+      messages: [ { role: "user", content: [ *image_blocks, { type: "text", text: user_message } ] } ],
       output_config: { format: RecipeCleanup }
     )
   rescue Anthropic::Errors::RateLimitError, Anthropic::Errors::InternalServerError, Anthropic::Errors::APIConnectionError => e
@@ -120,6 +124,12 @@ class CleanRecipeService
       #{@text.presence || "none"}
       </source_text>
     MESSAGE
+  end
+
+  def image_blocks
+    @images.map do |image|
+      { type: "image", source: { type: "base64", media_type: image[:media_type], data: Base64.strict_encode64(image[:data]) } }
+    end
   end
 
   def capped_recipe

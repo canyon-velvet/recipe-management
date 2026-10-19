@@ -3,14 +3,15 @@ require "rails_helper"
 RSpec.describe CleanRecipeService do
   let(:user) { create(:user) }
 
-  # Stands in for Anthropic::Client: replies with the given cleanup, as structured outputs would.
+  # Stands in for Anthropic::Client: replies with the given cleanup, as structured outputs would, and keeps what was
+  # sent (client.messages.sent).
   def fake_client(**cleanup)
     reply = CleanRecipeService::RecipeCleanup.new(
       is_recipe: true, name: "Apple cake", description: "", ingredients: [], steps: [ "Bake it." ], tags: [], tips: [],
       servings: 0, prep_minutes: 0, cook_minutes: 0, total_minutes: 0, **cleanup
     )
     message = Struct.new(:stop_reason, :content).new(:end_turn, [ Struct.new(:type, :parsed).new(:text, reply) ])
-    messages = Struct.new(:message) { def create(**) = message }.new(message)
+    messages = Struct.new(:message, :sent) { def create(**params) = (self.sent = params) && message }.new(message)
     Struct.new(:messages).new(messages)
   end
 
@@ -36,5 +37,15 @@ RSpec.describe CleanRecipeService do
 
       expect(data.values_at("servings", "prep_minutes", "cook_minutes", "total_minutes")).to all(be_nil)
     end
+  end
+
+  it "sends screenshots as pictures, in order, before the instructions" do
+    client = fake_client
+    described_class.new(user: user, recipe: nil, text: nil, client: client,
+                        images: [ { media_type: "image/png", data: "first" }, { media_type: "image/jpeg", data: "second" } ]).call
+
+    content = client.messages.sent[:messages].sole[:content]
+    expect(content.map { _1[:type] }).to eq %w[image image text]
+    expect(content.first[:source]).to eq(type: "base64", media_type: "image/png", data: Base64.strict_encode64("first"))
   end
 end
