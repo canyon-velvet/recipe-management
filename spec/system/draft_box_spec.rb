@@ -25,6 +25,18 @@ RSpec.describe "The Draft box", type: :system do
     expect(row("Soup")).to have_no_link("Review")
   end
 
+  it "tries a failed import again, beside pasting the text instead" do
+    expect(row("Apple cake")).to have_no_button("Try again")
+
+    within(row("xiaohongshu")) do
+      expect(page.all("a, button").map(&:text)).to eq [ "Try again", "Paste text instead", "Discard" ]
+      click_button "Try again"
+    end
+
+    expect(row("xiaohongshu")).to have_css(".draft-icon--reading")
+    expect(row("xiaohongshu")).to have_no_text("The site blocked automatic reading")
+  end
+
   it "discards a draft after asking" do
     within(row("Apple cake")) { click_button "Discard" }
     within("dialog[open]") { click_button "Delete" }

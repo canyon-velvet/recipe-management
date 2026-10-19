@@ -30,6 +30,7 @@ en:
     import_started: "Importing… the recipe will wait in your Draft box."
     admin_required: "Admin access required."
     draft_discarded: "Draft discarded."
+    draft_retried: "Reading it again…"
     invalid_login: "Incorrect username or password."
     invite_created: "Invite link created. Copy it and send it to the person."
     invite_deleted: "Invite deleted. Its link no longer works."
@@ -437,6 +438,7 @@ en:
       confirm_discard: "Discard \"%{title}\"?"
       discard: "Discard"
       paste_instead: "Paste text instead"
+      retry: "Try again"
       review: "Review"
     failures:
       blocked: "The site blocked automatic reading (for example with a captcha). Paste the recipe text instead."
