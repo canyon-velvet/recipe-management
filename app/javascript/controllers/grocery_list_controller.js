@@ -17,8 +17,7 @@ export default class extends Controller {
         body: new URLSearchParams({ in_pantry: inPantry })
       })
 
-      // Only if it is streams: a fetch that followed a redirect to the login page gets that page instead
-      if (response.ok && response.headers.get("content-type")?.includes("turbo-stream")) {
+      if (response.ok) {
         Turbo.renderStreamMessage(await response.text())
       }
     } catch (error) {
