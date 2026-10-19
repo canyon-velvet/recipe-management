@@ -1,17 +1,12 @@
 class SourcesController < ApplicationController
+  include PickerJson
+
   def search
-    sources = current_user.sources.search_by_name(params[:q]).order(:name).limit(20)
-    render json: sources.map { |s| { id: s.id, name: s.name } }
+    render_names current_user.sources.search_by_name(params[:q])
   end
 
   def create
-    source = current_user.sources.new(source_params)
-
-    if source.save
-      render json: { id: source.id, name: source.name }, status: :created
-    else
-      render json: { errors: source.errors.full_messages }, status: :unprocessable_entity
-    end
+    render_created current_user.sources.create(source_params)
   end
 
   private

@@ -12,7 +12,7 @@
       <% if draft.ready? %>
         <span class="assistant-draft-ready"><%= t("assistant.draft_ready") %></span>
       <% elsif draft.failed? %>
-        <span class="assistant-recipe-warning"><%= t(draft.failure_reason_key, scope: "drafts.failures") %></span>
+        <span class="assistant-recipe-warning"><%= draft.failure_message %></span>
       <% else %>
         <span class="assistant-recipe-facts assistant-thinking"><%= t("drafts.statuses.reading") %></span>
       <% end %>

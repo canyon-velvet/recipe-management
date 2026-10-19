@@ -2,6 +2,8 @@
 # pop-up has already shown.
 # #create also answers JSON for adding an aisle from the create-ingredient pop-up's aisle box.
 class AislesController < ApplicationController
+  include PickerJson
+
   before_action :set_aisle, only: [ :update, :destroy, :move ]
 
   def index
@@ -12,13 +14,7 @@ class AislesController < ApplicationController
     aisle = Aisle.add_before_other(current_user, aisle_params[:name])
 
     respond_to do |format|
-      format.json do
-        if aisle.persisted?
-          render json: { id: aisle.id, name: aisle.name }, status: :created
-        else
-          render json: { errors: aisle.errors.full_messages }, status: :unprocessable_entity
-        end
-      end
+      format.json { render_created(aisle) }
       format.html { aisle.persisted? ? redirect_to(aisles_path, status: :see_other) : render_editor(new_aisle: aisle) }
     end
   end

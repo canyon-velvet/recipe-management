@@ -16,7 +16,7 @@
       <%= draft_source(draft) %> · <%= t(".added", time: time_ago_in_words(draft.created_at)) %>
     </p>
     <% if draft.failed? %>
-      <p class="draft-failure"><%= t("drafts.failures.#{draft.failure_reason_key}", default: t("drafts.failures.generic")) %></p>
+      <p class="draft-failure"><%= draft.failure_message %></p>
     <% end %>
   </div>
 

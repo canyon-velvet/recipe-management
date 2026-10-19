@@ -38,7 +38,7 @@ class MealPlan < ApplicationRecord
   def assigned_recipe_count
     return self[:assigned_recipe_count] if has_attribute?(:assigned_recipe_count)
 
-    MealSlotRecipe.joins(:meal_slot).where(meal_slots: { meal_plan_id: id }).count
+    MealSlotRecipe.in_meal_plan(self).count
   end
 
   # The meals with at least one recipe, out of MEALS_PER_WEEK
