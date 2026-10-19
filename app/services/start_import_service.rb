@@ -27,13 +27,14 @@ class StartImportService
   # An import that failed before Claude read anything (ImportRecipeService) cost nothing, so it's given back: up to an
   # hour's limit of them an hour, so Try again on a link that never opens can't fetch pages on and on. The counters
   # run for an hour from their first count, so a failure counted near the end of one hour may be given back to the
-  # next. An expired counter isn't taken below zero.
+  # next. An expired counter isn't taken below zero, and one that expires just as it's counted down lasts an hour, not
+# the store's default week.
   def self.give_back(user)
     key = counter_key(user)
     return unless Rails.cache.read(key, raw: true).to_i.positive?
     return if Rails.cache.increment(given_back_key(user), 1, expires_in: 1.hour).to_i > hourly_limit(user)
 
-    Rails.cache.decrement(key, 1)
+    Rails.cache.decrement(key, 1, expires_in: 1.hour)
   end
 
   # draft: a failed draft to read again (Try again), from its own link or pasted text.
@@ -92,7 +93,7 @@ class StartImportService
     key = self.class.counter_key(@user)
     return false if Rails.cache.increment(key, 1, expires_in: 1.hour).to_i <= self.class.hourly_limit(@user)
 
-    Rails.cache.decrement(key, 1)
+    Rails.cache.decrement(key, 1, expires_in: 1.hour)
     true
   end
 
