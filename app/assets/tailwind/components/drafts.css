@@ -14,7 +14,9 @@
   }
   .draft-meta    { @apply mt-1 truncate text-sm text-gray-500; }
   .draft-failure { @apply mt-2 text-sm text-red-700; }
-  .draft-actions { @apply flex flex-none items-center gap-1.5; }
+  /* On a phone a failed draft's three buttons wrap rather than run off the card */
+  .draft-actions { @apply flex max-w-full flex-none flex-wrap items-center gap-1.5; }
+  .draft-retry   { @apply cursor-pointer gap-1.5 [&>svg]:size-3.5; }
 
   .draft-status--reading { @apply bg-gray-100 text-gray-600; }
   .draft-status--ready   { @apply bg-sectionbackground text-sectiontext; }

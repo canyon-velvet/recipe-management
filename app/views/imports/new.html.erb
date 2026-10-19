@@ -39,7 +39,7 @@
       <div class="field import-link">
         <%= f.label :url, t(".link"), class: "form-label" %>
         <%= f.url_field :url, value: @url, placeholder: "https://...", class: "form-input",
-                          autofocus: @mode == "link" %>
+                          autofocus: @mode == "link", data: { screenshots_target: "url" } %>
       </div>
 
       <div class="import-shots">
@@ -95,7 +95,8 @@
         <div class="ml-auto flex gap-2">
           <%= link_to t("actions.cancel"), recipes_path, class: "btn-pill-ghost btn-pill-sm",
                 data: { turbo_frame: "_top", action: "modal#close:prevent" } %>
-          <%= f.submit t(".submit"), class: "btn-pill-primary btn-pill-sm cursor-pointer" %>
+          <%= f.submit t(".submit"), class: "btn-pill-primary btn-pill-sm cursor-pointer disabled:opacity-60",
+                       data: { screenshots_target: "submit" } %>
         </div>
       </div>
     <% end %>

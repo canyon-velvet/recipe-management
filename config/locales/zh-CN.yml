@@ -27,6 +27,7 @@ zh-CN:
     import_started: "正在导入，完成后菜谱会在草稿箱等你。"
     admin_required: "需要管理员权限"
     draft_discarded: "草稿已丢弃"
+    draft_retried: "正在重新读取…"
     invalid_login: "用户名或密码错误"
     invite_created: "邀请链接已创建，复制后发给对方"
     invite_deleted: "邀请已删除，链接已失效"
@@ -424,6 +425,7 @@ zh-CN:
       confirm_discard: "丢弃“%{title}”？"
       discard: "丢弃"
       paste_instead: "改为粘贴文字"
+      retry: "重试"
       review: "审阅"
     failures:
       blocked: "网站阻止了自动读取（例如验证码）。请改为粘贴菜谱文字。"

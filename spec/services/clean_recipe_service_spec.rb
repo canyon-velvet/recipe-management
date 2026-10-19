@@ -41,8 +41,8 @@ RSpec.describe CleanRecipeService do
 
   it "sends screenshots as pictures, in order, before the instructions" do
     client = fake_client
-    described_class.new(user: user, recipe: nil, text: nil, client: client,
-                        images: [ { media_type: "image/png", data: "first" }, { media_type: "image/jpeg", data: "second" } ]).call
+    images = [ { media_type: "image/png", data: "first" }, { media_type: "image/jpeg", data: "second" } ]
+    described_class.new(user: user, recipe: nil, text: nil, images: images, client: client).call
 
     content = client.messages.sent[:messages].sole[:content]
     expect(content.map { _1[:type] }).to eq %w[image image text]

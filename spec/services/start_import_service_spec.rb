@@ -15,14 +15,18 @@ RSpec.describe StartImportService do
   describe "from screenshots" do
     before { allow(CleanRecipeService).to receive(:available?).and_return(true) }
 
-    def start_from(screenshots, title: "奶油烤鸡") = described_class.new(user: user, title: title, screenshots: screenshots).call
+    def start_from(screenshots, title: "奶油烤鸡")
+      described_class.new(user: user, title: title, screenshots: screenshots).call
+    end
 
     it "puts a Reading… draft with the user's name for it, holding the screenshots in order, and counts one import" do
       result = nil
-      expect { result = start_from([ screenshot, screenshot("tall_screenshot.png") ]) }.to have_enqueued_job(ImportRecipeJob)
+      expect { result = start_from([ screenshot, screenshot("tall_screenshot.png") ]) }
+        .to have_enqueued_job(ImportRecipeJob)
 
       expect(result).to be_success
-      expect(result.draft).to have_attributes(status: "reading", title: "奶油烤鸡", screenshot_count: 2, source_url: nil)
+      expect(result.draft).to have_attributes(status: "reading", title: "奶油烤鸡", screenshot_count: 2,
+                                              source_url: nil)
       expect(result.draft.images.map(&:position)).to eq [ 1, 2 ]
       expect(result.draft.images.first).to have_attributes(content_type: "image/png",
                                                            data: File.binread(screenshot.path))
@@ -41,10 +45,19 @@ RSpec.describe StartImportService do
     end
 
     it "refuses a file that isn't a picture Claude reads, whatever the browser called it" do
-      not_a_picture = Rack::Test::UploadedFile.new(StringIO.new("%PDF-1.4 …"), "image/png", original_filename: "a.png")
+      not_a_picture = Rack::Test::UploadedFile.new(StringIO.new("%PDF-1.4 …"), "image/png",
+                                                   original_filename: "a.png")
 
       expect(start_from([ screenshot, not_a_picture ]).error).to eq :unreadable_screenshot
       expect(Draft.where(user: user)).to be_empty
+    end
+
+    it "refuses a picture over #{DraftImage::MAX_BYTES / 1.megabyte} MB without reading it" do
+      too_big = screenshot
+      allow(too_big).to receive(:size).and_return(DraftImage::MAX_BYTES + 1)
+      expect(too_big).not_to receive(:read)
+
+      expect(start_from([ too_big ]).error).to eq :unreadable_screenshot
     end
 
     it "needs Claude to read them" do

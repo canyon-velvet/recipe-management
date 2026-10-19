@@ -37,6 +37,20 @@ RSpec.describe "Importing from screenshots", type: :system do
     expect(draft.images.map { jpeg_size(_1.data) }).to eq [ [ 738, 1600 ], [ 300, 500 ] ]
   end
 
+  it "sends screenshots though a half-typed link was left under Link" do
+    within("dialog[open]") do
+      fill_in "Recipe link", with: "xhslink.com/abc" # no https://, so not a valid link
+      choose "Screenshot", allow_label_click: true
+      fill_in "Recipe name", with: "奶油烤鸡"
+      attach_file "Choose screenshots", screenshot("small_screenshot.png"), make_visible: true
+      expect(page).to have_css(".import-shot", count: 1)
+      click_button "Import"
+    end
+
+    expect(page).to have_text("Importing… the recipe will wait in your Draft box.")
+    expect(user.drafts.sole).to have_attributes(title: "奶油烤鸡", source_url: nil)
+  end
+
   it "asks for the name before sending" do
     within("dialog[open]") do
       choose "Screenshot", allow_label_click: true

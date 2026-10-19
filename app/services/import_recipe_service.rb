@@ -1,6 +1,7 @@
 # Reads one Reading… Draft (ImportRecipeJob runs this in the background): fetches and extracts the page unless the
 # recipe text was pasted or it's from screenshots, has Claude clean it up, and leaves the draft Ready with its data, or
-# Failed with the reason. Screenshots are deleted once read; a failed draft keeps them, to be read again. Without an Anthropic API key, a page's structured recipe is used as it is.
+# Failed with the reason. Screenshots are deleted once read; a failed draft keeps them, to be read again (Try again).
+# Without an Anthropic API key, a page's structured recipe is used as it is.
 class ImportRecipeService
   # Failures before Claude read anything (the page wouldn't open or blocked us, or there's no Claude to read it): the
   # import cost nothing, so its count is given back to the user.
@@ -48,7 +49,8 @@ class ImportRecipeService
   def cleaned(extracted)
     text = @draft.source_text.presence || extracted&.text
     images = @draft.images.map { |image| { media_type: image.content_type, data: image.data } }
-    without_images(CleanRecipeService.new(user: @draft.user, recipe: extracted&.recipe, text: text, images: images).call)
+    cleaner = CleanRecipeService.new(user: @draft.user, recipe: extracted&.recipe, text: text, images: images)
+    without_images(cleaner.call)
   end
 
   # Without Claude, ingredient lines stay whole (e.g. "1 cup oats") and land in Other; the review form fixes the rest.

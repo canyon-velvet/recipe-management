@@ -1,5 +1,5 @@
-# Starts an Import (GLOSSARY): checks the recipe link, pasted text or screenshots, puts a Draft in the user's Draft box as
-# Reading…, and queues ImportRecipeJob to read it in the background. The import form uses it, and so will the
+# Starts an Import (GLOSSARY): checks the recipe link, pasted text or screenshots, puts a Draft in the user's Draft
+# box as Reading…, and queues ImportRecipeJob to read it in the background. The import form uses it, and so will the
 # phone API.
 class StartImportService
   # Imports a user can start in an hour, from the import form and the assistant together: each can cost a Claude call.
@@ -31,17 +31,20 @@ class StartImportService
   end
 
   # title and screenshots: pictures of one recipe (e.g. an AI's summary of a 小红书 video), named by the user, since
-  # the pictures don't say which recipe they are
-  def initialize(user:, url: nil, text: nil, title: nil, screenshots: [])
+  # the pictures don't say which recipe they are. draft: a failed draft to read again (Try again), from its own link,
+  # pasted text or screenshots.
+  def initialize(user:, url: nil, text: nil, title: nil, screenshots: [], draft: nil)
     @user = user
-    @url = RecipeLink.normalize(url)
+    @draft = draft
+    @url = RecipeLink.normalize(draft ? draft.source_url : url)
     # Browsers send line breaks as \r\n; as \n, the text is as long as the paste box counted it.
-    @text = text.to_s.gsub("\r\n", "\n").strip.presence
+    @text = (draft ? draft.source_text : text).to_s.gsub("\r\n", "\n").strip.presence
     @title = title.to_s.squish.presence
     @screenshots = screenshots
   end
 
   def call
+    return screenshots_again if @draft&.screenshot_count&.positive?
     return failure(:blank) if @url.nil? && @text.nil? && @screenshots.empty?
     return failure(:needs_claude) if (@text || @screenshots.any?) && !CleanRecipeService.available?
     return from_screenshots if @screenshots.any?
@@ -73,16 +76,26 @@ class StartImportService
   def from_screenshots
     return failure(:title_blank) unless @title
     return failure(:too_many_screenshots) if @screenshots.size > Draft::MAX_SCREENSHOTS
+    # Checked before they're read into memory
+    return failure(:unreadable_screenshot) if @screenshots.any? { |file| file.size > DraftImage::MAX_BYTES }
 
     images = @screenshots.map.with_index(1) { |file, position| DraftImage.from_upload(file, position: position) }
     draft = @user.drafts.new(data: { "name" => @title }, screenshot_count: images.size, images: images)
     draft.valid? ? start(draft) : failure(:unreadable_screenshot)
   end
 
-  # A failed draft for the same link is read again (typically with the recipe text pasted in); any other draft
-  # for that link means it's already being imported.
+  # A failed draft from screenshots, read again from the screenshots it kept, under the user's name for it
+  def screenshots_again
+    return failure(:needs_claude) unless CleanRecipeService.available?
+
+    @draft.assign_attributes(status: :reading, failure_reason: nil, data: { "name" => @draft.name })
+    start(@draft)
+  end
+
+  # The draft being tried again, or a failed draft for the same link (typically read again with the recipe text pasted
+  # in); any other draft for that link means it's already being imported.
   def draft_to_read
-    existing = @url && @user.drafts.find_by(source_url: @url)
+    existing = @draft || (@url && @user.drafts.find_by(source_url: @url))
     return @user.drafts.new(source_url: @url, source_text: @text) unless existing
     return unless existing.failed?
 

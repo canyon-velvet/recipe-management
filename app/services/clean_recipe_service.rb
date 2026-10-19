@@ -1,5 +1,5 @@
-# Has Claude turn what an import read (a page's structured recipe and text, pasted text, or screenshots) into Draft data:
-# ingredients split into name / quantity / unit and placed in one of the user's aisles, steps split, tags
+# Has Claude turn what an import read (a page's structured recipe and text, pasted text, or screenshots) into Draft
+# data: ingredients split into name / quantity / unit and placed in one of the user's aisles, steps split, tags
 # suggested from the fixed list, all in the recipe's original language. Structured outputs make the reply
 # always match RecipeCleanup's schema.
 class CleanRecipeService
@@ -128,7 +128,8 @@ class CleanRecipeService
 
   def image_blocks
     @images.map do |image|
-      { type: "image", source: { type: "base64", media_type: image[:media_type], data: Base64.strict_encode64(image[:data]) } }
+      source = { type: "base64", media_type: image[:media_type], data: Base64.strict_encode64(image[:data]) }
+      { type: "image", source: source }
     end
   end
 

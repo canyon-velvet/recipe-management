@@ -2,11 +2,12 @@ import { Controller } from "@hotwired/stimulus"
 
 // Screenshot, in the import form. The picked pictures are shrunk on the phone, to LONG_SIDE pixels on their long side
 // as JPEG, so they upload quickly; they show as thumbnails to remove or add to, in the order they'll be read. The
-// recipe's name is required while Screenshot is chosen.
+// recipe's name is required while Screenshot is chosen, and the link box, hidden then, is left out (a half-typed link
+// there would otherwise stop the form sending, with nothing to say why).
 const LONG_SIDE = 1600
 
 export default class extends Controller {
-  static targets = ["mode", "title", "input", "picker", "list", "add"]
+  static targets = ["mode", "url", "title", "input", "picker", "list", "add", "submit"]
   static values = { max: Number, removeLabel: String }
 
   connect() {
@@ -19,15 +20,27 @@ export default class extends Controller {
   }
 
   modeChanged() {
+    this.urlTarget.disabled = this.modeTarget.checked
     if (this.hasTitleTarget) this.titleTarget.required = this.modeTarget.checked
   }
 
-  // The picker's choice replaces the input's files; they're added to the ones picked before.
+  // The picker's choice replaces the input's files; they're added to the ones picked before. Until they're shrunk,
+  // neither another pick nor Import can start, so what's sent is always every shrunk picture, in order.
   async add() {
-    const picked = [...this.inputTarget.files].slice(0, this.maxValue - this.shots.length)
-    const files = await Promise.all(picked.map(shrink))
-    this.shots.push(...files.map((file) => ({ file, url: URL.createObjectURL(file) })))
-    this.update()
+    this.busy(true)
+    try {
+      const picked = [...this.inputTarget.files].slice(0, this.maxValue - this.shots.length)
+      const files = await Promise.all(picked.map(shrink))
+      this.shots.push(...files.map((file) => ({ file, url: URL.createObjectURL(file) })))
+    } finally {
+      this.update()
+      this.busy(false)
+    }
+  }
+
+  busy(busy) {
+    this.inputTarget.disabled = busy
+    this.submitTarget.disabled = busy
   }
 
   remove({ params: { index } }) {
