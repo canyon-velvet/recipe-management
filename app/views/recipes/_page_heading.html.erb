@@ -1,6 +1,6 @@
 <%# locals: (recipe:, description:, actions:) %>
-<%# The top of the recipe page: emoji, tags, name, quiet Share / Edit / Delete (actions), the description (without its tips), and the
-    servings and times. %>
+<%# The top of the recipe page: emoji, tags, name, quiet Share / Edit / Delete (actions), the description (without its
+    tips), and the servings and times. %>
 <div class="recipe-heading">
   <div class="recipe-heading-icon" aria-hidden="true">
     <% if (icon = recipe.card_icon) %>
@@ -26,7 +26,8 @@
         <span aria-hidden="true">✎</span> <%= t("actions.edit") %>
       <% end %>
       <span aria-hidden="true">·</span>
-      <%= link_to t("actions.delete"), recipe_path(recipe), class: "recipe-heading-action recipe-heading-action--delete",
+      <%= link_to t("actions.delete"), recipe_path(recipe),
+                  class: "recipe-heading-action recipe-heading-action--delete",
                   data: { turbo_method: :delete, turbo_confirm: t("recipes.confirm_delete") } %>
     </p>
   <% end %>

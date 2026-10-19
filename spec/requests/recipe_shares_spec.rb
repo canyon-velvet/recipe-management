@@ -69,6 +69,17 @@ RSpec.describe "Sharing a recipe", type: :request do
       expect(page.at_css("meta[property='og:description']")["content"]).to eq "Silky tofu in a numbing sauce."
     end
 
+    it "opens in an older browser too, which the app's own pages turn away" do
+      ios16 = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) " \
+              "Version/16.6 Mobile/15E148 Safari/604.1"
+
+      get shared_recipe_path(recipe.reload.share_token), headers: { "User-Agent" => ios16 }
+      expect(response).to have_http_status(:ok)
+
+      get login_path, headers: { "User-Agent" => ios16 }
+      expect(response).to have_http_status(:not_acceptable)
+    end
+
     it "is in the visitor's language" do
       get shared_recipe_path(recipe.reload.share_token), headers: { "Accept-Language" => "zh-CN,zh;q=0.9" }
 
