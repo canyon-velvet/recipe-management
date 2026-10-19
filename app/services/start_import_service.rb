@@ -29,11 +29,13 @@ class StartImportService
     Rails.cache.decrement(key, 1) if Rails.cache.read(key, raw: true).to_i.positive?
   end
 
-  def initialize(user:, url: nil, text: nil)
+  # draft: a failed draft to read again (Try again), from its own link or pasted text.
+  def initialize(user:, url: nil, text: nil, draft: nil)
     @user = user
-    @url = RecipeLink.normalize(url)
+    @draft = draft
+    @url = RecipeLink.normalize(draft ? draft.source_url : url)
     # Browsers send line breaks as \r\n; as \n, the text is as long as the paste box counted it.
-    @text = text.to_s.gsub("\r\n", "\n").strip.presence
+    @text = (draft ? draft.source_text : text).to_s.gsub("\r\n", "\n").strip.presence
   end
 
   def call
@@ -58,10 +60,10 @@ class StartImportService
 
   private
 
-  # A failed draft for the same link is read again (typically with the recipe text pasted in); any other draft
-  # for that link means it's already being imported.
+  # The draft being tried again, or a failed draft for the same link (typically read again with the recipe text pasted
+  # in); any other draft for that link means it's already being imported.
   def draft_to_read
-    existing = @url && @user.drafts.find_by(source_url: @url)
+    existing = @draft || (@url && @user.drafts.find_by(source_url: @url))
     return @user.drafts.new(source_url: @url, source_text: @text) unless existing
     return unless existing.failed?
 
