@@ -44,7 +44,10 @@
 # Playwright for system specs (npm install)
 /node_modules
 
-# Ignore local Claude Code files (worktrees, skills, settings); keep the project instructions and agents.
+# Ignore local Claude Code files (worktrees, skills, local settings); keep the project instructions, agents, shared
+# settings and hooks.
 /.claude/*
 !/.claude/CLAUDE.md
 !/.claude/agents/
+!/.claude/settings.json
+!/.claude/hooks/
