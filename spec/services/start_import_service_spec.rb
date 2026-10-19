@@ -6,7 +6,10 @@ RSpec.describe StartImportService do
   # The test env's cache stores nothing; the hourly limit needs one that counts.
   before { allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new) }
 
-  def start(url: nil, text: nil) = described_class.new(user: user, url: url, text: text).call
+  # Pasted text says where it's from (the import pop-up's source picker); a link's site is its source
+  def start(url: nil, text: nil, source_name: ("小红书" if text))
+    described_class.new(user: user, url: url, text: text, source_name: source_name).call
+  end
 
   def screenshot(name = "small_screenshot.png", type: "image/png")
     Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files", name), type)
@@ -15,8 +18,8 @@ RSpec.describe StartImportService do
   describe "from screenshots" do
     before { allow(CleanRecipeService).to receive(:available?).and_return(true) }
 
-    def start_from(screenshots, title: "奶油烤鸡")
-      described_class.new(user: user, title: title, screenshots: screenshots).call
+    def start_from(screenshots, title: "奶油烤鸡", source_name: "抖音")
+      described_class.new(user: user, title: title, screenshots: screenshots, source_name: source_name).call
     end
 
     it "puts a Reading… draft with the user's name for it, holding the screenshots in order, and counts one import" do
@@ -168,6 +171,43 @@ RSpec.describe StartImportService do
 
     expect(described_class.imports_left(user)).to eq 1
     expect(start(url: "https://example.com/3")).to be_success
+  end
+
+  describe "where a recipe is from" do
+    before { allow(CleanRecipeService).to receive(:available?).and_return(true) }
+
+    def screenshot = Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/small_screenshot.png"), "image/png")
+
+    it "is needed with pasted text or screenshots, and kept on the draft" do
+      expect(start(text: "红烧肉", source_name: " ").error).to eq :source_blank
+      expect(described_class.new(user: user, title: "奶油烤鸡", screenshots: [ screenshot ]).call.error)
+        .to eq :source_blank
+      expect(user.drafts).to be_empty
+
+      expect(start(text: "红烧肉", source_name: "抖音").draft.data).to eq("source_name" => "抖音")
+      draft = described_class.new(user: user, title: "奶油烤鸡", screenshots: [ screenshot ], source_name: "小红书").call.draft
+      expect(draft.data).to eq("name" => "奶油烤鸡", "source_name" => "小红书")
+    end
+
+    it "is kept when a failed draft is tried again" do
+      text_draft = start(text: "红烧肉", source_name: "抖音").draft
+      shot_draft = described_class.new(user: user, title: "奶油烤鸡", screenshots: [ screenshot ], source_name: "小红书")
+                                  .call.draft
+      [ text_draft, shot_draft ].each { _1.update!(status: :failed, failure_reason: :cleanup_failed) }
+
+      expect(described_class.new(user: user, draft: text_draft).call).to be_success
+      expect(described_class.new(user: user, draft: shot_draft).call).to be_success
+      expect(text_draft.reload.data).to eq("source_name" => "抖音")
+      expect(shot_draft.reload.data).to eq("name" => "奶油烤鸡", "source_name" => "小红书")
+    end
+
+    it "is the one picked when pasting the text of a link that was blocked" do
+      draft = start(url: "https://www.xiaohongshu.com/explore/1").draft
+      draft.update!(status: :failed, failure_reason: :blocked)
+
+      expect(start(url: "https://www.xiaohongshu.com/explore/1", text: "红烧肉", source_name: "Mom")).to be_success
+      expect(draft.reload.data).to eq("source_name" => "Mom")
+    end
   end
 
   it "doesn't count what it refuses before starting" do

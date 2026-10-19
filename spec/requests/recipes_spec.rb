@@ -39,7 +39,7 @@ RSpec.describe "Recipes", type: :request do
     expect(page.at_css(".recipe-form-main #recipe_name")).to be_present
     details = page.at_css(".recipe-form-details")
     expect(details.at_css("input[type=submit]")["value"]).to eq "Update recipe"
-    expect(details.css("label").map { _1.text.squish }).to include("Tags", "Servings", "Source", "Recipe link")
+    expect(details.css("label, legend").map { _1.text.squish }).to include("Tags", "Servings", "Source", "Recipe link")
   end
 
   it "names each card's ⋮ menu button for screen readers" do

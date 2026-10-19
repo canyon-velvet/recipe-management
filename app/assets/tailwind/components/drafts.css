@@ -27,8 +27,8 @@
     @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800;
   }
 
-  /* Import form: Link, Screenshot or Text, a switch of pills (radio buttons); the chosen one is white. Text shows the
-     paste box under the link box; Screenshot swaps the link box for the recipe's name and the pictures. */
+  /* Import form: Link, Screenshot or Text, a switch of pills (radio buttons); the chosen one is white. Each one's
+     fields are panels (fieldsets) shown only while enabled, i.e. while their way is chosen (import-form controller). */
   .import-modes { @apply flex gap-1 rounded-full bg-sectionbackground p-1; }
   .import-mode {
     @apply flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full py-2 text-sm font-medium
@@ -36,11 +36,7 @@
            has-checked:bg-white has-checked:font-semibold has-checked:text-sectiontext has-checked:shadow-sm
            has-focus-visible:ring-2 has-focus-visible:ring-sectiontext/30;
   }
-  .import-text { @apply hidden space-y-2; }
-  .import-form:has(#mode_text:checked) .import-text { @apply block; }
-  .import-form:has(#mode_screenshot:checked) .import-link { @apply hidden; }
-  .import-shots { @apply hidden space-y-4; }
-  .import-form:has(#mode_screenshot:checked) .import-shots { @apply block; }
+  .import-panel { @apply min-w-0 disabled:hidden; }
 
   /* Before any are picked, a dashed box to choose them; then their thumbnails (screenshots controller), each with ×,
      and a dashed tile to add more */
