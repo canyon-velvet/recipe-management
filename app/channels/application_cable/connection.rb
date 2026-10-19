@@ -1,7 +1,7 @@
 module ApplicationCable
   # Who's on the other end of a live-update connection (the assistant's replies, the Draft box): the logged-in user,
-  # from the same session cookie as their pages. Anyone else is refused, so a signed stream name copied out of a
-  # page is no use without the session that rendered it.
+  # from the same session cookie as their pages. Anyone not logged in is refused. Which streams a connection hears
+  # rests on their signed names, which only the user's own pages carry: Turbo checks the signature, not the user.
   class Connection < ActionCable::Connection::Base
     identified_by :current_user
 

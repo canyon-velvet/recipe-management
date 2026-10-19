@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe ApplicationCable::Connection, type: :channel do
-  it "connects the logged-in user, who then hears only their own streams" do
+  it "connects the logged-in user" do
     user = create(:user)
 
     connect "/cable", session: { user_id: user.id }
