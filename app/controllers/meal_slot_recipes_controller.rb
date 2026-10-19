@@ -9,14 +9,11 @@ class MealSlotRecipesController < ApplicationController
     ticked = MealSlotRecipe.in_meal_plan(meal_plan).where(recipe: recipe).pick(:add_to_grocery_list) || false
     @meal_slot_recipe = @meal_slot.meal_slot_recipes.build(recipe: recipe, add_to_grocery_list: ticked)
 
-    if @meal_slot_recipe.save
-      SyncGroceryListService.new(meal_plan).call
-      render_meal_slots(meal_plan, @meal_slot.id)
-    else
-      head :unprocessable_entity
-    end
+    # Saving fails only for a recipe already in the meal: it's there, so the meal is redrawn as if just added
+    SyncGroceryListService.new(meal_plan).call if @meal_slot_recipe.save
+    render_meal_slots(meal_plan, @meal_slot.id)
   rescue ActiveRecord::RecordNotUnique # the same recipe added twice at once (a double click)
-    head :unprocessable_entity
+    render_meal_slots(meal_plan, @meal_slot.id)
   end
 
   def destroy
