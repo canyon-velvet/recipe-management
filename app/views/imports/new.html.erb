@@ -7,7 +7,7 @@
 
     <% if @result && !@result.success? %>
       <div class="bg-red-50 border border-red-300 text-red-700 rounded-md p-3 mb-4 text-sm">
-        <%= t("imports.errors.#{@result.error}") %>
+        <%= t("imports.errors.#{@result.error}", max: Draft::MAX_SCREENSHOTS) %>
         <% if @result.recipe %>
           <%= link_to t(".view_recipe"), recipe_path(@result.recipe), class: "underline font-medium",
                       data: { turbo_frame: "_top" } %>
@@ -18,27 +18,61 @@
       </div>
     <% end %>
 
-    <%# Link or Text, one at a time. Text keeps the link box above the paste box, so a pasted recipe keeps its link
-        (a blocked link's "Paste text instead" fills it in). %>
-    <%= form_with url: imports_path, class: "import-form space-y-4", data: { turbo_frame: "_top" } do |f| %>
-      <fieldset class="import-modes">
+    <%# Link, Screenshot or Text, one at a time. Text keeps the link box above the paste box, so a pasted recipe keeps
+        its link (a blocked link's "Paste text instead" fills it in). Screenshot swaps the link box for the recipe's
+        name and the pictures, shrunk on the phone before they're sent (screenshots controller). %>
+    <%= form_with url: imports_path, class: "import-form space-y-4",
+                  data: { turbo_frame: "_top", controller: "screenshots",
+                          screenshots_max_value: Draft::MAX_SCREENSHOTS,
+                          screenshots_remove_label_value: t(".remove_screenshot") } do |f| %>
+      <fieldset class="import-modes" data-action="change->screenshots#modeChanged">
         <legend class="sr-only"><%= t(".mode") %></legend>
         <% ImportsController::MODES.each do |mode| %>
           <label class="import-mode">
-            <%= f.radio_button :mode, mode, checked: @mode == mode, class: "sr-only" %>
+            <%= f.radio_button :mode, mode, checked: @mode == mode, class: "sr-only",
+                               data: { screenshots_target: ("mode" if mode == "screenshot") } %>
             <%= inline_icon mode %> <%= t(".modes.#{mode}") %>
           </label>
         <% end %>
       </fieldset>
 
-      <div class="field">
+      <div class="field import-link">
         <%= f.label :url, t(".link"), class: "form-label" %>
         <%= f.url_field :url, value: @url, placeholder: "https://...", class: "form-input",
-                          autofocus: @mode == "link" %>
+                          autofocus: @mode == "link", data: { screenshots_target: "url" } %>
+      </div>
+
+      <div class="import-shots">
+        <% if @has_claude %>
+          <div class="field">
+            <%= f.label :title, t(".title"), class: "form-label" %>
+            <%= f.text_field :title, value: @title, placeholder: t(".title_placeholder"), class: "form-input",
+                             autofocus: @mode == "screenshot", data: { screenshots_target: "title" } %>
+          </div>
+
+          <div class="import-shots-picker" data-screenshots-target="picker">
+            <%= f.file_field :screenshots, multiple: true, accept: "image/*", class: "sr-only",
+                             data: { screenshots_target: "input", action: "screenshots#add" } %>
+            <label for="screenshots" class="import-shots-drop">
+              <span class="import-shots-drop-icons"><%= inline_icon "screenshot" %><%= inline_icon "camera" %></span>
+              <span class="import-shots-drop-title"><%= t(".choose_screenshots") %></span>
+              <span class="import-shots-drop-hint"><%= t(".screenshots_hint", count: Draft::MAX_SCREENSHOTS) %></span>
+            </label>
+            <div class="import-shots-grid">
+              <ul class="import-shots-list" data-screenshots-target="list"></ul>
+              <label for="screenshots" class="import-shots-add" data-screenshots-target="add">
+                <span aria-hidden="true">＋</span> <%= t(".add_screenshots") %>
+              </label>
+            </div>
+            <p class="import-shots-note help-text"><%= t(".screenshots_note") %></p>
+          </div>
+        <% else %>
+          <p class="help-text"><%= t(".screenshots_need_claude") %></p>
+        <% end %>
       </div>
 
       <div class="import-text">
-        <% if @can_paste %>
+        <% if @has_claude %>
           <%= f.label :text, t(".text"), class: "form-label" %>
           <%= f.text_area :text, value: @text, rows: 8, class: "form-textarea", autofocus: @mode == "text",
                           maxlength: Draft::MAX_SOURCE_TEXT, placeholder: t(".paste_placeholder") %>
@@ -61,7 +95,8 @@
         <div class="ml-auto flex gap-2">
           <%= link_to t("actions.cancel"), recipes_path, class: "btn-pill-ghost btn-pill-sm",
                 data: { turbo_frame: "_top", action: "modal#close:prevent" } %>
-          <%= f.submit t(".submit"), class: "btn-pill-primary btn-pill-sm cursor-pointer" %>
+          <%= f.submit t(".submit"), class: "btn-pill-primary btn-pill-sm cursor-pointer disabled:opacity-60",
+                       data: { screenshots_target: "submit" } %>
         </div>
       </div>
     <% end %>

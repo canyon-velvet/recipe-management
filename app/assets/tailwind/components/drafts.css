@@ -27,8 +27,8 @@
     @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800;
   }
 
-  /* Import form: Link or Text, a switch of pills (radio buttons); the chosen one is white. Text shows the paste box
-     under the link box. */
+  /* Import form: Link, Screenshot or Text, a switch of pills (radio buttons); the chosen one is white. Text shows the
+     paste box under the link box; Screenshot swaps the link box for the recipe's name and the pictures. */
   .import-modes { @apply flex gap-1 rounded-full bg-sectionbackground p-1; }
   .import-mode {
     @apply flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full py-2 text-sm font-medium
@@ -38,6 +38,40 @@
   }
   .import-text { @apply hidden space-y-2; }
   .import-form:has(#mode_text:checked) .import-text { @apply block; }
+  .import-form:has(#mode_screenshot:checked) .import-link { @apply hidden; }
+  .import-shots { @apply hidden space-y-4; }
+  .import-form:has(#mode_screenshot:checked) .import-shots { @apply block; }
+
+  /* Before any are picked, a dashed box to choose them; then their thumbnails (screenshots controller), each with ×,
+     and a dashed tile to add more */
+  .import-shots-drop {
+    @apply flex h-48 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px]
+           border-dashed border-sectiontext/40 px-4 text-center text-sectiontext hover:bg-sectionbackground/60;
+  }
+  .import-shots-drop-icons { @apply flex gap-2.5 [&>svg]:size-7; }
+  .import-shots-drop-title { @apply text-[15px] font-semibold; }
+  .import-shots-drop-hint  { @apply text-xs text-sectiontext/80; }
+  .import-shots-grid       { @apply hidden flex-wrap gap-3.5 pt-2; }
+  .import-shots-list       { @apply contents; }
+  .import-shot             { @apply relative h-[150px] w-[92px]; }
+  .import-shot > img       { @apply size-full rounded-xl object-cover object-top ring-1 ring-black/5; }
+  .import-shot-remove {
+    @apply absolute -top-2.5 -right-2.5 flex size-7 cursor-pointer items-center justify-center rounded-full
+           bg-gray-700 text-base leading-none text-white;
+  }
+  .import-shots-add {
+    @apply flex h-[150px] w-[92px] cursor-pointer flex-col items-center justify-center gap-1 rounded-xl
+           border-[1.5px] border-dashed border-sectiontext/40 text-sm font-medium text-sectiontext
+           hover:bg-sectionbackground/60;
+  }
+  /* The file input is hidden; its labels (the box, Add more) show its focus */
+  .import-shots-picker:has(#screenshots:focus-visible) :is(.import-shots-drop, .import-shots-add) {
+    @apply ring-2 ring-sectiontext/30;
+  }
+  .import-shots-note { @apply mt-3 hidden; }
+  .import-shots--picked .import-shots-drop { @apply hidden; }
+  .import-shots--picked .import-shots-grid { @apply flex; }
+  .import-shots--picked .import-shots-note { @apply block; }
   /* How many imports wait in the Draft box, beside Cancel and Import */
   .import-draft-count  { @apply text-sm text-gray-500 hover:text-sectiontext; }
   /* Under it, how many imports are left this hour; amber once few are */

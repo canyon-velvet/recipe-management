@@ -29,6 +29,19 @@ RSpec.describe "The Draft box", type: :request do
       expect(user.drafts.count).to eq 1
     end
 
+    it "reads the screenshots it kept again, under the name the user gave it" do
+      draft = user.drafts.create!(data: { "name" => "奶油烤鸡" }, screenshot_count: 1, status: :failed,
+                                  failure_reason: :cleanup_failed,
+                                  images: [ DraftImage.new(position: 1, content_type: "image/png", data: "png") ])
+
+      expect { post retry_draft_path(draft) }.to have_enqueued_job(ImportRecipeJob).with(draft, "en")
+
+      expect(response).to redirect_to(drafts_path)
+      expect(flash[:alert]).to be_nil
+      expect(draft.reload).to have_attributes(status: "reading", failure_reason: nil, title: "奶油烤鸡")
+      expect(draft.images.count).to eq 1
+    end
+
     it "is only for the user's own failed drafts" do
       ready = user.drafts.create!(source_url: "https://example.com/ready", status: :ready)
       theirs = create(:user).drafts.create!(source_url: "https://example.com/theirs", status: :failed)

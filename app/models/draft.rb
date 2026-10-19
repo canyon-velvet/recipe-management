@@ -12,8 +12,12 @@ class Draft < ApplicationRecord
 
   # Pasted text is sent to Claude, so it gets the same cap as a page's text.
   MAX_SOURCE_TEXT = ExtractRecipeService::MAX_TEXT_CHARS
+  # Screenshots read together as one recipe
+  MAX_SCREENSHOTS = 6
 
   belongs_to :user
+  # An import from screenshots: kept until Claude has read them (ImportRecipeService). Its name is the user's, in data.
+  has_many :images, -> { order(:position) }, class_name: "DraftImage", dependent: :delete_all, inverse_of: :draft
 
   enum :status, { reading: "reading", ready: "ready", failed: "failed" }, validate: true
 
