@@ -28,7 +28,7 @@ class StartImportService
   # hour's limit of them an hour, so Try again on a link that never opens can't fetch pages on and on. The counters
   # run for an hour from their first count, so a failure counted near the end of one hour may be given back to the
   # next. An expired counter isn't taken below zero, and one that expires just as it's counted down lasts an hour, not
-# the store's default week.
+  # the store's default week.
   def self.give_back(user)
     key = counter_key(user)
     return unless Rails.cache.read(key, raw: true).to_i.positive?
