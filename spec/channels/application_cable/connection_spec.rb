@@ -9,7 +9,7 @@ RSpec.describe ApplicationCable::Connection, type: :channel do
     expect(connection.current_user).to eq user
   end
 
-  it "refuses a visitor who isn't logged in, even one holding a signed stream name" do
+  it "refuses a visitor who isn't logged in" do
     expect { connect "/cable" }.to have_rejected_connection
     expect { connect "/cable", session: { user_id: 0 } }.to have_rejected_connection
   end
