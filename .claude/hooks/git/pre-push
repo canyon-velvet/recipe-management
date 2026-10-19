@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Git runs this before a push: core.hooksPath points here, set by the SessionStart hook in .claude/settings.json.
+# A push Claude Code makes (CLAUDECODE=1) goes ahead only if every commit it sends has a recorded clean review by the
+# code-reviewer agent (.claude/agents/code-reviewer.md); any new commit needs a review of its own. Git says exactly
+# what's being pushed, however the push was typed. People's own pushes aren't checked. The record is the agent's own
+# word that it ran the review; it keeps the step from being forgotten, not from being skipped on purpose.
+set -euo pipefail
+
+[ "${CLAUDECODE:-}" = 1 ] || exit 0
+
+# Shared by every worktree of the repository, and absolute, so a record can be made from any directory
+records=$(cd "$(git rev-parse --git-common-dir)" && pwd)
+blocked=""
+
+# One line per ref pushed: <local ref> <local sha> <remote ref> <remote sha>, all zeros for "none"
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [[ $local_sha =~ ^0+$ ]] && continue # a deletion sends no commits
+  commit=$(git rev-parse "$local_sha^{commit}") # a tag's commit
+  [ -f "$records/code-reviewed-$commit" ] && continue
+
+  # What to review: the commits new to the remote branch, or a new branch's commits on main
+  if [[ $remote_sha =~ ^0+$ ]]; then range="origin/main...$commit"; else range="$remote_sha..$commit"; fi
+  blocked+="  ${local_ref#refs/heads/} -> ${remote_ref#refs/heads/}: review $range, then touch \"$records/code-reviewed-$commit\""$'\n'
+done
+
+[ -z "$blocked" ] && exit 0
+cat >&2 <<MESSAGE
+Push stopped: these commits haven't been reviewed.
+$blocked
+1. Run the code-reviewer agent on each range above. Ask it to check correctness and security besides the usual review.
+2. Fix what it finds, committing the fixes, and review those too.
+3. Once a review finds nothing blocking, record it with the touch command above.
+4. Push again.
+MESSAGE
+exit 1
