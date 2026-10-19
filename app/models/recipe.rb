@@ -1,6 +1,5 @@
 class Recipe < ApplicationRecord
   include NameSearchable
-  include HasRecipeLink
 
   belongs_to :source, autosave: true
   belongs_to :user
@@ -21,6 +20,7 @@ class Recipe < ApplicationRecord
   attr_accessor :new_source_name
 
   validates :name, presence: true
+  include HasRecipeLink # its link validations here, so the form lists the errors top to bottom (name, then link)
   COUNT_LIMITS.each do |attribute, max|
     validates attribute, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: max },
                          allow_nil: true
