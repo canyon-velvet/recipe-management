@@ -121,7 +121,6 @@ zh-CN:
         total_minutes: "总时间（分钟）"
       recipe/recipe_ingredients:
         ingredient: "食材"
-        ingredient_id: "食材"
       recipe/steps:
         body: "步骤"
         position: "步骤序号"

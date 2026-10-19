@@ -119,6 +119,21 @@ RSpec.describe "Recipes", type: :request do
     expect(recipe.recipe_ingredients.reload.size).to eq 1
   end
 
+  it "refuses, rather than fails on, a row taking the ingredient another row is changing from" do
+    recipe = create(:recipe, user: user)
+    egg, milk = %w[Egg Milk].map { |name| create(:ingredient, user: user, name: name) }
+    egg_row, milk_row = [ egg, milk ].map { |ingredient| recipe.recipe_ingredients.create!(ingredient: ingredient) }
+
+    # The rows save one by one, so Egg's row would become Milk while Milk's row still is
+    patch recipe_path(recipe), params: { recipe: { recipe_ingredients_attributes: {
+      "0" => { id: egg_row.id, ingredient_id: milk.id },
+      "1" => { id: milk_row.id, ingredient_id: create(:ingredient, user: user, name: "Flour").id }
+    } } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(recipe.recipe_ingredients.reload.map(&:ingredient)).to contain_exactly(egg, milk)
+  end
+
   describe "another user's source or ingredient in the form" do
     let(:other_user) { create(:user) }
     let(:their_source) { create(:source, user: other_user, name: "Their secret source") }

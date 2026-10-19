@@ -46,9 +46,16 @@ class RecipeIngredient < ApplicationRecord
     duplicate = recipe.recipe_ingredients.any? do |other|
       next false if other.equal?(self) || other.marked_for_destruction? || other.ingredient.nil?
 
-      other.ingredient.equal?(ingredient) || (ingredient.persisted? && other.ingredient_id == ingredient.id)
+      other.ingredient.equal?(ingredient) || (ingredient.persisted? && other.ingredient_id == ingredient.id) ||
+        moving_onto?(other)
     end
     errors.add(:ingredient, :taken) if duplicate
+  end
+
+  # A saved row changing to the ingredient another saved row is changing from: the rows save one by one, so this one
+  # could meet the other's old ingredient still in the database.
+  def moving_onto?(other)
+    persisted? && ingredient_id_changed? && other.persisted? && other.ingredient_id_in_database == ingredient_id
   end
 
   def ingredient_must_belong_to_recipe_owner
