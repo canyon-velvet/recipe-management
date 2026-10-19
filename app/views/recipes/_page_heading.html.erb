@@ -1,5 +1,5 @@
-<%# locals: (recipe:, description:) %>
-<%# The top of the recipe page: emoji, tags, name, quiet Edit / Delete, the description (without its tips), and the
+<%# locals: (recipe:, description:, actions:) %>
+<%# The top of the recipe page: emoji, tags, name, quiet Share / Edit / Delete (actions), the description (without its tips), and the
     servings and times. %>
 <div class="recipe-heading">
   <div class="recipe-heading-icon" aria-hidden="true">
@@ -15,14 +15,20 @@
   <% end %>
   <h1 class="recipe-heading-title"><%= recipe.name %></h1>
 
-  <p class="recipe-heading-actions">
-    <%= link_to edit_recipe_path(recipe), class: "recipe-heading-action" do %>
-      <span aria-hidden="true">✎</span> <%= t("actions.edit") %>
-    <% end %>
-    <span aria-hidden="true">·</span>
-    <%= link_to t("actions.delete"), recipe_path(recipe), class: "recipe-heading-action recipe-heading-action--delete",
-                data: { turbo_method: :delete, turbo_confirm: t("recipes.confirm_delete") } %>
-  </p>
+  <% if actions %>
+    <p class="recipe-heading-actions">
+      <%= link_to recipe_share_path(recipe), class: "recipe-heading-action", data: { turbo_method: :post } do %>
+        <%= inline_icon "share" %> <%= t("actions.share") %>
+      <% end %>
+      <span aria-hidden="true">·</span>
+      <%= link_to edit_recipe_path(recipe), class: "recipe-heading-action" do %>
+        <span aria-hidden="true">✎</span> <%= t("actions.edit") %>
+      <% end %>
+      <span aria-hidden="true">·</span>
+      <%= link_to t("actions.delete"), recipe_path(recipe), class: "recipe-heading-action recipe-heading-action--delete",
+                  data: { turbo_method: :delete, turbo_confirm: t("recipes.confirm_delete") } %>
+    </p>
+  <% end %>
 
   <% if description %>
     <div class="recipe-description prose prose-lg text-gray-600"><%= render_markdown(description) %></div>

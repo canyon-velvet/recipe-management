@@ -16,6 +16,7 @@ en:
     delete: "Delete"
     edit: "Edit"
     more: "More actions"
+    share: "Share"
     save: "Save"
 
   date:
@@ -27,6 +28,7 @@ en:
       month_year: "%B %Y"
 
   flash:
+    sharing_stopped: "Stopped sharing. The link no longer works."
     import_started: "Importing… the recipe will wait in your Draft box."
     admin_required: "Admin access required."
     draft_discarded: "Draft discarded."
@@ -209,6 +211,17 @@ en:
       recipes: "All Recipes"
     navbar_menu:
       label: "Menu"
+
+  recipe_shares:
+    show:
+      title: "Share “%{name}”"
+      lead: "Anyone with this link can see the recipe, but not your other recipes or your account."
+      link: "Share link"
+      share: "Share…"
+      copy: "Copy link"
+      copied: "Copied"
+      stop: "Stop sharing"
+      done: "Done"
 
   recipes:
     confirm_delete: "Delete this recipe?"

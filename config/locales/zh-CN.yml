@@ -15,6 +15,7 @@ zh-CN:
     delete: "删除"
     edit: "编辑"
     more: "更多操作"
+    share: "分享"
     save: "保存"
 
   date:
@@ -24,6 +25,7 @@ zh-CN:
       month_year: "%Y年%-m月"
 
   flash:
+    sharing_stopped: "已停止分享，链接不再有效。"
     import_started: "正在导入，完成后菜谱会在草稿箱等你。"
     admin_required: "需要管理员权限"
     draft_discarded: "草稿已丢弃"
@@ -204,6 +206,17 @@ zh-CN:
       recipes: "所有菜谱"
     navbar_menu:
       label: "菜单"
+
+  recipe_shares:
+    show:
+      title: "分享“%{name}”"
+      lead: "拿到链接的人都能看到这个菜谱，但看不到你的其他菜谱和账户。"
+      link: "分享链接"
+      share: "分享…"
+      copy: "复制链接"
+      copied: "已复制"
+      stop: "停止分享"
+      done: "完成"
 
   recipes:
     confirm_delete: "确定要删除这个菜谱吗？"

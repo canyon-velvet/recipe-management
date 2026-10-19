@@ -1,0 +1,38 @@
+<%# locals: (recipe:, actions:) %>
+<%# A recipe as a cookbook page: one centred column with the heading, then Ingredients, Method and Tips, each under a
+    ruled heading, and where it's from at the bottom. Its owner sees Share, Edit and Delete under the name (actions);
+    someone it's shared with sees the recipe alone. %>
+<% description, tips = recipe.description_and_tips %>
+<article class="recipe-page">
+  <%= render "recipes/page_heading", recipe: recipe, description: description, actions: actions %>
+
+  <% if recipe.recipe_ingredients.any? %>
+    <section class="recipe-section">
+      <%= render "recipes/section_heading", title: t("recipes.show.ingredients") %>
+      <%= render "recipes/ingredient_list", recipe_ingredients: recipe.recipe_ingredients %>
+    </section>
+  <% end %>
+
+  <section class="recipe-section">
+    <%= render "recipes/section_heading", title: t("recipes.show.method") %>
+    <%= render "recipes/steps", steps: recipe.steps %>
+  </section>
+
+  <% if tips %>
+    <section class="recipe-section">
+      <%= render "recipes/section_heading", title: t("recipes.tips_heading") %>
+      <div class="recipe-tips prose prose-lg max-w-none text-gray-800"><%= render_markdown(tips) %></div>
+    </section>
+  <% end %>
+
+  <p class="recipe-source">
+    <%# The original, when there's a link to it %>
+    <% if recipe.source_url.present? %>
+      <%= link_to recipe.source_url, target: "_blank", rel: "noopener", class: "recipe-source-link" do %>
+        <%= t("recipes.show.from", name: recipe.source.name) %> <span aria-hidden="true">↗</span>
+      <% end %>
+    <% else %>
+      <%= t("recipes.show.from", name: recipe.source.name) %>
+    <% end %>
+  </p>
+</article>

@@ -110,6 +110,7 @@
   .recipe-heading-actions        { @apply mt-2 text-xs text-gray-400; }
   .recipe-heading-action         { @apply hover:text-gray-700; }
   .recipe-heading-action--delete { @apply hover:text-red-600; }
+  .recipe-heading-action > svg    { @apply inline size-3.5 align-[-2px]; }
   /* Its colour is on the element, beside .prose, whose own colour (a utility) would beat it here */
   .recipe-description   { @apply mx-auto mt-5; }
 
@@ -145,4 +146,8 @@
   /* Where it's from, at the bottom; the link to the original when there is one */
   .recipe-source      { @apply mt-14 border-t border-sectiontext/15 pt-4 text-center text-sm text-gray-400; }
   .recipe-source-link { @apply underline decoration-gray-300 underline-offset-4 hover:text-sectiontext; }
+
+  /* The share page (recipe_shares/show): Share and Copy under the link, then Stop sharing and Done */
+  .share-buttons { @apply mt-4 flex flex-wrap gap-2 [&_svg]:mr-1.5 [&_svg]:size-4; }
+  .share-footer  { @apply mt-8 flex items-center justify-between gap-2; }
 }
