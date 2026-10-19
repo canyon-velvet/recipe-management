@@ -3,10 +3,10 @@
   <div class="meal-plan-header">
     <div>
       <%= link_to meal_plan_path(@meal_plan), class: "meal-plan-back" do %>
-        <span aria-hidden="true">←</span> <%= @meal_plan.display_name %>
+        <span aria-hidden="true">←</span> <%= meal_plan_title(@meal_plan) %>
       <% end %>
       <p class="home-eyebrow mt-4">
-        <%= l(@meal_plan.start_date, format: :month_day) %> – <%= l(@meal_plan.end_date, format: :month_day_year) %>
+        <%= week_dates(@meal_plan.start_date, year: true) %>
       </p>
       <h1 class="meal-plan-title"><%= t(".title") %></h1>
     </div>

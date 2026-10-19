@@ -31,10 +31,6 @@ class MealPlan < ApplicationRecord
   after_create :create_meal_slots
   after_create :create_grocery_list
 
-  def display_name
-    name.presence || "#{start_date.strftime('%m/%d')} - #{end_date.strftime('%m/%d')}"
-  end
-
   def assigned_recipe_count
     return self[:assigned_recipe_count] if has_attribute?(:assigned_recipe_count)
 

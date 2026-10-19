@@ -7,11 +7,11 @@ module MealPlansHelper
     t(MealPlan::MEAL_TYPES[index], scope: "meal_plans.meal_types")
   end
 
-  def format_week_range(meal_plan)
-    format_week_of(meal_plan.start_date)
-  end
+  # The plan's name, or its week when it has none
+  def meal_plan_title(meal_plan) = meal_plan.name.presence || week_dates(meal_plan.start_date)
 
-  def format_week_of(monday)
-    "#{monday.strftime('%m/%d')} - #{(monday + 6.days).strftime('%m/%d')}"
+  # A week from its Monday, in the language in use: "Oct 12 – Oct 18" (10月12日 – 10月18日). year: true adds the year.
+  def week_dates(monday, year: false)
+    "#{l(monday, format: :month_day)} – #{l(monday + 6.days, format: year ? :month_day_year : :month_day)}"
   end
 end

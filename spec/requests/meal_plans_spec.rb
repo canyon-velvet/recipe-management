@@ -96,6 +96,29 @@ RSpec.describe "Meal plans", type: :request do
     expect(response.body.scan("1 of 28 meals").size).to eq 4
   end
 
+  it "writes a week the same way everywhere, in the language in use, and names a plan without a name by it" do
+    meal_plan = plan_week(monday)
+
+    get meal_plans_path
+    card = Nokogiri::HTML(response.body).at_css(".meal-plan-row")
+    expect(card.at_css(".meal-plan-name").text).to eq "Oct 12 – Oct 18"
+    expect(card.at_css(".meal-plan-facts").text.squish).to start_with "Oct 12 – Oct 18 ·"
+
+    get meal_plan_path(meal_plan)
+    expect(Nokogiri::HTML(response.body).at_css(".meal-plan-title").text).to eq "Oct 12 – Oct 18"
+
+    get meal_plan_grocery_list_path(meal_plan)
+    expect(Nokogiri::HTML(response.body).at_css(".meal-plan-back").text.squish).to eq "← Oct 12 – Oct 18"
+
+    get new_meal_plan_path
+    expect(Nokogiri::HTML(response.body).css(".week-chip-detail").map(&:text).first(3))
+      .to eq [ "Already planned", "Oct 19 – Oct 25", "Oct 26 – Nov 1" ]
+
+    patch locale_path, params: { locale: "zh-CN" }
+    get meal_plan_path(meal_plan)
+    expect(Nokogiri::HTML(response.body).at_css(".meal-plan-title").text).to eq "10月12日 – 10月18日"
+  end
+
   describe "a week's plan" do
     let(:meal_plan) { plan_week(monday) }
 
