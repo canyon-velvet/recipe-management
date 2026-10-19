@@ -1,0 +1,32 @@
+<%# locals: (recipe:) %>
+<%# A recipe in the list, one to a row: its emoji, then the name, a line of description and the facts. Like a card,
+    the whole row links to the recipe (the link lies under the content); only the ⋮ menu takes its own clicks. %>
+<li class="recipe-row">
+  <%= link_to "", recipe_path(recipe), class: "recipe-row-link", "aria-label": recipe.name %>
+
+  <span class="recipe-row-art" aria-hidden="true">
+    <% if (icon = recipe.card_icon) %>
+      <%= icon %>
+    <% else %>
+      <%= image_tag "icons/recipe-placeholder.svg", alt: "", class: "w-10 h-10 object-contain", loading: "lazy" %>
+    <% end %>
+  </span>
+
+  <div class="recipe-row-body">
+    <h3 class="recipe-row-title"><%= recipe.name %></h3>
+    <p class="recipe-row-summary"><%= recipe_summary(recipe) %></p>
+    <p class="recipe-row-facts">
+      <% if recipe.total_minutes %>
+        <span><span aria-hidden="true">⏱</span> <%= duration_label(recipe.total_minutes) %></span>
+      <% end %>
+      <% if recipe.servings %>
+        <span><span aria-hidden="true">👥</span><span class="sr-only"><%= t("recipes.facts.servings") %></span> <%= recipe.servings %></span>
+      <% end %>
+      <span class="recipe-row-tags"><%= recipe.tags.first(2).map(&:name).join(" · ") %></span>
+    </p>
+  </div>
+
+  <div class="recipe-row-menu">
+    <%= render "recipes/recipe_menu", recipe: recipe %>
+  </div>
+</li>

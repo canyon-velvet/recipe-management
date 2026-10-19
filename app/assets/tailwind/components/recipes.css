@@ -1,9 +1,9 @@
 @layer components {
-  /* Recipe list: the catalog in a sticky panel on the left; the heading and the cards on the right. On a phone the
-     catalog folds behind "Search & filter" between the heading and the cards (order). The heading and the cards sit
-     in a display: contents Turbo frame, so they are grid items of the page. */
+  /* Recipe list: the catalog in a sticky panel on the left; the heading and the recipes on the right. On a phone the
+     catalog folds behind "Search & filter" between the heading and the recipes (order). The heading and the recipes
+     sit in a display: contents Turbo frame, so they are grid items of the page. */
   /* The heading's row is only as tall as the heading (auto); when the sidebar, which spans both rows, is the taller
-     side (a few recipes), its extra height goes to the cards' row (1fr) instead of pushing the heading down. */
+     side (a few recipes), its extra height goes to the recipes' row (1fr) instead of pushing the heading down. */
   .recipes-page    { @apply grid gap-6 py-4 md:grid-cols-[15rem_1fr] md:grid-rows-[auto_1fr] md:gap-x-8; }
   .recipes-header  { @apply flex flex-wrap items-end justify-between gap-4 md:col-start-2 md:row-start-1; }
   .recipes-title   { @apply text-3xl font-bold tracking-tight text-gray-900; }
@@ -23,10 +23,9 @@
     @apply w-full rounded-xl border-0 bg-gray-100 px-3 py-2 text-sm focus:ring-2 focus:ring-sectiontext/30;
   }
   .recipes-results { @apply order-2 min-w-0 md:order-none md:col-start-2 md:row-start-2; }
-  /* One column on a phone that a long title can't widen (it truncates), two from sm, three from xl */
-  .recipes-grid    { @apply grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3; }
+  .recipes-list    { @apply flex flex-col gap-3; }
 
-  /* Tag catalog: each kind's tags with emoji and counts, one selectable at a time */
+  /* Tag catalog: each kind's tags with counts, one selectable at a time */
   .tag-catalog { @apply mt-3 flex flex-col; }
   .tag-catalog-kind {
     @apply mt-4 mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400;
@@ -61,6 +60,25 @@
   .recipe-card-summary { @apply mt-1 line-clamp-2 min-h-10 text-sm text-gray-500; }
   .recipe-card-facts   { @apply mt-4 flex gap-4 text-xs text-gray-500; }
   .recipe-card-tags    { @apply ml-auto truncate; }
+
+  /* A recipe in the list, one to a row: its emoji on a cream tile, then the name, a line of description and the
+     facts, each cut short rather than widening the row on a phone. The whole row is a link (.recipe-row-link, under
+     the content); the row with its menu open sits above the ones below, so the menu isn't covered. */
+  .recipe-row {
+    @apply relative flex items-center gap-4 rounded-3xl bg-white p-3 shadow-sm ring-1 ring-gray-100
+           transition-shadow hover:shadow-md focus-within:z-10;
+  }
+  .recipe-row-link    { @apply absolute inset-0 z-0 rounded-3xl; }
+  .recipe-row-art {
+    @apply pointer-events-none relative flex size-18 flex-none items-center justify-center rounded-2xl
+           bg-sectionbackground text-4xl leading-none select-none;
+  }
+  .recipe-row-body    { @apply pointer-events-none relative min-w-0 flex-1; }
+  .recipe-row-title   { @apply truncate font-semibold text-gray-900; }
+  .recipe-row-summary { @apply mt-0.5 truncate text-sm text-gray-500; }
+  .recipe-row-facts   { @apply mt-2 flex gap-4 text-xs text-gray-500; }
+  .recipe-row-tags    { @apply ml-auto truncate; }
+  .recipe-row-menu    { @apply pointer-events-auto relative z-20 flex-none self-start; }
 
   /* Servings and times: small number fields, four side by side where the form's sidebar is full width, two in the
      sidebar beside the content (lg) */

@@ -28,7 +28,7 @@ RSpec.describe "The recipe list", type: :system do
 
     expect(page).to have_css("h1", text: "Chinese")
     expect(page).to have_text("2 recipes")
-    expect(page).to have_css(".recipe-card", count: 2)
+    expect(page).to have_css(".recipe-row", count: 2)
     expect(page).to have_no_text("Minestrone")
   end
 
@@ -41,9 +41,9 @@ RSpec.describe "The recipe list", type: :system do
     box = lambda do |selector|
       page.evaluate_script("document.querySelector('#{selector}').getBoundingClientRect().toJSON()")
     end
-    # The sidebar is taller than the heading and the cards together...
-    heading_and_cards = box.(".recipes-header")["height"] + box.(".recipes-grid")["height"]
-    expect(box.(".recipes-sidebar")["height"]).to be > heading_and_cards
+    # The sidebar is taller than the heading and the list together...
+    heading_and_list = box.(".recipes-header")["height"] + box.(".recipes-list")["height"]
+    expect(box.(".recipes-sidebar")["height"]).to be > heading_and_list
     # ...and the heading still starts where the sidebar does
     expect(box.(".recipes-title")["top"]).to be_within(2).of(box.(".recipes-sidebar")["top"])
   end
@@ -52,9 +52,9 @@ RSpec.describe "The recipe list", type: :system do
     log_in_as user
     visit recipes_path
 
-    fill_in "Search recipes or ingredients", with: "soup"
+    fill_in "Search recipes by name, ingredient or source", with: "soup"
     expect(page).to have_text("1 recipe · matching “soup”")
-    expect(page).to have_css(".recipe-card", count: 1, text: "Hot and Sour Soup")
+    expect(page).to have_css(".recipe-row", count: 1, text: "Hot and Sour Soup")
     expect(page).to have_css("input[name='q']:focus")
     expect(page).to have_current_path(recipes_path(q: "soup"))
     # However the tag is opened (a click, or a new tab)
@@ -62,8 +62,8 @@ RSpec.describe "The recipe list", type: :system do
 
     within(".tag-catalog") { click_link "Soup" }
     expect(page).to have_css("h1", text: "Soup")
-    expect(page).to have_css(".recipe-card", count: 1, text: "Hot and Sour Soup")
-    expect(page).to have_field("Search recipes or ingredients", with: "soup")
+    expect(page).to have_css(".recipe-row", count: 1, text: "Hot and Sour Soup")
+    expect(page).to have_field("Search recipes by name, ingredient or source", with: "soup")
   end
 
   it "shows the login page whole when a search finds the session has ended" do
@@ -71,7 +71,7 @@ RSpec.describe "The recipe list", type: :system do
     visit recipes_path
     page.driver.with_playwright_page { |pw| pw.context.clear_cookies }
 
-    fill_in "Search recipes or ingredients", with: "soup"
+    fill_in "Search recipes by name, ingredient or source", with: "soup"
 
     expect(page).to have_current_path(login_path)
     expect(page).to have_button("Log in")
@@ -80,24 +80,24 @@ RSpec.describe "The recipe list", type: :system do
   it "keeps searches out of the history, so Back leaves the page" do
     log_in_as user
     click_link "All Recipes"
-    fill_in "Search recipes or ingredients", with: "soup"
+    fill_in "Search recipes by name, ingredient or source", with: "soup"
     expect(page).to have_text("matching “soup”")
-    fill_in "Search recipes or ingredients", with: "minestrone"
+    fill_in "Search recipes by name, ingredient or source", with: "minestrone"
     expect(page).to have_text("matching “minestrone”")
 
     page.go_back
     expect(page).to have_current_path(root_path)
   end
 
-  it "shows a card's description as text, its time and servings, and keeps its ⋮ menu" do
+  it "shows a row's description as text, its time and servings, and keeps its ⋮ menu" do
     log_in_as user
     visit recipes_path
 
-    card = find(".recipe-card", text: "Mapo Tofu")
-    expect(card).to have_text("Silky tofu.")
-    expect(card.find(".recipe-card-facts")).to have_text(/25 min\s+👥\s+Servings\s+4\s+Chinese/)
+    row = find(".recipe-row", text: "Mapo Tofu")
+    expect(row).to have_text("Silky tofu.")
+    expect(row.find(".recipe-row-facts")).to have_text(/25 min\s+👥\s+Servings\s+4\s+Chinese/)
 
-    within(card) do
+    within(row) do
       find("button[data-action*='dropdown#toggle']").click
       click_link "Edit"
     end
@@ -114,7 +114,7 @@ RSpec.describe "The recipe list", type: :system do
     expect(page).to have_css("button[aria-expanded='true']", text: "Search & filter")
 
     # Searching leaves it open, and the search box focused (the keyboard stays up)
-    fill_in "Search recipes or ingredients", with: "o"
+    fill_in "Search recipes by name, ingredient or source", with: "o"
     expect(page).to have_text("matching “o”")
     expect(page).to have_css(".tag-catalog", visible: true)
     expect(page).to have_css("input[name='q']:focus")
@@ -126,13 +126,13 @@ RSpec.describe "The recipe list", type: :system do
     expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 390
   end
 
-  it "keeps a card with a long name within the narrowest phone, its name cut short" do
+  it "keeps a row with a long name within the narrowest phone, its name cut short" do
     create(:recipe, user: user, name: "Grandma's slow-braised pork belly with preserved mustard greens and rice")
     resize(320)
     log_in_as user
     visit recipes_path
 
-    expect(page).to have_css(".recipe-card-title", text: "Grandma's slow-braised")
+    expect(page).to have_css(".recipe-row-title", text: "Grandma's slow-braised")
     expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 320
   end
 end
