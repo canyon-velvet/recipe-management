@@ -1,5 +1,5 @@
-<%# The catalog (search and tags) beside the cards; on a phone it folds behind "Search & filter" above them.
-    Searching reloads only the frame (the heading and the cards), so the search box keeps its focus as you type, and
+<%# The catalog (search and tags) beside the recipes; on a phone it folds behind "Search & filter" above them.
+    Searching reloads only the frame (the heading and the recipes), so the search box keeps its focus as you type, and
     the open catalog stays open. It replaces the URL rather than adding to the history, so Back leaves the page.
     Links in the frame leave the page as usual (_top), and a response without the frame (the login page, once the
     session has ended) is shown whole. %>
@@ -33,11 +33,11 @@
 
   <section class="recipes-results">
     <% if @recipes.any? %>
-      <div class="recipes-grid">
+      <ul class="recipes-list">
         <% @recipes.each do |recipe| %>
-          <%= render "recipes/recipe_card", recipe: recipe %>
+          <%= render "recipes/recipe_row", recipe: recipe %>
         <% end %>
-      </div>
+      </ul>
     <% else %>
       <p class="page-empty"><%= t(".empty") %></p>
     <% end %>
@@ -56,7 +56,7 @@
   <%# Outside the frame, so searching doesn't redraw it and lose whether the catalog is open %>
   <button type="button" class="recipes-filter-toggle" data-action="dropdown#toggle" data-dropdown-target="button"
           aria-controls="recipes-filters" aria-expanded="false">
-    <span aria-hidden="true">🔍</span> <%= t(".search_and_filter") %><%= " · #{@selected_tag.name}" if @selected_tag %>
+    <%= t(".search_and_filter") %><%= " · #{@selected_tag.name}" if @selected_tag %>
   </button>
 
   <aside id="recipes-filters" class="recipes-sidebar hidden md:block" data-dropdown-target="menu">
@@ -64,8 +64,8 @@
                   data: { search_form_target: "form", turbo_frame: "recipe_results", turbo_action: "replace" } do |f| %>
       <%# Searching keeps the selected tag. %>
       <%= hidden_field_tag :tag, @selected_tag.key if @selected_tag %>
-      <%= f.search_field :q, value: params[:q], placeholder: "🔍 #{t('.search_placeholder')}",
-                             aria: { label: t(".search_placeholder") },
+      <%= f.search_field :q, value: params[:q], placeholder: t(".search_placeholder"),
+                             aria: { label: t(".search_label") },
                              data: { action: "input->search-form#submitLater" }, class: "recipes-search" %>
     <% end %>
     <%= render "recipes/tag_catalog", tags_by_kind: @tags_by_kind, tag_counts: @tag_counts,

@@ -64,10 +64,10 @@ RSpec.describe "Sharing a recipe", type: :system do
     expect(page.evaluate_script("window.shared.url")).to end_with "/r/#{recipe.reload.share_token}"
   end
 
-  it "shares from a card's menu on the recipe list, in a pop-up over the list" do
+  it "shares from a row's menu on the recipe list, in a pop-up over the list" do
     other = create(:recipe, user: user, name: "Apple cake")
     visit recipes_path
-    within(".recipe-card", text: "Mapo tofu") do
+    within(".recipe-row", text: "Mapo tofu") do
       click_button "More actions"
       click_link "Share"
     end
@@ -81,8 +81,8 @@ RSpec.describe "Sharing a recipe", type: :system do
     expect(page).to have_current_path(recipes_path)
     expect(recipe.reload.share_token).to be_present
 
-    # Copying closes the pop-up a moment later, but not one opened again in that moment, for another card
-    within(".recipe-card", text: "Mapo tofu") do
+    # Copying closes the pop-up a moment later, but not one opened again in that moment, for another row
+    within(".recipe-row", text: "Mapo tofu") do
       click_button "More actions"
       click_link "Share"
     end
@@ -93,8 +93,8 @@ RSpec.describe "Sharing a recipe", type: :system do
     find("dialog[open]").send_keys(:escape)
     expect(page).to have_no_css("dialog[open]")
 
-    # The pop-up shows each card's own link
-    within(".recipe-card", text: "Apple cake") do
+    # The pop-up shows each row's own link
+    within(".recipe-row", text: "Apple cake") do
       click_button "More actions"
       click_link "Share"
     end

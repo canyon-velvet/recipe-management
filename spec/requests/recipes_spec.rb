@@ -42,12 +42,23 @@ RSpec.describe "Recipes", type: :request do
     expect(details.css("label, legend").map { _1.text.squish }).to include("Tags", "Servings", "Source", "Recipe link")
   end
 
-  it "names each card's ⋮ menu button for screen readers" do
+  it "shows the sidebar's tags without their emoji" do
+    soup = create(:tag, key: "soup", kind: "meal")
+    create(:recipe, user: user, tags: [ soup ])
+
+    get recipes_path
+
+    catalog = Nokogiri::HTML(response.body).at_css(".tag-catalog")
+    expect(catalog.css("a").map { _1.text.squish }).to eq [ "All recipes", "Soup 1" ]
+    expect(catalog.text).not_to include(soup.icon)
+  end
+
+  it "names each row's ⋮ menu button for screen readers" do
     create(:recipe, user: user)
 
     get recipes_path
 
-    button = Nokogiri::HTML(response.body).at_css(".recipe-card [data-controller=dropdown] > button")
+    button = Nokogiri::HTML(response.body).at_css(".recipe-row [data-controller=dropdown] > button")
     expect(button.attributes.transform_values(&:value)).to include(
       "type" => "button", "aria-label" => "More actions", "aria-haspopup" => "true", "aria-expanded" => "false"
     )
@@ -248,7 +259,7 @@ RSpec.describe "Recipes", type: :request do
       end
     end
 
-    def listed = Nokogiri::HTML(response.body).css(".recipe-card-link").map { _1["aria-label"] }
+    def listed = Nokogiri::HTML(response.body).css(".recipe-row-link").map { _1["aria-label"] }
 
     before do
       with_ingredients("Pancakes", "eggs", "flour", tags: [ breakfast ])
@@ -264,6 +275,16 @@ RSpec.describe "Recipes", type: :request do
       get recipes_path(q: "egg")
 
       expect(listed).to contain_exactly("Pancakes", "Egg fried rice", "Fried egg sandwich")
+    end
+
+    it "finds a recipe in the list by its source, among the user's own" do
+      create(:recipe, user: user, name: "Braised pork", source: create(:source, user: user, name: "Mom's notebook"))
+      someone_else = create(:user)
+      create(:recipe, user: someone_else, name: "Their stew", source: create(:source, user: someone_else, name: "Mom"))
+
+      get recipes_path(q: "mom")
+
+      expect(listed).to eq [ "Braised pork" ]
     end
 
     it "shows every recipe for a search that isn't text" do
@@ -289,6 +310,14 @@ RSpec.describe "Recipes", type: :request do
       get search_recipes_path(q: "flour")
 
       expect(response.parsed_body.pluck("name")).to eq [ "Pancakes" ]
+    end
+
+    it "leaves sources out of the meal plan's search" do
+      create(:recipe, user: user, name: "Braised pork", source: create(:source, user: user, name: "Mom's notebook"))
+
+      get search_recipes_path(q: "mom")
+
+      expect(response.parsed_body).to be_empty
     end
   end
 end
