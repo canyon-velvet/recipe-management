@@ -75,4 +75,13 @@ RSpec.describe "Importing", type: :request do
       expect(response.body).to include("Pick where the recipe is from.")
     end
   end
+
+  it "says pasted text and screenshots need Claude, when it isn't set up" do
+    allow(CleanRecipeService).to receive(:available?).and_return(false)
+
+    post imports_path, params: { mode: "text" }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include("can&#39;t be read without Claude")
+  end
 end

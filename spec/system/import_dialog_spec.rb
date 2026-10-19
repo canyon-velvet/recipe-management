@@ -49,6 +49,31 @@ RSpec.describe "Importing from the recipe list's pop-up", type: :system do
     expect(user.drafts).to be_empty
   end
 
+  it "has someone with no sources yet make one before sending" do
+    user.sources.destroy_all
+    visit recipes_path
+    click_link "Import recipe"
+
+    within("dialog[open]") do
+      choose "Text", allow_label_click: true
+      fill_in "Recipe text", with: "Apple cake"
+      expect(page).to have_field("Search sources...") # open already: there are no chips to tap
+      click_button "Import"
+      expect(page).to have_field("Recipe text", with: "Apple cake") # still here, not sent
+
+      fill_in "Search sources...", with: "Grandma"
+      find(".autocomplete-item--create").click
+    end
+    within("dialog[open] dialog[open]") { click_button "Save" } # the pop-up within the import pop-up
+    within("dialog[open]") do
+      expect(page).to have_checked_field("Grandma", visible: :all)
+      click_button "Import"
+    end
+
+    expect(page).to have_text("Importing… the recipe will wait in your Draft box.")
+    expect(user.drafts.sole.data).to eq("source_name" => "Grandma")
+  end
+
   it "leaves out text typed in Text when Link is chosen again" do
     within("dialog[open]") do
       choose "Text", allow_label_click: true

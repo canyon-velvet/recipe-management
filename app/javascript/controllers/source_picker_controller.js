@@ -21,6 +21,7 @@ export default class extends Controller {
       this.chip(id, name)
     radio.checked = true
     this.searchInput.value = ""
+    this.searchInput.required = false // a chip is picked now
     this.searchTarget.hidden = true
     this.changed()
   }

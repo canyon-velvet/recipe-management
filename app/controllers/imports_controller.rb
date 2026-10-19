@@ -13,7 +13,7 @@ class ImportsController < ApplicationController
   end
 
   def create
-    @result = StartImportService.new(user: current_user, **import_params).call
+    @result = start_import
 
     if @result.success?
       redirect_to drafts_path, notice: t("flash.import_started"), status: :see_other
@@ -45,6 +45,15 @@ class ImportsController < ApplicationController
     @source = current_user.sources.named(site).first if site
     @new_source_name = site unless @source
   end
+
+  # Pasted text and screenshots need Claude; without it, their panels hold nothing to send
+  def start_import
+    return StartImportService::Result.new(draft: nil, error: :needs_claude, recipe: nil) unless reads_without_claude?
+
+    StartImportService.new(user: current_user, **import_params).call
+  end
+
+  def reads_without_claude? = @mode == "link" || @has_claude
 
   def import_params
     source_name = @source&.name || @new_source_name
