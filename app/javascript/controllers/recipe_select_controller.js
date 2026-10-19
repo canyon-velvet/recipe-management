@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { Turbo } from "@hotwired/turbo-rails"
 
 export default class extends Controller {
   static targets = ["dialog", "input", "results", "slotId"]
@@ -85,7 +86,7 @@ export default class extends Controller {
         "meal_slot_recipe[recipe_id]": recipeId
       })
       if (response.ok) {
-        this.applyTurboStream(await response.text())
+        Turbo.renderStreamMessage(await response.text())
         this.close()
       }
     } catch (error) {
@@ -102,7 +103,7 @@ export default class extends Controller {
         "meal_slot_recipe[add_to_grocery_list]": checkbox.checked
       })
       if (response.ok) {
-        this.applyTurboStream(await response.text())
+        Turbo.renderStreamMessage(await response.text())
       }
     } catch (error) {
       console.error("Failed to toggle grocery:", error)
@@ -129,15 +130,6 @@ export default class extends Controller {
         "Accept": "text/vnd.turbo-stream.html"
       },
       body: formData
-    })
-  }
-
-  applyTurboStream(html) {
-    const template = document.createElement("template")
-    template.innerHTML = html
-    template.content.querySelectorAll("turbo-stream").forEach(stream => {
-      document.querySelector(`#${stream.getAttribute("target")}`)
-        ?.replaceChildren(...stream.querySelector("template").content.cloneNode(true).childNodes)
     })
   }
 }
