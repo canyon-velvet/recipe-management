@@ -16,7 +16,7 @@
             <label class="week-chip">
               <%= f.radio_button :start_date, monday, disabled: planned, class: "sr-only" %>
               <span class="week-chip-label"><%= t(".week_labels")[index] %></span>
-              <span class="week-chip-detail"><%= planned ? t(".planned") : format_week_of(monday) %></span>
+              <span class="week-chip-detail"><%= planned ? t(".planned") : week_dates(monday) %></span>
             </label>
           <% end %>
           <label class="week-chip">

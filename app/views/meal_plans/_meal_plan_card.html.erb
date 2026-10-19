@@ -2,7 +2,7 @@
 <%# The whole row links to the week (the link lies under the content); the grocery list and ⋮ take their own clicks. %>
 <% planned = meal_plan.planned_meal_count %>
 <div class="list-row meal-plan-row <%= 'meal-plan-row--current' if meal_plan.this_week? %>">
-  <%= link_to "", meal_plan_path(meal_plan), class: "meal-plan-row-link", "aria-label": meal_plan.display_name %>
+  <%= link_to "", meal_plan_path(meal_plan), class: "meal-plan-row-link", "aria-label": meal_plan_title(meal_plan) %>
 
   <div class="meal-plan-date">
     <span class="meal-plan-date-month"><%= l(meal_plan.start_date, format: "%b") %></span>
@@ -11,7 +11,7 @@
 
   <div class="meal-plan-body">
     <div class="meal-plan-heading">
-      <h3 class="meal-plan-name"><%= meal_plan.display_name %></h3>
+      <h3 class="meal-plan-name"><%= meal_plan_title(meal_plan) %></h3>
       <% if meal_plan.this_week? %>
         <span class="status-pill meal-plan-badge meal-plan-badge--current"><%= t(".this_week") %></span>
       <% elsif meal_plan.next_week? %>
@@ -19,7 +19,8 @@
       <% end %>
     </div>
     <p class="meal-plan-facts">
-      <%= format_week_range(meal_plan) %> · <%= t(".recipe_count", count: meal_plan.assigned_recipe_count) %>
+      <%= week_dates(meal_plan.start_date) %> ·
+      <span class="whitespace-nowrap"><%= t(".recipe_count", count: meal_plan.assigned_recipe_count) %></span>
     </p>
     <div class="meal-plan-meter">
       <progress class="meal-plan-meter-bar" max="<%= MealPlan::MEALS_PER_WEEK %>" value="<%= planned %>"

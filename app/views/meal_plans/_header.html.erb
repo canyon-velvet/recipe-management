@@ -6,9 +6,9 @@
     <%= link_to meal_plans_path, class: "meal-plan-back" do %>
       <span aria-hidden="true">←</span> <%= t(".all_meal_plans") %>
     <% end %>
-    <h1 class="meal-plan-title"><%= meal_plan.display_name %></h1>
+    <h1 class="meal-plan-title"><%= meal_plan_title(meal_plan) %></h1>
     <p class="meal-plan-summary">
-      <%= l(meal_plan.start_date, format: :month_day) %> – <%= l(meal_plan.end_date, format: :month_day_year) %>
+      <%= week_dates(meal_plan.start_date, year: true) %>
       · <%= t("meal_plans.meal_plan_card.recipe_count", count: meal_plan.assigned_recipe_count) %>
     </p>
   </div>
