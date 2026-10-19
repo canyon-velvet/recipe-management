@@ -1,1 +1,5 @@
 <%= render "recipes/recipe_page", recipe: @recipe, actions: true %>
+<%# Share opens here %>
+<div data-controller="modal">
+  <%= render "shared/modal_frame", frame: "share_recipe", labelledby: "share_recipe_title" %>
+</div>

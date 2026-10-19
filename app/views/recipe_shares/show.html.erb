@@ -1,26 +1,30 @@
 <%# A shared recipe's link, to send from the phone's share sheet (where the browser has one) or to copy, and a way to
-    stop sharing it %>
+    stop sharing it. Shown in the pop-up Share opens (the recipe page, the recipe list), and as a page of its own. %>
 <% content_for :title, t(".title", name: @recipe.name) %>
 <section class="modal-page modal-panel modal-panel--roomy">
-  <h1 class="modal-heading"><%= t(".title", name: @recipe.name) %></h1>
-  <p class="modal-lead"><%= t(".lead") %></p>
+  <%= turbo_frame_tag "share_recipe" do %>
+    <h2 id="share_recipe_title" class="modal-heading"><%= t(".title", name: @recipe.name) %></h2>
+    <p class="modal-lead"><%= t(".lead") %></p>
 
-  <% link = shared_recipe_url(@recipe.share_token) %>
-  <div data-controller="clipboard" data-clipboard-copied-text-value="<%= t(".copied") %>">
-    <input type="text" readonly value="<%= link %>" class="modal-input" data-clipboard-target="source"
-           aria-label="<%= t(".link") %>">
-    <div class="share-buttons">
-      <button type="button" class="btn-pill-primary btn-pill-sm cursor-pointer" hidden
-              data-controller="share" data-share-url-value="<%= link %>" data-share-title-value="<%= @recipe.name %>"
-              data-action="share#share"><%= inline_icon "share" %> <%= t(".share") %></button>
-      <button type="button" class="btn-pill-secondary btn-pill-sm cursor-pointer" data-clipboard-target="button"
-              data-action="clipboard#copy"><%= t(".copy") %></button>
+    <% link = shared_recipe_url(@recipe.share_token) %>
+    <div data-controller="clipboard" data-clipboard-copied-text-value="<%= t(".copied") %>">
+      <input type="text" readonly value="<%= link %>" class="modal-input" data-clipboard-target="source"
+             aria-label="<%= t(".link") %>">
+      <div class="share-buttons">
+        <button type="button" class="btn-pill-primary btn-pill-sm cursor-pointer" hidden
+                data-controller="share" data-share-url-value="<%= link %>" data-share-title-value="<%= @recipe.name %>"
+                data-action="share#share"><%= inline_icon "share" %> <%= t(".share") %></button>
+        <button type="button" class="btn-pill-secondary btn-pill-sm cursor-pointer" data-clipboard-target="button"
+                data-action="clipboard#copy"><%= t(".copy") %></button>
+      </div>
     </div>
-  </div>
 
-  <div class="share-footer">
-    <%= button_to t(".stop"), recipe_share_path(@recipe), method: :delete,
-                  class: "btn-pill-ghost btn-pill-sm cursor-pointer text-red-600" %>
-    <%= link_to t(".done"), recipe_path(@recipe), class: "btn-pill-secondary btn-pill-sm" %>
-  </div>
+    <div class="share-footer">
+      <%= button_to t(".stop"), recipe_share_path(@recipe), method: :delete,
+                    class: "btn-pill-ghost btn-pill-sm cursor-pointer text-red-600",
+                    form: { data: { turbo_frame: "_top" } } %>
+      <%= link_to t(".done"), recipe_path(@recipe), class: "btn-pill-secondary btn-pill-sm",
+                  data: { turbo_frame: "_top", action: "modal#close:prevent" } %>
+    </div>
+  <% end %>
 </section>

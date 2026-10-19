@@ -13,7 +13,8 @@ class RecipeSharesController < ApplicationController
 
   def destroy
     @recipe.stop_sharing!
-    redirect_to recipe_path(@recipe), notice: t("flash.sharing_stopped")
+    # Back to the recipe page or the recipe list, wherever the pop-up was opened
+    redirect_back_or_to recipe_path(@recipe), notice: t("flash.sharing_stopped")
   end
 
   private

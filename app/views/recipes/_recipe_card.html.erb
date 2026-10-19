@@ -16,7 +16,7 @@
       <h3 class="recipe-card-title"><%= recipe.name %></h3>
       <div class="recipe-card-menu">
         <%= render "shared/kebab_menu", items: [
-          { label: t("actions.share"), url: recipe_share_path(recipe), data: { turbo_method: :post } },
+          { label: t("actions.share"), url: recipe_share_path(recipe), data: { turbo_method: :post, turbo_frame: "share_recipe" } },
           { label: t("actions.edit"), url: edit_recipe_path(recipe) },
           { label: t("actions.delete"), url: recipe_path(recipe), data: { turbo_method: :delete, turbo_confirm: t("recipes.confirm_delete") }, class: "text-red-600" }
         ] %>

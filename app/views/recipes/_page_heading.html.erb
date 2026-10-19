@@ -17,7 +17,8 @@
 
   <% if actions %>
     <p class="recipe-heading-actions">
-      <%= link_to recipe_share_path(recipe), class: "recipe-heading-action", data: { turbo_method: :post } do %>
+      <%= link_to recipe_share_path(recipe), class: "recipe-heading-action",
+                                                data: { turbo_method: :post, turbo_frame: "share_recipe" } do %>
         <%= inline_icon "share" %> <%= t("actions.share") %>
       <% end %>
       <span aria-hidden="true">·</span>
