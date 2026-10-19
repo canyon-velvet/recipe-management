@@ -31,4 +31,16 @@ RSpec.describe "Long words on a phone", type: :system do
     expect(page).to have_text("From")
     expect(overflow("html")).to eq 0
   end
+
+  it "keeps a failed draft's buttons within the screen" do
+    user.drafts.create!(source_url: "https://www.xiachufang.com/recipe/1", status: :failed, failure_reason: "blocked")
+    log_in_as user
+
+    visit drafts_path
+
+    expect(page).to have_button("Try again")
+    expect(overflow("html")).to eq 0
+    expect(page.evaluate_script("document.querySelector('.draft-actions form:last-child').getBoundingClientRect().right"))
+      .to be <= page.evaluate_script("document.querySelector('.draft-row').getBoundingClientRect().right")
+  end
 end
