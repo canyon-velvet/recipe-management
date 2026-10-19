@@ -25,15 +25,17 @@
     @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800;
   }
 
-  /* Import form: "paste the text instead", a cream chip that turns brown while open, over the paste box */
-  .import-paste-toggle {
-    @apply block cursor-pointer list-none rounded-2xl bg-sectionbackground px-4 py-2.5 text-gray-900
-           [&::-webkit-details-marker]:hidden;
+  /* Import form: Link or Text, a switch of pills (radio buttons); the chosen one is white. Text shows the paste box
+     under the link box. */
+  .import-modes { @apply flex gap-1 rounded-full bg-sectionbackground p-1; }
+  .import-mode {
+    @apply flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full py-2 text-sm font-medium
+           text-sectiontext/80 [&>svg]:size-4
+           has-checked:bg-white has-checked:font-semibold has-checked:text-sectiontext has-checked:shadow-sm
+           has-focus-visible:ring-2 has-focus-visible:ring-sectiontext/30;
   }
-  .import-paste[open] > .import-paste-toggle { @apply bg-sectiontext text-white; }
-  .import-paste-label  { @apply block text-sm font-semibold; }
-  .import-paste-detail { @apply mt-0.5 block text-xs opacity-75; }
-  .import-paste-body   { @apply mt-3 space-y-2; }
+  .import-text { @apply hidden space-y-2; }
+  .import-form:has(#mode_text:checked) .import-text { @apply block; }
   /* How many imports wait in the Draft box, beside Cancel and Import */
   .import-draft-count  { @apply text-sm text-gray-500 hover:text-sectiontext; }
   /* Under it, how many imports are left this hour; amber once few are */

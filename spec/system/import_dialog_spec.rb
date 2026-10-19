@@ -21,16 +21,33 @@ RSpec.describe "Importing from the recipe list's pop-up", type: :system do
     expect(user.drafts.sole.source_url).to eq "https://example.com/apple-cake"
   end
 
-  it "opens the paste box on its chip" do
+  it "switches to Text for pasted recipe text, keeping the link box" do
     within("dialog[open]") do
-      expect(page).to have_no_field("Paste the recipe text instead")
-      find(".import-paste-toggle").click
-      fill_in "Paste the recipe text instead", with: "Apple cake\n2 apples\nBake for 40 minutes"
+      expect(page).to have_checked_field("Link")
+      expect(page).to have_no_field("Recipe text")
+      choose "Text", allow_label_click: true
+      fill_in "Recipe link", with: "https://example.com/apple-cake"
+      fill_in "Recipe text", with: "Apple cake\n2 apples\nBake for 40 minutes"
       click_button "Import"
     end
 
     expect(page).to have_text("Importing… the recipe will wait in your Draft box.")
-    expect(user.drafts.sole.source_text).to include("2 apples")
+    expect(user.drafts.sole).to have_attributes(source_url: "https://example.com/apple-cake",
+                                                source_text: include("2 apples"))
+  end
+
+  it "leaves out text typed in Text when Link is chosen again" do
+    within("dialog[open]") do
+      choose "Text", allow_label_click: true
+      fill_in "Recipe text", with: "Apple cake"
+      choose "Link", allow_label_click: true
+      expect(page).to have_no_field("Recipe text")
+      fill_in "Recipe link", with: "https://example.com/apple-cake"
+      click_button "Import"
+    end
+
+    expect(page).to have_text("Importing… the recipe will wait in your Draft box.")
+    expect(user.drafts.sole.source_text).to be_nil
   end
 
   it "shows a problem on the import page" do
@@ -64,15 +81,16 @@ RSpec.describe "Importing from the recipe list's pop-up", type: :system do
   it "opens as new again after Cancel" do
     within("dialog[open]") do
       fill_in "Recipe link", with: "https://example.com/apple-cake"
-      find(".import-paste-toggle").click
-      expect(page).to have_field("Paste the recipe text instead")
+      choose "Text", allow_label_click: true
+      expect(page).to have_field("Recipe text")
       click_link "Cancel"
     end
 
     click_link "Import recipe"
     within("dialog[open]") do
       expect(page).to have_field("Recipe link", with: "")
-      expect(page).to have_no_field("Paste the recipe text instead")
+      expect(page).to have_checked_field("Link")
+      expect(page).to have_no_field("Recipe text")
     end
   end
 
