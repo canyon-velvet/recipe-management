@@ -61,6 +61,20 @@ RSpec.describe StartImportService do
       expect(described_class.imports_left(user)).to eq described_class::HOURLY_LIMIT - 1
     end
 
+    it "gives back at most an hour's limit an hour, so Try again on a dead link can't fetch on and on" do
+      stub_const("StartImportService::HOURLY_LIMIT", 2)
+      draft = start(url: "https://www.xiachufang.com/recipe/1").draft
+      allow(FetchPageService).to receive(:new).and_raise(FetchPageService::Error.new(:fetch_failed, "404"))
+
+      results = Array.new(6) do
+        read(draft.reload)
+        described_class.new(user: user, draft: draft.reload).call.error
+      end
+
+      # Two give-backs, then each Try again counts until the hour's two are used up
+      expect(results).to eq [ nil, nil, nil, :rate_limited, :rate_limited, :rate_limited ]
+    end
+
     it "keeps counting one Claude did read, which cost a call" do
       draft = start(url: "https://example.com/not-food").draft
       allow(FetchPageService).to receive(:new).and_return(instance_double(FetchPageService, call: "<html></html>"))
@@ -73,6 +87,19 @@ RSpec.describe StartImportService do
       expect(draft.reload.failure_reason).to eq "not_a_recipe"
       expect(described_class.imports_left(user)).to eq described_class::HOURLY_LIMIT - 1
     end
+  end
+
+  it "doesn't count an import refused for the limit, so one given back can be used again" do
+    stub_const("StartImportService::HOURLY_LIMIT", 2)
+    first = start(url: "https://example.com/1").draft
+    start(url: "https://example.com/2")
+    expect(start(url: "https://example.com/3").error).to eq :rate_limited
+
+    allow(FetchPageService).to receive(:new).and_raise(FetchPageService::Error.new(:blocked, "captcha"))
+    ImportRecipeService.new(first).call
+
+    expect(described_class.imports_left(user)).to eq 1
+    expect(start(url: "https://example.com/3")).to be_success
   end
 
   it "doesn't count what it refuses before starting" do

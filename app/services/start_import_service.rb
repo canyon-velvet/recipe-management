@@ -15,18 +15,25 @@ class StartImportService
     def success? = error.nil?
   end
 
-  # How many more imports the user can start this hour (shown on the import page).
   def self.hourly_limit(user) = user.admin? ? ADMIN_HOURLY_LIMIT : HOURLY_LIMIT
 
+  # How many more imports the user can start this hour (shown on the import page).
   def self.imports_left(user) = [ hourly_limit(user) - Rails.cache.read(counter_key(user), raw: true).to_i, 0 ].max
 
   def self.counter_key(user) = "imports:#{user.id}"
 
-  # An import that failed before Claude read anything (ImportRecipeService) cost nothing, so it's given back. Only
-  # while the hour it was counted in is still running: an expired counter isn't taken below zero.
+  def self.given_back_key(user) = "imports_given_back:#{user.id}"
+
+  # An import that failed before Claude read anything (ImportRecipeService) cost nothing, so it's given back: up to an
+  # hour's limit of them an hour, so Try again on a link that never opens can't fetch pages on and on. The counters
+  # run for an hour from their first count, so a failure counted near the end of one hour may be given back to the
+  # next. An expired counter isn't taken below zero.
   def self.give_back(user)
     key = counter_key(user)
-    Rails.cache.decrement(key, 1) if Rails.cache.read(key, raw: true).to_i.positive?
+    return unless Rails.cache.read(key, raw: true).to_i.positive?
+    return if Rails.cache.increment(given_back_key(user), 1, expires_in: 1.hour).to_i > hourly_limit(user)
+
+    Rails.cache.decrement(key, 1)
   end
 
   # draft: a failed draft to read again (Try again), from its own link or pasted text.
@@ -80,9 +87,13 @@ class StartImportService
 
   # Counted in Rails.cache (Redis), so the web and worker processes share it. Every import started counts, so
   # discarding drafts or reading a failed one again doesn't free any up; only one that failed before Claude read it
-  # is given back (give_back).
+  # is given back (give_back). One refused here is taken back off, so it doesn't use up a place.
   def over_hourly_limit?
-    Rails.cache.increment(self.class.counter_key(@user), 1, expires_in: 1.hour).to_i > self.class.hourly_limit(@user)
+    key = self.class.counter_key(@user)
+    return false if Rails.cache.increment(key, 1, expires_in: 1.hour).to_i <= self.class.hourly_limit(@user)
+
+    Rails.cache.decrement(key, 1)
+    true
   end
 
   def failure(error, recipe: nil) = Result.new(draft: nil, error: error, recipe: recipe)
