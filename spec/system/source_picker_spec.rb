@@ -83,4 +83,17 @@ RSpec.describe "Picking a recipe's source", type: :system do
     expect(user.recipes.find_by(name: "Apple cake").source).to eq mom
     expect(user.sources.named("Some blog")).to be_empty
   end
+
+  it "shows a draft's new source once when the form comes back with a problem" do
+    draft = user.drafts.create!(status: :ready, data: { "name" => "Mapo tofu", "source_name" => "Just One Cookbook",
+                                                        "steps" => [ "Cook it." ] })
+    visit new_recipe_path(draft_id: draft.id)
+    fill_in "Name", with: ""
+    page.execute_script("document.querySelector('form.recipe-form').noValidate = true")
+    click_button "Create recipe"
+
+    expect(page).to have_css(".form-errors")
+    expect(chips.count { _1.start_with?("Just One Cookbook") }).to eq 1
+    expect(page).to have_checked_field("Just One Cookbook New", visible: :all)
+  end
 end
