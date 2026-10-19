@@ -1,6 +1,9 @@
 # The import form: a recipe link, or the recipe's text pasted in. Starting an import puts a Draft in the
 # Draft box; ImportRecipeJob reads it in the background.
 class ImportsController < ApplicationController
+  # The form's ways in, one at a time: a link, or the recipe's text (with its link, if any)
+  MODES = %w[link text].freeze
+
   before_action :set_form, only: [ :new, :create ]
 
   helper_method :imports_left
@@ -21,9 +24,10 @@ class ImportsController < ApplicationController
   private
 
   def set_form
+    @mode = params[:mode].presence_in(MODES) || (params[:paste].present? ? "text" : "link")
     @url = params[:url].to_s.strip
-    @text = params[:text].to_s
-    @paste = params[:paste].present? || @text.present?
+    # Text typed under Text and left there when Link was chosen again isn't sent for reading
+    @text = @mode == "text" ? params[:text].to_s : ""
     @can_paste = CleanRecipeService.available?
   end
 

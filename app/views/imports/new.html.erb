@@ -18,28 +18,35 @@
       </div>
     <% end %>
 
-    <%= form_with url: imports_path, class: "space-y-4", data: { turbo_frame: "_top" } do |f| %>
+    <%# Link or Text, one at a time. Text keeps the link box above the paste box, so a pasted recipe keeps its link
+        (a blocked link's "Paste text instead" fills it in). %>
+    <%= form_with url: imports_path, class: "import-form space-y-4", data: { turbo_frame: "_top" } do |f| %>
+      <fieldset class="import-modes">
+        <legend class="sr-only"><%= t(".mode") %></legend>
+        <% ImportsController::MODES.each do |mode| %>
+          <label class="import-mode">
+            <%= f.radio_button :mode, mode, checked: @mode == mode, class: "sr-only" %>
+            <%= inline_icon mode %> <%= t(".modes.#{mode}") %>
+          </label>
+        <% end %>
+      </fieldset>
+
       <div class="field">
         <%= f.label :url, t(".link"), class: "form-label" %>
-        <%= f.url_field :url, value: @url, placeholder: "https://...", class: "form-input", autofocus: !@paste %>
+        <%= f.url_field :url, value: @url, placeholder: "https://...", class: "form-input",
+                          autofocus: @mode == "link" %>
       </div>
 
-      <%= tag.details class: "import-paste", open: @paste do %>
-        <summary class="import-paste-toggle">
-          <span class="import-paste-label"><%= t(".paste_instead") %></span>
-          <span class="import-paste-detail"><%= t(".paste_for") %></span>
-        </summary>
-        <div class="import-paste-body">
-          <% if @can_paste %>
-            <%= f.text_area :text, value: @text, rows: 8, class: "form-textarea", autofocus: @paste,
-                            maxlength: Draft::MAX_SOURCE_TEXT, placeholder: t(".paste_placeholder"),
-                            aria: { label: t(".paste_instead") } %>
-            <p class="help-text"><%= t(".paste_hint") %></p>
-          <% else %>
-            <p class="help-text"><%= t(".paste_needs_claude") %></p>
-          <% end %>
-        </div>
-      <% end %>
+      <div class="import-text">
+        <% if @can_paste %>
+          <%= f.label :text, t(".text"), class: "form-label" %>
+          <%= f.text_area :text, value: @text, rows: 8, class: "form-textarea", autofocus: @mode == "text",
+                          maxlength: Draft::MAX_SOURCE_TEXT, placeholder: t(".paste_placeholder") %>
+          <p class="help-text"><%= t(".paste_hint") %></p>
+        <% else %>
+          <p class="help-text"><%= t(".paste_needs_claude") %></p>
+        <% end %>
+      </div>
 
       <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
         <%# What's waiting in the Draft box, and how many more imports this hour (in amber once few are left) %>

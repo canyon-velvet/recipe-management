@@ -459,15 +459,18 @@ zh-CN:
       draft_box_count: "草稿箱里有 %{count} 个"
       imports_left: "本小时还可导入 %{count} 次（共 %{total} 次）"
       heading: "添加一道菜谱"
-      hint: "粘贴菜谱网页的链接。系统会在后台读取，完成后在草稿箱等你确认。"
+      hint: "粘贴菜谱网页的链接，或菜谱的文字。系统会在后台读取，完成后在草稿箱等你确认。"
       link: "菜谱链接"
+      mode: "导入方式"
+      modes:
+        link: "链接"
+        text: "文字"
       open_draft_box: "打开草稿箱"
-      paste_for: "适用于无法直接导入的网站，例如小红书"
-      paste_hint: "如果有链接，也请填在上面，菜谱会保留它。"
-      paste_instead: "直接粘贴菜谱文字"
+      paste_hint: "适用于无法直接导入的网站，例如小红书。如果有链接，也请填在上面，菜谱会保留它。"
       paste_needs_claude: "读取粘贴的文字需要 Claude，但尚未配置（缺少 Anthropic API 密钥）。"
       paste_placeholder: "从网页复制用料和步骤，粘贴到这里"
       submit: "导入"
+      text: "菜谱文字"
       view_recipe: "查看菜谱"
 
   sessions:

@@ -472,15 +472,18 @@ en:
       draft_box_count: "%{count} in your Draft box"
       imports_left: "%{count} of %{total} imports left this hour"
       heading: "Bring in a recipe"
-      hint: "Paste a link to a recipe page. It's read in the background and waits in your Draft box for you to review."
+      hint: "Paste a link to a recipe page, or the recipe's text. It's read in the background and waits in your Draft box for you to review."
       link: "Recipe link"
+      mode: "Bring it in from"
+      modes:
+        link: "Link"
+        text: "Text"
       open_draft_box: "Open Draft box"
-      paste_for: "For sites that block importing, such as 小红书"
-      paste_hint: "Add the link above too if you have it, so the recipe keeps it."
-      paste_instead: "Paste the recipe text instead"
+      paste_hint: "For sites that block importing, such as 小红书. Add the link above too if you have it, so the recipe keeps it."
       paste_needs_claude: "Reading pasted text needs Claude, which isn't set up (no Anthropic API key)."
       paste_placeholder: "Copy the ingredients and steps from the page and paste them here"
       submit: "Import"
+      text: "Recipe text"
       view_recipe: "View it"
 
   sessions:
