@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { Turbo } from "@hotwired/turbo-rails"
 
 export default class extends Controller {
   async togglePantry(event) {
@@ -16,29 +17,9 @@ export default class extends Controller {
         body: new URLSearchParams({ in_pantry: inPantry })
       })
 
-      if (response.ok) {
-        const html = response.headers.get("content-type")?.includes("turbo-stream")
-          ? await response.text()
-          : null
-
-        if (html) {
-          const template = document.createElement("template")
-          template.innerHTML = html
-          template.content.querySelectorAll("turbo-stream").forEach(stream => {
-            const action = stream.getAttribute("action")
-            const targetId = stream.getAttribute("target")
-            const target = document.getElementById(targetId)
-            const content = stream.querySelector("template")?.content.cloneNode(true)
-
-            if (action === "remove" && target) {
-              target.remove()
-            } else if (action === "append" && target && content) {
-              target.appendChild(content)
-            } else if (action === "update" && target && content) {
-              target.replaceChildren(...content.childNodes)
-            }
-          })
-        }
+      // Only if it is streams: a fetch that followed a redirect to the login page gets that page instead
+      if (response.ok && response.headers.get("content-type")?.includes("turbo-stream")) {
+        Turbo.renderStreamMessage(await response.text())
       }
     } catch (error) {
       console.error("Failed to toggle pantry:", error)
