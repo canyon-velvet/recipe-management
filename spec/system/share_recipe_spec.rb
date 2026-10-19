@@ -48,10 +48,12 @@ RSpec.describe "Sharing a recipe", type: :system do
       click_link "Share"
     end
 
+    # Cancel closes the pop-up, leaving the list where it was (its link, to the recipe, is for the page of its own)
     within("dialog[open]") do
       expect(page).to have_css("h2", text: "Share “Mapo tofu”")
-      click_button "Close"
+      click_link "Cancel"
     end
+    expect(page).to have_no_css("dialog[open]")
     expect(page).to have_current_path(recipes_path)
     expect(recipe.reload.share_token).to be_present
 
