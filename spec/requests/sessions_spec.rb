@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Logging in", type: :request do
-  let(:user) { create(:user, username: "home_cook") }
+  let!(:user) { create(:user, username: "home_cook") }
   # The test env's cache stores nothing; the limits need one that counts.
   let(:cache) { ActiveSupport::Cache::MemoryStore.new }
 
@@ -28,6 +28,14 @@ RSpec.describe "Logging in", type: :request do
       log_in(user.username, "password", from: "198.51.100.2")
       expect(session[:user_id]).to eq user.id
     end
+  end
+
+  it "stops an address after 10 tries in 3 minutes, whichever accounts it tries" do
+    10.times { |n| log_in("cook#{n}", "wrong", from: "203.0.113.1") }
+
+    log_in(user.username, "password", from: "203.0.113.1")
+    expect(response).to redirect_to(login_path)
+    expect(session[:user_id]).to be_nil
   end
 end
 
