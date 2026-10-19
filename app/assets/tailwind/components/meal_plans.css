@@ -50,5 +50,6 @@
            has-disabled:cursor-not-allowed has-disabled:opacity-50;
   }
   .week-chip-label  { @apply block text-sm font-semibold; }
-  .week-chip-detail { @apply mt-0.5 block text-xs opacity-75; }
+  /* break-keep: a Chinese date wraps at the dash, not between its characters (10月25 / 日) */
+  .week-chip-detail { @apply mt-0.5 block text-xs opacity-75 break-keep; }
 }
