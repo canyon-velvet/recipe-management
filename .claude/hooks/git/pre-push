@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Git runs this before a push: core.hooksPath points here, set by the SessionStart hook in .claude/settings.json.
+# Git runs this before a push: the SessionStart hook in .claude/settings.json copies it into .git/hooks
+# (install-git-hooks.sh).
 # A push Claude Code makes (CLAUDECODE=1) goes ahead only if every commit it sends has a recorded clean review by the
 # code-reviewer agent (.claude/agents/code-reviewer.md); any new commit needs a review of its own. Git says exactly
 # what's being pushed, however the push was typed. People's own pushes aren't checked. The record is the agent's own
@@ -18,8 +19,13 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   commit=$(git rev-parse "$local_sha^{commit}") # a tag's commit
   [ -f "$records/code-reviewed-$commit" ] && continue
 
-  # What to review: the commits new to the remote branch, or a new branch's commits on main
-  if [[ $remote_sha =~ ^0+$ ]]; then range="origin/main...$commit"; else range="$remote_sha..$commit"; fi
+  # What to review: the commits new to the remote branch, or, for a new branch (or one whose remote commit hasn't
+  # been fetched), its commits on main
+  if [[ $remote_sha =~ ^0+$ ]] || ! git cat-file -e "$remote_sha^{commit}" 2>/dev/null; then
+    range="origin/main...$commit"
+  else
+    range="$remote_sha..$commit"
+  fi
   blocked+="  ${local_ref#refs/heads/} -> ${remote_ref#refs/heads/}: review $range, then touch \"$records/code-reviewed-$commit\""$'\n'
 done
 
