@@ -15,7 +15,10 @@ Rails.application.routes.draw do
   # Recipes
   resources :recipes do
     get :search, on: :collection
+    resource :share, only: [ :show, :create, :destroy ], controller: "recipe_shares"
   end
+  # A shared recipe, for anyone with the link
+  get "r/:token", to: "shared_recipes#show", as: :shared_recipe
   # The Preview tab of a markdown field, rendered as it will be shown
   resource :markdown_preview, only: [ :create ]
 

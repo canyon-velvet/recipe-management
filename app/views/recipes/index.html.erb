@@ -48,6 +48,10 @@
 
   <%# Outside the frame, so searching doesn't redraw it %>
   <%= render "shared/modal_frame", frame: "new_import", src: new_import_path, labelledby: "new_import_title" %>
+  <%# A card's Share opens here %>
+  <div data-controller="modal">
+    <%= render "shared/modal_frame", frame: "share_recipe", labelledby: "share_recipe_title" %>
+  </div>
 
   <%# Outside the frame, so searching doesn't redraw it and lose whether the catalog is open %>
   <button type="button" class="recipes-filter-toggle" data-action="dropdown#toggle" data-dropdown-target="button"

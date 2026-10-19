@@ -30,6 +30,11 @@
     @apply inline-flex items-center rounded-full px-6 py-3 font-medium border border-sectiontext/30 text-sectiontext
            hover:border-sectiontext hover:bg-white hover:ring-1 hover:ring-inset hover:ring-sectiontext transition;
   }
+  /* The secondary pill in red, for an action that undoes something (Stop sharing) */
+  .btn-pill-danger {
+    @apply inline-flex items-center rounded-full px-6 py-3 font-medium border border-red-300 text-red-700
+           hover:border-red-600 hover:bg-red-50 hover:ring-1 hover:ring-inset hover:ring-red-600 transition;
+  }
   .btn-pill-ghost {
     @apply inline-flex items-center rounded-full px-4 py-3 font-medium text-sectiontext hover:bg-white transition
            cursor-pointer;

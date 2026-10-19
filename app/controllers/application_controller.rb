@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   include Pagy::Method
   include Localization
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
-  allow_browser versions: :modern
+  allow_browser versions: :modern, unless: :open_to_any_browser?
 
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
@@ -53,6 +53,9 @@ class ApplicationController < ActionController::Base
   def use_time_zone(&action)
     Time.use_zone(current_user.time_zone, &action)
   end
+
+  # Pages anyone may be sent (a shared recipe) open in whatever browser they have
+  def open_to_any_browser? = false
 
   def require_admin
     redirect_to root_path, alert: t("flash.admin_required") unless current_user&.admin?

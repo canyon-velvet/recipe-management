@@ -152,7 +152,7 @@ RSpec.describe "Recipes", type: :request do
       expect(page.css(".recipe-description").text.squish).to eq "Silky tofu."
       expect(page.css(".recipe-section-heading").map(&:text)).to eq %w[Ingredients Method Tips]
       expect(page.css(".recipe-tips").text.squish).to eq "Cut gently."
-      expect(page.css(".recipe-heading-actions a").map { _1.text.squish }).to eq [ "✎ Edit", "Delete" ]
+      expect(page.css(".recipe-heading-actions a").map { _1.text.squish }).to eq [ "Share", "✎ Edit", "Delete" ]
     end
 
     it "leaves out the ingredients and tips sections when there are none" do

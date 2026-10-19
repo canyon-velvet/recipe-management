@@ -61,6 +61,11 @@ class Recipe < ApplicationRecord
   # Shown with a "new" badge in the form until the recipe saves.
   def new_source? = new_source_name.present? && (source.nil? || source.new_record?)
 
+  # A link anyone can open (/r/<token>), made the first time the recipe is shared; sharing again keeps it. Stopping
+  # sharing clears it, so the link stops working. Neither moves the recipe up the list, as an edit does.
+  def share! = share_token || update_column(:share_token, SecureRandom.base58(24))
+  def stop_sharing! = update_column(:share_token, nil)
+
   # The description and the tips at its end, apart: [description, tips], each nil when there's none. Imports put the
   # tips under a bold "Tips" line in the reviewer's language (BuildRecipeFromDraftService); typing one does the same,
   # and the tips under a second one join the first. Line ends sent as \r\n (a plain form post) are evened out first.

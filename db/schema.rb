@@ -207,6 +207,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_130000) do
     t.integer "prep_minutes"
     t.integer "cook_minutes"
     t.integer "total_minutes"
+    t.string "share_token"
+    t.index ["share_token"], name: "index_recipes_on_share_token", unique: true
     t.index ["source_id"], name: "index_recipes_on_source_id"
     t.index ["user_id", "source_url"], name: "index_recipes_on_user_id_and_source_url", unique: true, where: "(source_url IS NOT NULL)"
     t.index ["user_id"], name: "index_recipes_on_user_id"
