@@ -8,8 +8,9 @@
        data-autocomplete-create-label-value="<%= t("recipes.ingredient_fields.create") %>"
        data-action="autocomplete:requestCreate->inline-create#openModal">
     <%= form.hidden_field :ingredient_id, data: { autocomplete_target: "hiddenField" } %>
-    <%# A draft's ingredient the user doesn't have yet is submitted by name (unless one is picked) and created on save. %>
-    <%= tag.input type: "text", name: ("#{form.object_name}[new_ingredient_name]" if new_ingredient),
+    <%# The name goes too: one typed but not picked from the list is the user's ingredient of that name, else created
+        on save (as a draft's ingredient the user doesn't have yet is). %>
+    <%= tag.input type: "text", name: "#{form.object_name}[new_ingredient_name]",
                   value: form.object.ingredient&.name || form.object.new_ingredient_name,
                   placeholder: t("recipes.ingredient_fields.search"), class: "form-input", autocomplete: "off",
                   data: { autocomplete_target: "input",
