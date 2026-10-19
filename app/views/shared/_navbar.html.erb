@@ -1,6 +1,7 @@
 <header data-controller="scrolled" data-action="scroll@window->scrolled#update:passive">
+  <%# The name goes home, on a phone too, where Home is folded into ☰ %>
   <div class="navbar-brand">
-    <span class="logo-text"><%= t("app_name") %></span>
+    <%= link_to t("app_name"), root_path, class: "logo-text" %>
   </div>
 
   <%# The links and the language switcher fold into ☰ (shared/navbar_menu) when there isn't room for them. %>

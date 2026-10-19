@@ -28,6 +28,16 @@ RSpec.describe "The navbar", type: :system do
     expect(page).to have_button("菜单") # the page is now in Chinese
   end
 
+  it "goes home from the app's name, on a phone too, where Home is folded into ☰" do
+    resize(390)
+    log_in_as user
+    visit meal_plans_path
+
+    click_link "Recipe Manager"
+
+    expect(page).to have_current_path(root_path)
+  end
+
   it "fits the narrowest phone's width, even with a long username and drafts waiting" do
     allow(CleanRecipeService).to receive(:available?).and_return(true) # ✦ shows too
     resize(320)
