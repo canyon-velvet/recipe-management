@@ -81,6 +81,18 @@ RSpec.describe "Sharing a recipe", type: :system do
     expect(page).to have_current_path(recipes_path)
     expect(recipe.reload.share_token).to be_present
 
+    # Copying closes the pop-up a moment later, but not one opened again in that moment, for another card
+    within(".recipe-card", text: "Mapo tofu") do
+      click_button "More actions"
+      click_link "Share"
+    end
+    within("dialog[open]") do
+      click_button "Copy link"
+      expect(page).to have_button("Copied") # so the close is on its way
+    end
+    find("dialog[open]").send_keys(:escape)
+    expect(page).to have_no_css("dialog[open]")
+
     # The pop-up shows each card's own link
     within(".recipe-card", text: "Apple cake") do
       click_button "More actions"
@@ -88,6 +100,8 @@ RSpec.describe "Sharing a recipe", type: :system do
     end
     within("dialog[open]") do
       expect(page).to have_css("h2", text: "Share “Apple cake”")
+      sleep 1 # past the copy's close
+      expect(page).to have_css("h2", text: "Share “Apple cake”", wait: 0)
       expect(page).to have_field("Share link", with: /#{other.reload.share_token}\z/)
       click_button "Stop sharing"
     end

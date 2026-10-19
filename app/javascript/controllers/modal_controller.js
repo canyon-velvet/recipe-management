@@ -6,6 +6,7 @@ export default class extends Controller {
   static targets = ["dialog", "frame"]
 
   open() {
+    clearTimeout(this.closing) // one meant for the pop-up as it was before, e.g. for another recipe
     this.dialogTarget.showModal()
     document.body.classList.add("overflow-hidden")
   }
@@ -17,6 +18,7 @@ export default class extends Controller {
 
   // After a moment, so what was just done shows first (the share pop-up's "Copied")
   closeSoon() {
+    clearTimeout(this.closing)
     this.closing = setTimeout(() => this.close(), 800)
   }
 
