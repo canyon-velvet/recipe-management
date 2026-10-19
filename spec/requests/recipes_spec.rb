@@ -67,6 +67,22 @@ RSpec.describe "Recipes", type: :request do
     expect(recipe.name).to eq "Apple cake"
   end
 
+  it "keeps a removed ingredient removed when an edit fails, so saving again doesn't bring it back" do
+    recipe = create(:recipe, user: user, name: "Omelette")
+    egg_row = recipe.recipe_ingredients.create!(ingredient: create(:ingredient, user: user, name: "Egg"))
+
+    patch recipe_path(recipe), params: { recipe: {
+      name: "", recipe_ingredients_attributes: { "0" => { id: egg_row.id, _destroy: "1" } }
+    } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    id_field = Nokogiri::HTML(response.body)
+      .at_css("input[name^='recipe[recipe_ingredients_attributes]'][name$='[id]'][value='#{egg_row.id}']")
+    row = id_field.ancestors("[data-nested-form-row]").first
+    expect(row["class"].split).to include("hidden")
+    expect(ActiveModel::Type::Boolean.new.cast(row.at_css("input[name$='[_destroy]']")["value"])).to be true
+  end
+
   describe "another user's source or ingredient in the form" do
     let(:other_user) { create(:user) }
     let(:their_source) { create(:source, user: other_user, name: "Their secret source") }

@@ -1,6 +1,6 @@
 <%# locals: (form:, aisles: []) %>
 <% new_ingredient = form.object.new_ingredient? %>
-<div data-nested-form-row class="grid grid-cols-12 gap-3 items-start">
+<div data-nested-form-row class="grid grid-cols-12 gap-3 items-start <%= "hidden" if form.object.marked_for_destruction? %>">
   <!-- Ingredient autocomplete -->
   <div class="col-span-5 relative"
        data-controller="autocomplete"
@@ -39,7 +39,7 @@
   <div class="col-span-1 flex items-center justify-center pt-2">
     <% if form.object.persisted? %>
       <%= form.hidden_field :id %>
-      <%= form.hidden_field :_destroy, value: "0" %>
+      <%= form.hidden_field :_destroy %>
     <% end %>
     <button type="button" data-action="nested-form#remove"
             class="text-gray-400 hover:text-red-500" title="<%= t("actions.delete") %>">
