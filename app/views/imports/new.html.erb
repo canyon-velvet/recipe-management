@@ -38,7 +38,8 @@
 
       <div class="field import-link">
         <%= f.label :url, t(".link"), class: "form-label" %>
-        <%= f.url_field :url, value: @url, placeholder: "https://...", class: "form-input", autofocus: @mode == "link" %>
+        <%= f.url_field :url, value: @url, placeholder: "https://...", class: "form-input",
+                          autofocus: @mode == "link" %>
       </div>
 
       <div class="import-shots">
