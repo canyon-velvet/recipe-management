@@ -212,6 +212,8 @@ en:
       recipes: "All Recipes"
     navbar_menu:
       label: "Menu"
+    source_picker:
+      other: "Other…"
 
   recipe_shares:
     show:

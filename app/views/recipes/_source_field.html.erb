@@ -1,29 +1,6 @@
 <%# locals: (form:, recipe:) %>
-<%# Where the recipe is from: a searchable dropdown of the user's sources, with a pop-up to create one. %>
-<div class="field"
-     data-controller="inline-create"
-     data-inline-create-create-url-value="<%= sources_path %>"
-     data-inline-create-error-text-value="<%= t("recipes.form.save_failed") %>">
-  <%= form.label :source_id, Recipe.human_attribute_name(:source), class: "form-label" %>
-
-  <div class="relative"
-       data-controller="autocomplete"
-       data-autocomplete-url-value="<%= search_sources_path %>"
-       data-autocomplete-create-label-value="<%= t("recipes.form.create_source") %>"
-       data-action="autocomplete:requestCreate->inline-create#openModal">
-    <%= form.hidden_field :source_id, data: { autocomplete_target: "hiddenField" } %>
-    <%# A draft's source the user doesn't have yet is submitted by name and created on save. %>
-    <%= tag.input type: "text", name: ("recipe[new_source_name]" if recipe.new_source?),
-                  value: recipe.source&.name || recipe.new_source_name,
-                  placeholder: t("recipes.form.search_source"), class: "form-input", autocomplete: "off",
-                  data: { autocomplete_target: "input",
-                          action: "input->autocomplete#onInput click@window->autocomplete#outside" } %>
-    <ul data-autocomplete-target="list" class="autocomplete-list hidden"></ul>
-  </div>
-
-  <% if recipe.new_source? %>
-    <span class="new-badge mt-1"><%= t("recipes.form.new_badge") %></span>
-  <% end %>
-
-  <%= render "recipes/source_modal" %>
-</div>
+<%# Where the recipe is from: chips of the user's sources, Other… to search or create one (shared/source_picker). A
+    draft's source the user doesn't have yet is submitted by name and created on save. %>
+<%= render "shared/source_picker", field: "#{form.object_name}[source_id]", selected: recipe.source,
+                                   new_name: (recipe.new_source_name if recipe.new_source?),
+                                   new_name_field: "#{form.object_name}[new_source_name]" %>

@@ -207,6 +207,8 @@ zh-CN:
       recipes: "所有菜谱"
     navbar_menu:
       label: "菜单"
+    source_picker:
+      other: "其他…"
 
   recipe_shares:
     show:

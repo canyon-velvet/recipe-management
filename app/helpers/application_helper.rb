@@ -46,4 +46,10 @@ module ApplicationHelper
   end
 
   def assistant_panel_id = dom_id(current_user, :assistant_panel)
+
+  # The source picker's chips: the user's most-used sources, and the one already picked if it isn't among them
+  def source_chips(selected, limit: 5)
+    chips = current_user.sources.most_used.limit(limit).to_a
+    selected.nil? || chips.include?(selected) ? chips : chips << selected
+  end
 end

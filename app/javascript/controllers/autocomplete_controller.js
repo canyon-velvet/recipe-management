@@ -65,10 +65,12 @@ export default class extends Controller {
     this.setSelection(id, name)
   }
 
+  // Also sent as autocomplete:selected, for a picker that shows the choice its own way (the source picker's chips)
   setSelection(id, name) {
     this.inputTarget.value = name
     this.hiddenFieldTarget.value = id
     this.hideList()
+    this.dispatch("selected", { detail: { id, name } })
   }
 
   createNew() {
