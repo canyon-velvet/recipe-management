@@ -18,7 +18,7 @@ class User < ApplicationRecord
   validates :username, presence: true,
                        uniqueness: { case_sensitive: false },
                        length: { minimum: 2, maximum: 50 }
-  validates :password, length: { minimum: 6 }, on: :create
+  validates :password, length: { minimum: 8 }, on: :create
   validates :time_zone, inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
 
   normalizes :username, with: ->(username) { username.strip }

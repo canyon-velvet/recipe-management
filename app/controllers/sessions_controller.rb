@@ -1,7 +1,11 @@
 class SessionsController < ApplicationController
   skip_before_action :authenticate_user!, only: [ :new, :create ]
-  rate_limit to: 10, within: 3.minutes, only: :create,
-             with: -> { redirect_to login_path, alert: t("flash.rate_limited") }
+  # Per address, and per account, so guessing one account's password from many addresses is slowed down too. (Someone
+  # typing wrong passwords for an account holds up its owner's logging in as well, until 15 minutes after they stop;
+  # being logged in already isn't affected.)
+  rate_limit to: 10, within: 3.minutes, only: :create, with: :too_many_attempts
+  rate_limit to: 10, within: 15.minutes, only: :create, with: :too_many_attempts,
+             name: "username", by: -> { params[:username].to_s.strip.downcase }
 
   def new
   end
@@ -21,4 +25,8 @@ class SessionsController < ApplicationController
     reset_session_keeping_locale
     redirect_to login_path, notice: t("flash.logged_out")
   end
+
+  private
+
+  def too_many_attempts = redirect_to(login_path, alert: t("flash.rate_limited"))
 end

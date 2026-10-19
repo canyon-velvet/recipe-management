@@ -1,6 +1,11 @@
 require "rails_helper"
 
 RSpec.describe User do
+  it "signs up with a password of at least 8 characters" do
+    expect(build(:user, password: "1234567")).not_to be_valid
+    expect(build(:user, password: "12345678")).to be_valid
+  end
+
   it "starts in Central Time, and takes only a time zone Rails knows" do
     user = create(:user)
     expect(user.time_zone).to eq "Central Time (US & Canada)"
