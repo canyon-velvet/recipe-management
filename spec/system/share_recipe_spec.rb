@@ -9,7 +9,7 @@ RSpec.describe "Sharing a recipe", type: :system do
     log_in_as user
   end
 
-  it "shares from the recipe page in a pop-up, copies the link, cancels, and stops sharing" do
+  it "shares from the recipe page in a pop-up, copies the link, which closes it, and stops sharing" do
     visit recipe_path(recipe)
     click_link "Share"
 
@@ -20,8 +20,8 @@ RSpec.describe "Sharing a recipe", type: :system do
       expect(page).to have_field("Share link", with: link, readonly: true)
       click_button "Copy link"
       expect(page).to have_button("Copied")
-      click_link "Cancel"
     end
+    # It closes by itself a moment later, once "Copied" has shown
     expect(page).to have_no_css("dialog[open]")
     expect(page).to have_current_path(recipe_path(recipe))
 
@@ -38,6 +38,30 @@ RSpec.describe "Sharing a recipe", type: :system do
     expect(page).to have_text("Stopped sharing. The link no longer works.")
     expect(page).to have_current_path(recipe_path(recipe))
     expect(recipe.reload.share_token).to be_nil
+  end
+
+  it "closes once the phone's share sheet has shared the link, and stays open if it was dismissed" do
+    # Headless Chromium has no share sheet: stand one in that shares, or is dismissed, as the test says
+    page.driver.with_playwright_page do |pw|
+      pw.add_init_script(script: <<~JS)
+        navigator.share = (data) => {
+          window.shared = data
+          return window.dismissShare ? Promise.reject(new DOMException("", "AbortError")) : Promise.resolve()
+        }
+      JS
+    end
+    visit recipe_path(recipe)
+    click_link "Share"
+
+    page.execute_script("window.dismissShare = true")
+    within("dialog[open]") { click_button "Share…" }
+    expect(page.evaluate_script("window.shared.title")).to eq "Mapo tofu"
+    expect(page).to have_css("dialog[open]")
+
+    page.execute_script("window.dismissShare = false")
+    within("dialog[open]") { click_button "Share…" }
+    expect(page).to have_no_css("dialog[open]")
+    expect(page.evaluate_script("window.shared.url")).to end_with "/r/#{recipe.reload.share_token}"
   end
 
   it "shares from a card's menu on the recipe list, in a pop-up over the list" do

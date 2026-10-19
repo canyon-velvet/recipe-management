@@ -15,6 +15,15 @@ export default class extends Controller {
     document.body.classList.remove("overflow-hidden")
   }
 
+  // After a moment, so what was just done shows first (the share pop-up's "Copied")
+  closeSoon() {
+    this.closing = setTimeout(() => this.close(), 800)
+  }
+
+  disconnect() {
+    clearTimeout(this.closing)
+  }
+
   backdropClose(event) {
     if (event.target === this.dialogTarget) {
       this.close()

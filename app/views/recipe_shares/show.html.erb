@@ -8,13 +8,17 @@
     <p class="modal-lead"><%= t(".lead") %></p>
 
     <% link = shared_recipe_url(@recipe.share_token) %>
-    <div data-controller="clipboard" data-clipboard-copied-text-value="<%= t(".copied") %>">
+    <%# Copying the link, or sharing it from the share sheet, closes the pop-up %>
+    <div data-controller="clipboard" data-clipboard-copied-text-value="<%= t(".copied") %>"
+         data-action="clipboard:copied->modal#closeSoon">
       <input type="text" readonly value="<%= link %>" class="modal-input" data-clipboard-target="source"
              aria-label="<%= t(".link") %>">
       <div class="share-buttons">
         <button type="button" class="btn-pill-primary btn-pill-sm cursor-pointer" hidden
                 data-controller="share" data-share-url-value="<%= link %>" data-share-title-value="<%= @recipe.name %>"
-                data-action="share#share"><%= inline_icon "share" %> <%= t(".share") %></button>
+                data-action="share#share share:shared->modal#close">
+          <%= inline_icon "share" %> <%= t(".share") %>
+        </button>
         <button type="button" class="btn-pill-secondary btn-pill-sm cursor-pointer" data-clipboard-target="button"
                 data-action="clipboard#copy"><%= t(".copy") %></button>
       </div>
