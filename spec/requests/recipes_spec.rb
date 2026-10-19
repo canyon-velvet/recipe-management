@@ -95,6 +95,30 @@ RSpec.describe "Recipes", type: :request do
     expect(aisle_select.at_css("option[selected]").text).to eq "Other"
   end
 
+  it "saves an ingredient removed and added again in the same edit, once" do
+    recipe = create(:recipe, user: user)
+    egg = create(:ingredient, user: user, name: "Egg")
+    egg_row = recipe.recipe_ingredients.create!(ingredient: egg, quantity: "2")
+
+    patch recipe_path(recipe), params: { recipe: { recipe_ingredients_attributes: {
+      "0" => { id: egg_row.id, _destroy: "1" }, "1" => { ingredient_id: egg.id, quantity: "3" }
+    } } }
+
+    expect(response).to redirect_to(recipe_path(recipe))
+    expect(recipe.recipe_ingredients.reload.map { [ _1.ingredient, _1.quantity ] }).to eq [ [ egg, "3" ] ]
+  end
+
+  it "still won't list an ingredient twice" do
+    recipe = create(:recipe, user: user)
+    egg = create(:ingredient, user: user, name: "Egg")
+    recipe.recipe_ingredients.create!(ingredient: egg)
+
+    patch recipe_path(recipe), params: { recipe: { recipe_ingredients_attributes: { "1" => { ingredient_id: egg.id } } } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(recipe.recipe_ingredients.reload.size).to eq 1
+  end
+
   describe "another user's source or ingredient in the form" do
     let(:other_user) { create(:user) }
     let(:their_source) { create(:source, user: other_user, name: "Their secret source") }

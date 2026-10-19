@@ -6,7 +6,6 @@ class RecipeIngredient < ApplicationRecord
   # A draft's ingredient the user doesn't have yet: its name and the aisle chosen for it in the review form.
   attr_accessor :new_ingredient_name, :new_aisle_id
 
-  validates :ingredient_id, uniqueness: { scope: :recipe_id }
   validate :ingredient_must_belong_to_recipe_owner
   validate :ingredient_must_be_listed_once
 
@@ -38,8 +37,9 @@ class RecipeIngredient < ApplicationRecord
           .find { |other| other.new_record? && other.name.casecmp?(new_ingredient_name.strip) }
   end
 
-  # Two rows with the same ingredient would hit the unique index on save; the uniqueness validation above only
-  # sees saved rows, not unsaved siblings or ingredients that are themselves new.
+  # Two rows with the same ingredient would hit the unique index on save. Checked among the recipe's rows, saved or
+  # not, rather than in the database: there, a row being removed in the same save would still count (remove Egg, add
+  # Egg again), and an ingredient that is itself new has no id yet.
   def ingredient_must_be_listed_once
     return unless ingredient
 
