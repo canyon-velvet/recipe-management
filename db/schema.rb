@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -34,6 +34,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
     t.index ["user_id", "created_at"], name: "index_conversations_on_user_id_and_created_at"
   end
 
+  create_table "draft_images", force: :cascade do |t|
+    t.bigint "draft_id", null: false
+    t.integer "position", null: false
+    t.string "content_type", null: false
+    t.binary "data", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["draft_id"], name: "index_draft_images_on_draft_id"
+  end
+
   create_table "drafts", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "status", default: "reading", null: false
@@ -43,6 +53,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
     t.jsonb "data", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "screenshot_count", default: 0, null: false
     t.index ["user_id", "created_at"], name: "index_drafts_on_user_id_and_created_at"
     t.index ["user_id", "source_url"], name: "index_drafts_on_user_id_and_source_url", unique: true, where: "(source_url IS NOT NULL)"
   end
@@ -266,6 +277,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
 
   add_foreign_key "aisles", "users"
   add_foreign_key "conversations", "users"
+  add_foreign_key "draft_images", "drafts", on_delete: :cascade
   add_foreign_key "drafts", "users"
   add_foreign_key "grocery_list_items", "grocery_lists"
   add_foreign_key "grocery_list_items", "ingredients"

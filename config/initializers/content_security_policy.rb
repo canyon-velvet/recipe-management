@@ -12,7 +12,8 @@ Rails.application.configure do
     policy.script_src  :self
     # Inline style attributes are used in a few views and by Tom Select; styles can't run code.
     policy.style_src   :self, :unsafe_inline
-    policy.img_src     :self, :data
+    # blob: for the import form's thumbnails of picked screenshots, which haven't been uploaded yet
+    policy.img_src     :self, :data, :blob
     policy.connect_src :self # includes the Action Cable websocket
     policy.object_src  :none
     policy.base_uri    :self

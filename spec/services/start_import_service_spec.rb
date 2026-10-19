@@ -8,6 +8,74 @@ RSpec.describe StartImportService do
 
   def start(url: nil, text: nil) = described_class.new(user: user, url: url, text: text).call
 
+  def screenshot(name = "small_screenshot.png", type: "image/png")
+    Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files", name), type)
+  end
+
+  describe "from screenshots" do
+    before { allow(CleanRecipeService).to receive(:available?).and_return(true) }
+
+    def start_from(screenshots, title: "奶油烤鸡")
+      described_class.new(user: user, title: title, screenshots: screenshots).call
+    end
+
+    it "puts a Reading… draft with the user's name for it, holding the screenshots in order, and counts one import" do
+      result = nil
+      expect { result = start_from([ screenshot, screenshot("tall_screenshot.png") ]) }
+        .to have_enqueued_job(ImportRecipeJob)
+
+      expect(result).to be_success
+      expect(result.draft).to have_attributes(status: "reading", title: "奶油烤鸡", screenshot_count: 2,
+                                              source_url: nil)
+      expect(result.draft.images.map(&:position)).to eq [ 1, 2 ]
+      expect(result.draft.images.first).to have_attributes(content_type: "image/png",
+                                                           data: File.binread(screenshot.path))
+      expect(described_class.imports_left(user)).to eq described_class::HOURLY_LIMIT - 1
+    end
+
+    it "needs a name, to tell which recipe the screenshots are of" do
+      expect(start_from([ screenshot ], title: "  ").error).to eq :title_blank
+      expect(user.drafts).to be_empty
+      expect(described_class.imports_left(user)).to eq described_class::HOURLY_LIMIT
+    end
+
+    it "takes up to #{Draft::MAX_SCREENSHOTS} screenshots" do
+      expect(start_from(Array.new(Draft::MAX_SCREENSHOTS + 1) { screenshot }).error).to eq :too_many_screenshots
+      expect(start_from(Array.new(Draft::MAX_SCREENSHOTS) { screenshot })).to be_success
+    end
+
+    it "refuses a file that isn't a picture Claude reads, whatever the browser called it" do
+      not_a_picture = Rack::Test::UploadedFile.new(StringIO.new("%PDF-1.4 …"), "image/png",
+                                                   original_filename: "a.png")
+
+      expect(start_from([ screenshot, not_a_picture ]).error).to eq :unreadable_screenshot
+      expect(Draft.where(user: user)).to be_empty
+    end
+
+    it "refuses a picture over #{DraftImage::MAX_BYTES / 1.megabyte} MB without reading it" do
+      too_big = screenshot
+      allow(too_big).to receive(:size).and_return(DraftImage::MAX_BYTES + 1)
+      expect(too_big).not_to receive(:read)
+
+      expect(start_from([ too_big ]).error).to eq :unreadable_screenshot
+    end
+
+    it "reads a failed draft's screenshots again only while it's failed" do
+      draft = start_from([ screenshot ]).draft
+
+      expect(described_class.new(user: user, draft: draft).call.error).to eq :already_in_draft_box
+      draft.update!(status: :failed, failure_reason: :cleanup_failed)
+      expect(described_class.new(user: user, draft: draft).call).to be_success
+      expect(draft.reload).to have_attributes(status: "reading", title: "奶油烤鸡")
+    end
+
+    it "needs Claude to read them" do
+      allow(CleanRecipeService).to receive(:available?).and_return(false)
+
+      expect(start_from([ screenshot ]).error).to eq :needs_claude
+    end
+  end
+
   it "puts a Reading… draft in the Draft box and reads it in the background" do
     result = nil
     expect { result = start(url: "https://example.com/soup") }.to have_enqueued_job(ImportRecipeJob)
@@ -61,6 +129,20 @@ RSpec.describe StartImportService do
       expect(described_class.imports_left(user)).to eq described_class::HOURLY_LIMIT - 1
     end
 
+    it "gives back at most an hour's limit an hour, so Try again on a dead link can't fetch on and on" do
+      stub_const("StartImportService::HOURLY_LIMIT", 2)
+      draft = start(url: "https://www.xiachufang.com/recipe/1").draft
+      allow(FetchPageService).to receive(:new).and_raise(FetchPageService::Error.new(:fetch_failed, "404"))
+
+      results = Array.new(6) do
+        read(draft.reload)
+        described_class.new(user: user, draft: draft.reload).call.error
+      end
+
+      # Two give-backs, then each Try again counts until the hour's two are used up
+      expect(results).to eq [ nil, nil, nil, :rate_limited, :rate_limited, :rate_limited ]
+    end
+
     it "keeps counting one Claude did read, which cost a call" do
       draft = start(url: "https://example.com/not-food").draft
       allow(FetchPageService).to receive(:new).and_return(instance_double(FetchPageService, call: "<html></html>"))
@@ -73,6 +155,19 @@ RSpec.describe StartImportService do
       expect(draft.reload.failure_reason).to eq "not_a_recipe"
       expect(described_class.imports_left(user)).to eq described_class::HOURLY_LIMIT - 1
     end
+  end
+
+  it "doesn't count an import refused for the limit, so one given back can be used again" do
+    stub_const("StartImportService::HOURLY_LIMIT", 2)
+    first = start(url: "https://example.com/1").draft
+    start(url: "https://example.com/2")
+    expect(start(url: "https://example.com/3").error).to eq :rate_limited
+
+    allow(FetchPageService).to receive(:new).and_raise(FetchPageService::Error.new(:blocked, "captcha"))
+    ImportRecipeService.new(first).call
+
+    expect(described_class.imports_left(user)).to eq 1
+    expect(start(url: "https://example.com/3")).to be_success
   end
 
   it "doesn't count what it refuses before starting" do

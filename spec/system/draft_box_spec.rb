@@ -25,6 +25,27 @@ RSpec.describe "The Draft box", type: :system do
     expect(row("Soup")).to have_no_link("Review")
   end
 
+  it "opens Text for a blocked link, with the link filled in" do
+    allow(CleanRecipeService).to receive(:available?).and_return(true)
+    within(row("xiaohongshu")) { click_link "Paste text instead" }
+
+    expect(page).to have_checked_field("Text")
+    expect(page).to have_field("Recipe link", with: "https://www.xiaohongshu.com/explore/1")
+    expect(page).to have_field("Recipe text", focused: true)
+  end
+
+  it "tries a failed import again, beside pasting the text instead" do
+    expect(row("Apple cake")).to have_no_button("Try again")
+
+    within(row("xiaohongshu")) do
+      expect(page.all("a, button").map(&:text)).to eq [ "Try again", "Paste text instead", "Discard" ]
+      click_button "Try again"
+    end
+
+    expect(row("xiaohongshu")).to have_css(".draft-icon--reading")
+    expect(row("xiaohongshu")).to have_no_text("The site blocked automatic reading")
+  end
+
   it "discards a draft after asking" do
     within(row("Apple cake")) { click_button "Discard" }
     within("dialog[open]") { click_button "Delete" }

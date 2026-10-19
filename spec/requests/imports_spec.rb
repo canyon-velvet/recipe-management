@@ -37,4 +37,26 @@ RSpec.describe "Importing", type: :request do
 
     expect(limit_line.text).to eq "50 of 50 imports left this hour"
   end
+
+  it "imports screenshots under the name given, leaving out a link typed under Link" do
+    allow(CleanRecipeService).to receive(:available?).and_return(true)
+    screenshot = Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/small_screenshot.png"), "image/png")
+
+    post imports_path, params: { mode: "screenshot", title: "奶油烤鸡", url: "https://example.com/apple-cake",
+                                 screenshots: [ screenshot ] }
+
+    expect(response).to redirect_to(drafts_path)
+    expect(user.drafts.sole).to have_attributes(title: "奶油烤鸡", source_url: nil, screenshot_count: 1)
+  end
+
+  it "keeps the name when the screenshots are missing" do
+    allow(CleanRecipeService).to receive(:available?).and_return(true)
+
+    post imports_path, params: { mode: "screenshot", title: "奶油烤鸡" }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css("#mode_screenshot")["checked"]).to be_present
+    expect(page.at_css("#title")["value"]).to eq "奶油烤鸡"
+  end
 end

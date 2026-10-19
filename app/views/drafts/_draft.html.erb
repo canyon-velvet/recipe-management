@@ -13,7 +13,7 @@
       <span class="status-pill draft-status--<%= draft.status %>"><%= t("drafts.statuses.#{draft.status}") %></span>
     </div>
     <p class="draft-meta">
-      <%= draft.source_host || draft.source_url || t("drafts.pasted_text") %> · <%= t(".added", time: time_ago_in_words(draft.created_at)) %>
+      <%= draft_source(draft) %> · <%= t(".added", time: time_ago_in_words(draft.created_at)) %>
     </p>
     <% if draft.failed? %>
       <p class="draft-failure"><%= t("drafts.failures.#{draft.failure_reason_key}", default: t("drafts.failures.generic")) %></p>
@@ -23,8 +23,14 @@
   <div class="draft-actions">
     <% if draft.ready? %>
       <%= link_to t(".review"), new_recipe_path(draft_id: draft.id), class: "btn-pill-primary btn-pill-sm" %>
-    <% elsif draft.failed? && draft.source_url %>
-      <%= link_to t(".paste_instead"), new_import_path(url: draft.source_url, paste: 1), class: "btn-pill-secondary btn-pill-sm" %>
+    <% elsif draft.failed? %>
+      <%= button_to retry_draft_path(draft), class: "btn-pill-secondary btn-pill-sm draft-retry" do %>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/></svg>
+        <%= t(".retry") %>
+      <% end %>
+      <% if draft.source_url %>
+        <%= link_to t(".paste_instead"), new_import_path(url: draft.source_url, paste: 1), class: "btn-pill-secondary btn-pill-sm" %>
+      <% end %>
     <% end %>
     <%= button_to t(".discard"), draft_path(draft), method: :delete, class: "btn-pill-ghost btn-pill-sm",
                   form: { data: { turbo_confirm: t(".confirm_discard", title: draft.title) } } %>

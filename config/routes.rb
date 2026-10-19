@@ -35,7 +35,9 @@ Rails.application.routes.draw do
 
   # Draft box: imported recipes waiting to be reviewed
   resources :imports, only: [ :new, :create ]
-  resources :drafts, only: [ :index, :destroy ]
+  resources :drafts, only: [ :index, :destroy ] do
+    post :retry, on: :member, action: :read_again
+  end
 
   # What the user eats, for the assistant's recommendations
   resources :preferences, only: [ :index, :create, :destroy ]
