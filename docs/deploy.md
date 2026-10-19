@@ -41,6 +41,7 @@ Admins can see the jobs (queued, running, failed, and retry or discard them) fro
 **Background jobs**.
 
 A deploy gives the jobs still running (an import, an assistant reply) 50 seconds to finish before the old server
-stops. One still running after that is marked failed a few minutes later (`ProcessPrunedError`): its draft stays
-"Reading…", or its reply "Thinking…". **Retry** it in Background jobs (the reply then shows as failed, and the import
-carries on), or the user can discard the draft or ask again. Deploying when nobody is importing or chatting avoids it.
+stops. One still running after that is usually marked failed within about 10 minutes (`ProcessPrunedError`); until
+then it shows as in progress in Background jobs. Meanwhile its draft stays "Reading…", or its reply "Thinking…".
+Once it's failed, **Retry** it there (the reply then shows as failed, and the import carries on), or the user can
+discard the draft or ask again. Deploying when nobody is importing or chatting avoids it.
