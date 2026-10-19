@@ -104,6 +104,24 @@ RSpec.describe "The recipe list", type: :system do
     expect(page).to have_field("Name", with: "Mapo Tofu")
   end
 
+  it "keeps an open ⋮ menu above the next row's ⋮ button" do
+    log_in_as user
+    visit recipes_path
+
+    within(first(".recipe-row")) { click_button "More actions" }
+    delete = find_link("Delete")
+    # Where the next row's ⋮ button sits, under the menu
+    hit = page.evaluate_script(<<~JS)
+      (() => {
+        const link = [...document.querySelectorAll("a")].find((a) => a.textContent.trim() === "Delete");
+        const box = link.getBoundingClientRect();
+        return document.elementFromPoint(box.right - 4, box.top + box.height / 2).textContent.trim();
+      })()
+    JS
+    expect(delete).to be_visible
+    expect(hit).to eq "Delete"
+  end
+
   it "folds the sidebar behind “Search & filter” on a phone" do
     resize(390)
     log_in_as user

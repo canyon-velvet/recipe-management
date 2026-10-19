@@ -39,8 +39,8 @@ class Recipe < ApplicationRecord
   # validation comes back with Total still blank and keeps adding up later changes.
   before_save :fill_total_minutes, if: -> { total_minutes.nil? && prep_minutes && cook_minutes }
 
-  # The meal plan's search: recipes whose name (NameSearchable), or one of whose ingredients,
-  # contains the text. Anything but text (?q[]=…) is no search.
+  # The meal plan's search (and the start of the recipe list's): recipes whose name (NameSearchable), or one of
+  # whose ingredients, contains the text. Anything but text (?q[]=…) is no search.
   scope :search_by_name_or_ingredient, ->(query) {
     next unless query.is_a?(String) && query.present?
 

@@ -63,10 +63,11 @@
 
   /* A recipe in the list, one to a row: its emoji on a cream tile, then the name, a line of description and the
      facts, each cut short rather than widening the row on a phone. The whole row is a link (.recipe-row-link, under
-     the content); the row with its menu open sits above the ones below, so the menu isn't covered. */
+     the content). Each row stacks on its own (isolate), and the one with its menu open sits above the rest, so the
+     next row's ⋮ doesn't cover the menu; :has also covers Safari, where a click doesn't focus the button. */
   .recipe-row {
-    @apply relative flex items-center gap-4 rounded-3xl bg-white p-3 shadow-sm ring-1 ring-gray-100
-           transition-shadow hover:shadow-md focus-within:z-10;
+    @apply relative isolate flex items-center gap-4 rounded-3xl bg-white p-3 shadow-sm ring-1 ring-gray-100
+           transition-shadow hover:shadow-md focus-within:z-10 has-[[aria-expanded=true]]:z-10;
   }
   .recipe-row-link    { @apply absolute inset-0 z-0 rounded-3xl; }
   .recipe-row-art {
