@@ -1,5 +1,5 @@
-<%# The heading across the top, then the catalog (search and tags) beside the recipes; on a phone it folds behind
-    "Search & filter" above them.
+<%# The heading across the top, then the catalog (search and tags) beside the recipes; on a phone the search box
+    above them, with the tags folded behind Filter.
     Searching reloads only the frame (the heading and the recipes), so the search box keeps its focus as you type, and
     the open catalog stays open. It replaces the URL rather than adding to the history, so Back leaves the page.
     Links in the frame leave the page as usual (_top), and a response without the frame (the login page, once the
@@ -56,22 +56,42 @@
     <%= render "shared/modal_frame", frame: "share_recipe", labelledby: "share_recipe_title" %>
   </div>
 
-  <%# Outside the frame, so searching doesn't redraw it and lose whether the catalog is open %>
-  <button type="button" class="recipes-filter-toggle" data-action="dropdown#toggle" data-dropdown-target="button"
-          aria-controls="recipes-filters" aria-expanded="false">
-    <%= t(".search_and_filter") %><%= " · #{@selected_tag.name}" if @selected_tag %>
-  </button>
+  <%# Outside the frame, so searching doesn't redraw it and lose whether the tags are open. On a phone the search box
+      is always shown, with the tags folded behind Filter beside it (named after the picked tag, if any). %>
+  <aside class="recipes-sidebar">
+    <div class="recipes-search-row">
+      <%= form_with url: recipes_path, method: :get, class: "recipes-search-form",
+                    data: { search_form_target: "form", turbo_frame: "recipe_results",
+                            turbo_action: "replace" } do |f| %>
+        <%# Searching keeps the selected tag. %>
+        <%= hidden_field_tag :tag, @selected_tag.key if @selected_tag %>
+        <%= f.search_field :q, value: params[:q], placeholder: t(".search_placeholder"),
+                               aria: { label: t(".search_label") },
+                               data: { action: "input->search-form#submitLater" }, class: "recipes-search" %>
+      <% end %>
+      <button type="button" class="recipes-filter-toggle group" data-action="dropdown#toggle"
+              data-dropdown-target="button" aria-controls="recipes-filters" aria-expanded="false"
+              <%= tag.attributes(aria: { label: (t(".filter_with_tag", tag: @selected_tag.name) if @selected_tag) }) %>>
+        <svg class="size-4 flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>
+        </svg>
+        <% if @selected_tag %>
+          <span class="truncate"><%= @selected_tag.name %></span>
+        <% else %>
+          <%= t(".filter") %>
+        <% end %>
+        <svg class="size-4 flex-none transition-transform group-aria-expanded:rotate-180" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
 
-  <aside id="recipes-filters" class="recipes-sidebar hidden md:block" data-dropdown-target="menu">
-    <%= form_with url: recipes_path, method: :get,
-                  data: { search_form_target: "form", turbo_frame: "recipe_results", turbo_action: "replace" } do |f| %>
-      <%# Searching keeps the selected tag. %>
-      <%= hidden_field_tag :tag, @selected_tag.key if @selected_tag %>
-      <%= f.search_field :q, value: params[:q], placeholder: t(".search_placeholder"),
-                             aria: { label: t(".search_label") },
-                             data: { action: "input->search-form#submitLater" }, class: "recipes-search" %>
-    <% end %>
-    <%= render "recipes/tag_catalog", tags_by_kind: @tags_by_kind, tag_counts: @tag_counts, total: @recipe_count,
-                                      selected: @selected_tag, query: params[:q] %>
+    <div id="recipes-filters" class="recipes-filters hidden md:block" data-dropdown-target="menu">
+      <%= render "recipes/tag_catalog", tags_by_kind: @tags_by_kind, tag_counts: @tag_counts, total: @recipe_count,
+                                        selected: @selected_tag, query: params[:q] %>
+    </div>
   </aside>
 </div>
