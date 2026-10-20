@@ -251,6 +251,7 @@ en:
       empty: "No recipes match your search."
       eyebrow: "Your recipes"
       filter: "Filter"
+      filter_with_tag: "Filter: %{tag}"
       import_recipe: "Import recipe"
       matching: "matching “%{query}”"
       new_recipe: "New recipe"

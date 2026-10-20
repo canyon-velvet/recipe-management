@@ -70,13 +70,14 @@
                                data: { action: "input->search-form#submitLater" }, class: "recipes-search" %>
       <% end %>
       <button type="button" class="recipes-filter-toggle group" data-action="dropdown#toggle"
-              data-dropdown-target="button" aria-controls="recipes-filters" aria-expanded="false">
+              data-dropdown-target="button" aria-controls="recipes-filters" aria-expanded="false"
+              <%= tag.attributes(aria: { label: (t(".filter_with_tag", tag: @selected_tag.name) if @selected_tag) }) %>>
         <svg class="size-4 flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" aria-hidden="true">
           <path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>
         </svg>
         <% if @selected_tag %>
-          <span class="sr-only"><%= t(".filter") %>:</span> <span class="truncate"><%= @selected_tag.name %></span>
+          <span class="truncate"><%= @selected_tag.name %></span>
         <% else %>
           <%= t(".filter") %>
         <% end %>
@@ -92,7 +93,7 @@
       <%= render "recipes/tag_catalog", tags_by_kind: @tags_by_kind, tag_counts: @tag_counts, total: @recipe_count,
                                         selected: @selected_tag, query: params[:q] %>
       <div class="recipes-filters-actions">
-        <button type="button" class="btn-pill-primary btn-pill-sm" data-action="dropdown#hide">
+        <button type="button" class="btn-pill-primary btn-pill-sm" data-action="dropdown#hideAndFocusButton">
           <%= t(".done") %>
         </button>
       </div>

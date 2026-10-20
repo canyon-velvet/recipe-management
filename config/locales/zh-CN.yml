@@ -244,6 +244,7 @@ zh-CN:
       empty: "没有找到符合条件的菜谱。"
       eyebrow: "我的菜谱"
       filter: "筛选"
+      filter_with_tag: "筛选：%{tag}"
       import_recipe: "导入菜谱"
       matching: "匹配“%{query}”"
       new_recipe: "新建菜谱"
