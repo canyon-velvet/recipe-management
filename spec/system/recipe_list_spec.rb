@@ -144,6 +144,23 @@ RSpec.describe "The recipe list", type: :system do
     expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 390
   end
 
+  it "keeps a row's time and servings on one line on a phone, cutting the tags short instead" do
+    create(:recipe, user: user, name: "Red-braised pork", total_minutes: 90, servings: 4, tags: [ chinese, soup ])
+    resize(390)
+    log_in_as user
+    visit recipes_path
+
+    facts = find(".recipe-row", text: "Red-braised pork").find(".recipe-row-facts")
+    expect(facts).to have_text("1 hr 30 min")
+    heights = page.evaluate_script(<<~JS)
+      [...document.querySelectorAll(".recipe-row-facts")].map((facts) => facts.getBoundingClientRect().height)
+    JS
+    line_height = page.evaluate_script(<<~JS)
+      parseFloat(getComputedStyle(document.querySelector(".recipe-row-facts")).lineHeight)
+    JS
+    expect(heights).to all(be <= line_height + 1)
+  end
+
   it "keeps a row with a long name within the narrowest phone, its name cut short" do
     create(:recipe, user: user, name: "Grandma's slow-braised pork belly with preserved mustard greens and rice")
     resize(320)
