@@ -250,10 +250,12 @@ en:
       empty: "No recipes match your search."
       eyebrow: "Your recipes"
       filter: "Filter"
-      filter_with_tag: "Filter: %{tag}"
       import_recipe: "Import recipe"
       matching: "matching “%{query}”"
       new_recipe: "New recipe"
+      picked:
+        one: "%{count} tag ticked"
+        other: "%{count} tags ticked"
       search_label: "Search recipes by name, ingredient or source"
       search_placeholder: "Name, ingredient, source"
       title: "Recipes"
@@ -287,9 +289,16 @@ en:
       done: "Done"
       moved: "Step moved to %{number} of %{total}"
       reorder: "Reorder"
+    picked_tags:
+      clear_all: "Clear all"
+      remove: "Remove %{tag}"
     tag_catalog:
       all_recipes: "All recipes"
+      clear: "Clear"
       label: "Recipe categories"
+      show:
+        one: "Show %{count} recipe"
+        other: "Show %{count} recipes"
     tag_picker:
       no_results: "No matching tags"
       placeholder: "Choose tags"

@@ -57,6 +57,24 @@ RSpec.describe Recipe do
     end
   end
 
+  describe ".tagged_any_in_each_kind" do
+    it "keeps the recipes with any of the picked tags in each kind picked from" do
+      chinese = create(:tag, key: "chinese", kind: "cuisine")
+      italian = create(:tag, key: "italian", kind: "cuisine")
+      breakfast = create(:tag, key: "breakfast", kind: "meal")
+      lunch = create(:tag, key: "lunch", kind: "meal")
+      congee = create(:recipe, name: "Congee", tags: [ chinese, breakfast ])
+      noodles = create(:recipe, name: "Noodles", tags: [ chinese, lunch ])
+      pasta = create(:recipe, name: "Pasta", tags: [ italian, lunch ])
+      dumplings = create(:recipe, name: "Dumplings", tags: [ chinese ])
+
+      expect(Recipe.tagged_any_in_each_kind([])).to contain_exactly(congee, noodles, pasta, dumplings)
+      expect(Recipe.tagged_any_in_each_kind([ breakfast, lunch ])).to contain_exactly(congee, noodles, pasta)
+      expect(Recipe.tagged_any_in_each_kind([ breakfast, lunch, chinese ])).to contain_exactly(congee, noodles)
+      expect(Recipe.tagged_any_in_each_kind([ lunch, chinese, italian ])).to contain_exactly(noodles, pasta)
+    end
+  end
+
   describe "#description_and_tips" do
     it "splits off the tips under a bold Tips line, in either language" do
       english = build(:recipe, description: "Silky tofu.\n\n**Tips**\n\n- Cut gently.")

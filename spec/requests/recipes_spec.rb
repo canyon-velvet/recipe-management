@@ -50,7 +50,7 @@ RSpec.describe "Recipes", type: :request do
     get recipes_path
 
     catalog = Nokogiri::HTML(response.body).at_css(".tag-catalog")
-    expect(catalog.css("a").map { _1.text.squish }).to eq [ "All recipes 1", "Soup 1" ]
+    expect(catalog.css("a, label").map { _1.text.squish }).to eq [ "All recipes 1", "Soup 1" ]
     expect(catalog.text).not_to include(soup.icon)
   end
 
@@ -296,9 +296,18 @@ RSpec.describe "Recipes", type: :request do
     end
 
     it "keeps the tag filter with an ingredient search" do
-      get recipes_path(q: "egg", tag: "breakfast")
+      get recipes_path(q: "egg", tags: [ "breakfast" ])
 
       expect(listed).to eq [ "Pancakes" ]
+    end
+
+    it "leaves out tags that are unknown or aren't a list of keys" do
+      get recipes_path(tags: [ "breakfast", "nonsense" ])
+      expect(listed).to eq [ "Pancakes" ]
+
+      get recipes_path(tags: { "a" => "breakfast" })
+      expect(response).to have_http_status(:ok)
+      expect(listed.size).to eq 4
     end
 
     it "takes the text as it is, so a % in it matches only a %" do

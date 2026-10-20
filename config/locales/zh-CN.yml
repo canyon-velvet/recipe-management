@@ -243,10 +243,10 @@ zh-CN:
       empty: "没有找到符合条件的菜谱。"
       eyebrow: "我的菜谱"
       filter: "筛选"
-      filter_with_tag: "筛选：%{tag}"
       import_recipe: "导入菜谱"
       matching: "匹配“%{query}”"
       new_recipe: "新建菜谱"
+      picked: "已选 %{count} 个标签"
       search_label: "按菜名、食材或来源搜索菜谱"
       search_placeholder: "菜名、食材或来源"
       title: "菜谱"
@@ -280,9 +280,14 @@ zh-CN:
       done: "完成"
       moved: "已移到第 %{number} 步，共 %{total} 步"
       reorder: "排序"
+    picked_tags:
+      clear_all: "全部清除"
+      remove: "移除“%{tag}”"
     tag_catalog:
       all_recipes: "全部菜谱"
+      clear: "清除"
       label: "菜谱分类"
+      show: "显示 %{count} 道菜谱"
     tag_picker:
       no_results: "没有匹配的标签"
       placeholder: "选择标签"

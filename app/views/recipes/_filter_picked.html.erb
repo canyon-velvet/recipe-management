@@ -1,0 +1,5 @@
+<%# locals: (count:) %>
+<% if count.positive? %>
+  <span class="recipes-filter-badge" aria-hidden="true"><%= count %></span>
+  <span class="sr-only"><%= t("recipes.index.picked", count:) %></span>
+<% end %>
