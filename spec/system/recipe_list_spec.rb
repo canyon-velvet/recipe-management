@@ -143,12 +143,12 @@ RSpec.describe "The recipe list", type: :system do
     expect(page).to have_css("input[name='q']:focus")
     expect(page).to have_no_css(".tag-catalog", visible: true)
 
-    # Filter opens them (its arrow turns), and Done folds them again
+    # Filter opens them (its arrow turns), and folds them again
     click_button "Filter"
     expect(page).to have_css("button[aria-expanded='true']", text: "Filter")
     expect(page).to have_css(".tag-catalog", visible: true)
-    click_button "Done"
-    expect(page).to have_css("button[aria-expanded='false']:focus", text: "Filter")
+    click_button "Filter"
+    expect(page).to have_css("button[aria-expanded='false']", text: "Filter")
     expect(page).to have_no_css(".tag-catalog", visible: true)
 
     # A tag picked keeps the search and names the button, the tags folded again

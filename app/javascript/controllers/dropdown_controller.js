@@ -21,12 +21,6 @@ export default class extends Controller {
     this.#syncButton()
   }
 
-  // A button inside the menu that closes it: focus goes back to the toggle rather than being lost with the menu
-  hideAndFocusButton() {
-    this.hide()
-    this.buttonTarget.focus()
-  }
-
   #syncButton() {
     if (this.hasButtonTarget) {
       this.buttonTarget.setAttribute("aria-expanded", !this.menuTarget.classList.contains("hidden"))

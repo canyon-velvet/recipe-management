@@ -240,7 +240,6 @@ zh-CN:
       unit: "单位"
     index:
       count: "%{count} 道菜谱"
-      done: "完成"
       empty: "没有找到符合条件的菜谱。"
       eyebrow: "我的菜谱"
       filter: "筛选"

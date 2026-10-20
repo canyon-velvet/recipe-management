@@ -92,11 +92,6 @@
     <div id="recipes-filters" class="recipes-filters hidden md:block" data-dropdown-target="menu">
       <%= render "recipes/tag_catalog", tags_by_kind: @tags_by_kind, tag_counts: @tag_counts, total: @recipe_count,
                                         selected: @selected_tag, query: params[:q] %>
-      <div class="recipes-filters-actions">
-        <button type="button" class="btn-pill-primary btn-pill-sm" data-action="dropdown#hideAndFocusButton">
-          <%= t(".done") %>
-        </button>
-      </div>
     </div>
   </aside>
 </div>

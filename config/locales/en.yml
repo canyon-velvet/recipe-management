@@ -247,7 +247,6 @@ en:
       count:
         one: "%{count} recipe"
         other: "%{count} recipes"
-      done: "Done"
       empty: "No recipes match your search."
       eyebrow: "Your recipes"
       filter: "Filter"
