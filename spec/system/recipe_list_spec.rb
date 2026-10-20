@@ -130,6 +130,12 @@ RSpec.describe "The recipe list", type: :system do
     visit recipes_path
 
     expect(page).to have_no_css(".tag-catalog", visible: true)
+    # The heading, then "Search & filter", then the recipes
+    tops = page.evaluate_script(<<~JS)
+      [".recipes-header", ".recipes-filter-toggle", ".recipes-list"].map((selector) =>
+        document.querySelector(selector).getBoundingClientRect().top)
+    JS
+    expect(tops).to eq tops.sort
     click_button "Search & filter"
     expect(page).to have_css("button[aria-expanded='true']", text: "Search & filter")
 

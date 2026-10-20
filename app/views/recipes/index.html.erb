@@ -12,10 +12,10 @@
 <div class="recipes-page" data-controller="dropdown search-form modal">
   <%= turbo_frame_tag "recipe_results", target: "_top", class: "contents",
                       data: { action: "turbo:frame-missing->search-form#showWholePage" } do %>
-  <div class="recipes-header">
+  <div class="page-header recipes-header">
     <div>
       <p class="home-eyebrow"><%= t(".eyebrow") %></p>
-      <h1 class="recipes-title">
+      <h1 class="page-title">
         <% if @selected_tag %>
           <span aria-hidden="true"><%= @selected_tag.icon %></span> <%= @selected_tag.name %>
         <% else %>
