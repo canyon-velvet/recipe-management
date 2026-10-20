@@ -6,13 +6,11 @@ class RecipesController < ApplicationController
   def index
     # Unknown or malformed ?tags[]= are left out, so the list and the catalog always agree.
     @picked_tags = Tag.where(key: Array.wrap(params[:tags]).grep(String)).ordered.to_a
-    recipes = current_user.recipes.includes(:source, :tags)
-                          .search_by_name_ingredient_or_source(params[:q])
-                          .tagged_any_in_each_kind(@picked_tags)
-                          .order(updated_at: :desc)
-    @pagy, @recipes = pagy(recipes)
+    searched = current_user.recipes.search_by_name_ingredient_or_source(params[:q])
+    @pagy, @recipes = pagy(searched.includes(:source, :tags).tagged_any_in_each_kind(@picked_tags)
+                                   .order(updated_at: :desc))
     @tags_by_kind = Tag.by_kind
-    @tag_counts = Tag.recipe_counts_for(current_user, @picked_tags)
+    @tag_counts = Tag.recipe_counts_for(searched, @picked_tags)
     @recipe_count = current_user.recipes.count
   end
 

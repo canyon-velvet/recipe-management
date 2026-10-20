@@ -301,6 +301,21 @@ RSpec.describe "Recipes", type: :request do
       expect(listed).to eq [ "Pancakes" ]
     end
 
+    it "counts each tag among the recipes as searched, and a ticked tag at none as 0" do
+      lunch = create(:tag, key: "lunch", kind: "meal")
+      with_ingredients("Egg salad", "boiled eggs", tags: [ lunch ])
+
+      get recipes_path(q: "egg", tags: [ "breakfast" ])
+
+      expect(Nokogiri::HTML(response.body).css(".tag-catalog label").map { _1.text.squish })
+        .to eq [ "Breakfast 1", "Lunch 1" ]
+
+      get recipes_path(q: "rice", tags: [ "breakfast" ])
+
+      expect(listed).to be_empty
+      expect(Nokogiri::HTML(response.body).at_css(".tag-catalog label").text.squish).to eq "Breakfast 0"
+    end
+
     it "leaves out tags that are unknown or aren't a list of keys" do
       get recipes_path(tags: [ "breakfast", "nonsense" ])
       expect(listed).to eq [ "Pancakes" ]

@@ -1,9 +1,10 @@
 <%# locals: (tags_by_kind:, tag_counts:, total:, picked:, query:, matching:) %>
-<%# Tags to tick, grouped by kind, each with how many recipes ticking it would show (All recipes: all of them, and
-    clears the ticks). A tag at none is dimmed and can't be ticked, unless it already is. Ticking or unticking one
-    sends the form at once (the search box's text with it), back to page 1. Show closes the tags on a phone. %>
-<div id="recipes-tag-catalog">
-  <div class="tag-catalog" role="group" aria-label="<%= t(".label") %>" data-action="click->search-form#cancelSearch">
+<%# Tags to tick, grouped by kind, each with how many recipes (as searched) ticking it would show (All recipes: all
+    of them, and clears the ticks). A tag at none is dimmed and can't be ticked, unless it already is. Ticking or
+    unticking one sends the form at once (the search box's text with it), back to page 1. Show closes the tags on a
+    phone. %>
+<div id="recipes-tag-catalog" data-action="click->search-form#cancelSearch">
+  <div class="tag-catalog" role="group" aria-label="<%= t(".label") %>">
     <%= link_to recipes_path(q: query.presence),
                 class: "tag-catalog-link #{'tag-catalog-link--selected' if picked.empty?}",
                 aria: { current: ("page" if picked.empty?) },
@@ -26,7 +27,7 @@
                    stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
             </span>
             <span class="tag-catalog-name"><%= catalog_tag.name %></span>
-            <span class="tag-catalog-count"><%= tag_counts[catalog_tag.id] %></span>
+            <span class="tag-catalog-count"><%= tag_counts.fetch(catalog_tag.id, (0 if ticked)) %></span>
           </label>
         <% end %>
       </fieldset>
@@ -38,7 +39,7 @@
       <%= link_to t(".clear"), recipes_path(q: query.presence), class: "text-sm",
             data: { search_form_target: "link", turbo_frame: "recipe_results", turbo_action: "replace" } %>
     <% end %>
-    <button type="button" class="btn-pill-primary btn-pill-sm" data-action="dropdown#hide">
+    <button type="button" class="btn-pill-primary btn-pill-sm" data-action="dropdown#hideAndFocusButton">
       <%= t(".show", count: matching) %>
     </button>
   </div>

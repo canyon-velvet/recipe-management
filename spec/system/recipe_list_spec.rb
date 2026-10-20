@@ -184,7 +184,7 @@ RSpec.describe "The recipe list", type: :system do
     expect(page).to have_field("Search recipes by name, ingredient or source", with: "o")
     expect(page).to have_css(".recipes-filter-badge", text: "2")
     click_button "Show 1 recipe"
-    expect(page).to have_css("button[aria-expanded='false']", text: "Filter")
+    expect(page).to have_css("button[aria-expanded='false']:focus", text: "Filter")
     expect(page).to have_no_css(".tag-catalog", visible: true)
     expect(page).to have_css(".recipes-picked", text: "Soup")
     expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 390
