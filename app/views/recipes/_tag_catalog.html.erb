@@ -1,12 +1,13 @@
-<%# locals: (tags_by_kind:, tag_counts:, selected:, query:) %>
-<%# One tag at a time, grouped by kind, each with how many recipes have it. Tags none of the user's
-    recipes have are dimmed and not links. Switching tags keeps the search text (the search box updates the links as
+<%# locals: (tags_by_kind:, tag_counts:, total:, selected:, query:) %>
+<%# One tag at a time, grouped by kind, each with how many recipes have it (All recipes: all of them). Tags none of
+    the user's recipes have are dimmed and not links. Switching tags keeps the search text (the search box updates the links as
     you type) and goes back to page 1. %>
 <nav class="tag-catalog" aria-label="<%= t(".label") %>" data-action="click->search-form#cancelSearch">
   <%= link_to recipes_path(q: query.presence),
               class: "tag-catalog-link #{'tag-catalog-link--selected' unless selected}",
               aria: { current: ("page" unless selected) }, data: { search_form_target: "link" } do %>
     <span class="tag-catalog-name"><%= t(".all_recipes") %></span>
+    <span class="tag-catalog-count"><%= total %></span>
   <% end %>
 
   <% tags_by_kind.each do |kind, kind_tags| %>

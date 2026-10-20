@@ -1,4 +1,5 @@
-<%# The catalog (search and tags) beside the recipes; on a phone it folds behind "Search & filter" above them.
+<%# The heading across the top, then the catalog (search and tags) beside the recipes; on a phone it folds behind
+    "Search & filter" above them.
     Searching reloads only the frame (the heading and the recipes), so the search box keeps its focus as you type, and
     the open catalog stays open. It replaces the URL rather than adding to the history, so Back leaves the page.
     Links in the frame leave the page as usual (_top), and a response without the frame (the login page, once the
@@ -13,6 +14,7 @@
                       data: { action: "turbo:frame-missing->search-form#showWholePage" } do %>
   <div class="recipes-header">
     <div>
+      <p class="home-eyebrow"><%= t(".eyebrow") %></p>
       <h1 class="recipes-title">
         <% if @selected_tag %>
           <span aria-hidden="true"><%= @selected_tag.icon %></span> <%= @selected_tag.name %>
@@ -20,9 +22,10 @@
           <%= t(".title") %>
         <% end %>
       </h1>
-      <p class="recipes-count">
-        <%= t(".count", count: @pagy.count) %><%= " · #{t('.matching', query: params[:q])}" if params[:q].present? %>
-      </p>
+      <%# The sidebar counts each tag's recipes, All recipes too; only a search's count shows here %>
+      <% if params[:q].present? %>
+        <p class="recipes-count"><%= t(".count", count: @pagy.count) %> · <%= t(".matching", query: params[:q]) %></p>
+      <% end %>
     </div>
     <div class="recipes-actions">
       <%= link_to t(".import_recipe"), new_import_path, class: "btn-pill-secondary btn-pill-sm",
@@ -68,7 +71,7 @@
                              aria: { label: t(".search_label") },
                              data: { action: "input->search-form#submitLater" }, class: "recipes-search" %>
     <% end %>
-    <%= render "recipes/tag_catalog", tags_by_kind: @tags_by_kind, tag_counts: @tag_counts,
+    <%= render "recipes/tag_catalog", tags_by_kind: @tags_by_kind, tag_counts: @tag_counts, total: @recipe_count,
                                       selected: @selected_tag, query: params[:q] %>
   </aside>
 </div>

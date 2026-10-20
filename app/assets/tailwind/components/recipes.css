@@ -1,12 +1,11 @@
 @layer components {
-  /* Recipe list: the catalog in a sticky panel on the left; the heading and the recipes on the right. On a phone the
-     catalog folds behind "Search & filter" between the heading and the recipes (order). The heading and the recipes
-     sit in a display: contents Turbo frame, so they are grid items of the page. */
-  /* The heading's row is only as tall as the heading (auto); when the sidebar, which spans both rows, is the taller
-     side (a few recipes), its extra height goes to the recipes' row (1fr) instead of pushing the heading down. */
-  .recipes-page    { @apply grid gap-6 py-4 md:grid-cols-[15rem_1fr] md:grid-rows-[auto_1fr] md:gap-x-8; }
-  .recipes-header  { @apply flex flex-wrap items-end justify-between gap-4 md:col-start-2 md:row-start-1; }
-  .recipes-title   { @apply text-3xl font-bold tracking-tight text-gray-900; }
+  /* Recipe list: the heading across the top, like Meal Plans', then the catalog in a sticky panel on the left and the
+     recipes on the right, both starting level. On a phone the catalog folds behind "Search & filter" between the
+     heading and the recipes (order). The heading and the recipes sit in a display: contents Turbo frame, so they
+     are grid items of the page. */
+  .recipes-page    { @apply grid gap-6 py-4 md:grid-cols-[15rem_1fr] md:grid-rows-[auto_1fr] md:gap-8; }
+  .recipes-header  { @apply flex flex-wrap items-end justify-between gap-4 md:col-span-2 md:row-start-1; }
+  .recipes-title   { @apply mt-2 text-4xl font-bold tracking-tight text-gray-900; }
   .recipes-count   { @apply mt-1 text-sm text-gray-500; }
   .recipes-actions { @apply flex gap-2; }
   .recipes-filter-toggle {
@@ -16,7 +15,7 @@
   /* Hidden on a phone until "Search & filter" opens it: the element's own hidden md:block, as utilities beat these */
   .recipes-sidebar {
     @apply order-1 self-start rounded-3xl border border-gray-200 bg-white p-4
-           md:order-none md:col-start-1 md:row-span-2 md:row-start-1
+           md:order-none md:col-start-1 md:row-start-2
            md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] md:overflow-y-auto;
   }
   .recipes-search {

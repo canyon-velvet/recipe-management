@@ -241,13 +241,14 @@ zh-CN:
     index:
       count: "%{count} 道菜谱"
       empty: "没有找到符合条件的菜谱。"
+      eyebrow: "我的菜谱"
       import_recipe: "导入菜谱"
       matching: "匹配“%{query}”"
       new_recipe: "新建菜谱"
       search_and_filter: "搜索和筛选"
       search_label: "按菜名、食材或来源搜索菜谱"
       search_placeholder: "菜名、食材或来源"
-      title: "全部菜谱"
+      title: "菜谱"
     new:
       review_hint: "确认读取的内容后保存。标记为“新”的食材和来源会在保存时创建。"
       review_title: "审阅草稿"

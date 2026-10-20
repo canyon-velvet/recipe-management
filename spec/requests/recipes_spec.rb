@@ -49,7 +49,7 @@ RSpec.describe "Recipes", type: :request do
     get recipes_path
 
     catalog = Nokogiri::HTML(response.body).at_css(".tag-catalog")
-    expect(catalog.css("a").map { _1.text.squish }).to eq [ "All recipes", "Soup 1" ]
+    expect(catalog.css("a").map { _1.text.squish }).to eq [ "All recipes 1", "Soup 1" ]
     expect(catalog.text).not_to include(soup.icon)
   end
 

@@ -13,6 +13,7 @@ class RecipesController < ApplicationController
     @pagy, @recipes = pagy(recipes)
     @tags_by_kind = Tag.by_kind
     @tag_counts = Tag.recipe_counts_for(current_user)
+    @recipe_count = current_user.recipes.count
   end
 
   def search
