@@ -76,7 +76,8 @@
   .recipe-row-body    { @apply pointer-events-none relative min-w-0 flex-1; }
   .recipe-row-title   { @apply truncate font-semibold text-gray-900; }
   .recipe-row-summary { @apply mt-0.5 truncate text-sm text-gray-500; }
-  .recipe-row-facts   { @apply mt-2 flex gap-4 text-xs text-gray-500; }
+  /* The time and servings stay whole on one line; the tags take what's left, cut short */
+  .recipe-row-facts   { @apply mt-2 flex gap-4 whitespace-nowrap text-xs text-gray-500; }
   .recipe-row-tags    { @apply ml-auto truncate; }
   .recipe-row-menu    { @apply pointer-events-auto relative z-20 flex-none self-start; }
 
