@@ -41,7 +41,25 @@ RSpec.describe Tag do
       create(:recipe, user: user, tags: [ chinese, soup ])
       create(:recipe, tags: [ soup ]) # someone else's
 
-      expect(Tag.recipe_counts_for(user)).to eq(chinese.id => 3, soup.id => 1)
+      expect(Tag.recipe_counts_for(user.recipes)).to eq(chinese.id => 3, soup.id => 1)
+    end
+
+    it "counts each tag among the recipes with the tags picked in the other kinds: what picking it would show" do
+      user = create(:user)
+      chinese = create(:tag, key: "chinese", kind: "cuisine")
+      italian = create(:tag, key: "italian", kind: "cuisine")
+      soup = create(:tag, key: "soup", kind: "meal")
+      dinner = create(:tag, key: "dinner", kind: "meal")
+      create(:recipe, user: user, tags: [ chinese, soup ])
+      create(:recipe, user: user, tags: [ chinese, dinner ])
+      create(:recipe, user: user, tags: [ italian, soup ])
+
+      # Soup picked: the cuisines count among soups; the meals, picked or not, among everything (no cuisine picked)
+      expect(Tag.recipe_counts_for(user.recipes, [ soup ]))
+        .to eq(chinese.id => 1, italian.id => 1, soup.id => 2, dinner.id => 1)
+      # Soup and Chinese: each kind counts among the other's picks
+      expect(Tag.recipe_counts_for(user.recipes, [ soup, chinese ]))
+        .to eq(chinese.id => 1, italian.id => 1, soup.id => 1, dinner.id => 1)
     end
   end
 end

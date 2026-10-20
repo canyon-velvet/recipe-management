@@ -15,23 +15,45 @@ RSpec.describe "The recipe list", type: :system do
 
   def resize(width) = page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: width, height: 900) }
 
-  it "filters by a tag from the sidebar, which counts each tag's recipes and all of them" do
+  it "ticks several tags: any of them within a kind, every kind; each counts what ticking it would show" do
+    dinner = create(:tag, key: "dinner", kind: "meal")
+    create(:recipe, user: user, name: "Kung Pao Chicken", tags: [ chinese, dinner ])
     log_in_as user
     visit recipes_path
 
-    expect(page).to have_css("h1", text: "Recipes")
     expect(page).to have_no_css(".recipes-count") # the count is All recipes' in the sidebar
     within(".tag-catalog") do
-      expect(page).to have_link("All recipes 3")
-      expect(page).to have_link("Chinese 2")
-      expect(page).to have_link("Soup 2")
-      expect(page).to have_no_link("Italian") # none of the user's recipes
-      click_link "Chinese"
+      expect(page).to have_link("All recipes 4")
+      expect(page).to have_field("Chinese 3", type: "checkbox", visible: :all)
+      expect(page).to have_field("Italian", type: "checkbox", disabled: true, visible: :all) # none of the user's
+      find("label", text: "Soup").click
     end
+    expect(page).to have_css(".recipe-row", count: 2) # Hot and Sour Soup, Minestrone
+    expect(page).to have_css(".recipes-count", text: "2 recipes")
 
-    expect(page).to have_css("h1", text: "Chinese")
+    # Chinese too: Chinese soups. The counts follow: Chinese among soups, Soup among Chinese recipes.
+    within(".tag-catalog") { find("label", text: "Chinese").click }
+    expect(page).to have_css(".recipe-row", count: 1, text: "Hot and Sour Soup")
+    within(".tag-catalog") do
+      expect(page).to have_css("label", text: /\AChinese\s+1\z/)
+      expect(page).to have_css("label", text: /\ASoup\s+1\z/)
+      expect(page).to have_css("label", text: /\ADinner\s+1\z/)
+      # Dinner too, the same kind as Soup: Chinese soups or dinners
+      find("label", text: "Dinner").click
+    end
     expect(page).to have_css(".recipe-row", count: 2)
-    expect(page).to have_no_text("Minestrone")
+    expect(page).to have_css(".recipe-row", text: "Kung Pao Chicken")
+    expect(page).to have_css("h1", exact_text: "Recipes")
+    expect(Rack::Utils.parse_nested_query(URI(page.current_url).query)["tags"]).to match_array %w[chinese dinner soup]
+
+    # The ticked tags show above the list, each to untick, and Clear all
+    within(".recipes-picked") { click_link "Remove Soup" }
+    expect(page).to have_css(".recipe-row", count: 1, text: "Kung Pao Chicken")
+    expect(find_field("Soup", visible: :all)).not_to be_checked
+    within(".recipes-picked") { click_link "Clear all" }
+    expect(page).to have_css(".recipe-row", count: 4)
+    expect(page).to have_no_css(".recipes-picked")
+    expect(page).to have_no_checked_field(visible: :all)
   end
 
   it "starts the sidebar level with the first recipe, under a heading across the top, even when it is the taller" do
@@ -50,7 +72,7 @@ RSpec.describe "The recipe list", type: :system do
     expect(box.(".recipes-sidebar")["top"]).to be > box.(".recipes-header")["bottom"]
   end
 
-  it "searches as you type, keeping the search box's focus, and a tag picked next keeps the search" do
+  it "searches as you type, keeping the search box's focus, and a tag ticked next keeps the search" do
     log_in_as user
     visit recipes_path
 
@@ -59,11 +81,11 @@ RSpec.describe "The recipe list", type: :system do
     expect(page).to have_css(".recipe-row", count: 1, text: "Hot and Sour Soup")
     expect(page).to have_css("input[name='q']:focus")
     expect(page).to have_current_path(recipes_path(q: "soup"))
-    # However the tag is opened (a click, or a new tab)
-    expect(find(".tag-catalog").find_link("Soup")[:href]).to include("q=soup")
+    # However All recipes is opened (a click, or a new tab), it keeps the search
+    expect(find(".tag-catalog").find_link("All recipes")[:href]).to include("q=soup")
 
-    within(".tag-catalog") { click_link "Soup" }
-    expect(page).to have_css("h1", text: "Soup")
+    within(".tag-catalog") { find("label", text: "Chinese").click }
+    expect(page).to have_current_path(recipes_path(q: "soup", tags: [ "chinese" ]))
     expect(page).to have_css(".recipe-row", count: 1, text: "Hot and Sour Soup")
     expect(page).to have_field("Search recipes by name, ingredient or source", with: "soup")
   end
@@ -151,13 +173,20 @@ RSpec.describe "The recipe list", type: :system do
     expect(page).to have_css("button[aria-expanded='false']", text: "Filter")
     expect(page).to have_no_css(".tag-catalog", visible: true)
 
-    # A tag picked keeps the search and names the button, the tags folded again
+    # Ticking tags keeps the search and the tags open, the list following behind; Filter counts them, and Show
+    # folds the tags
     click_button "Filter"
-    within(".tag-catalog") { click_link "Soup" }
-    expect(page).to have_css("h1", text: "Soup")
+    within(".tag-catalog") { find("label", text: "Soup").click }
+    expect(page).to have_css(".recipes-count", text: "2 recipes · matching “o”")
+    within(".tag-catalog") { find("label", text: "Chinese").click }
+    expect(page).to have_css(".recipes-count", text: "1 recipe · matching “o”")
+    expect(page).to have_css(".tag-catalog", visible: true)
     expect(page).to have_field("Search recipes by name, ingredient or source", with: "o")
-    expect(page).to have_button("Filter: Soup")
+    expect(page).to have_css(".recipes-filter-badge", text: "2")
+    click_button "Show 1 recipe"
+    expect(page).to have_css("button[aria-expanded='false']:focus", text: "Filter")
     expect(page).to have_no_css(".tag-catalog", visible: true)
+    expect(page).to have_css(".recipes-picked", text: "Soup")
     expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 390
   end
 

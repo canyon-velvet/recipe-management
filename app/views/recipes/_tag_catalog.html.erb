@@ -1,32 +1,46 @@
-<%# locals: (tags_by_kind:, tag_counts:, total:, selected:, query:) %>
-<%# One tag at a time, grouped by kind, each with how many recipes have it (All recipes: all of them). Tags none of
-    the user's recipes have are dimmed and not links. Switching tags keeps the search text (the search box updates the
-    links as you type) and goes back to page 1. %>
-<nav class="tag-catalog" aria-label="<%= t(".label") %>" data-action="click->search-form#cancelSearch">
-  <%= link_to recipes_path(q: query.presence),
-              class: "tag-catalog-link #{'tag-catalog-link--selected' unless selected}",
-              aria: { current: ("page" unless selected) }, data: { search_form_target: "link" } do %>
-    <span class="tag-catalog-name"><%= t(".all_recipes") %></span>
-    <span class="tag-catalog-count"><%= total %></span>
-  <% end %>
-
-  <% tags_by_kind.each do |kind, kind_tags| %>
-    <p class="tag-catalog-kind"><%= Tag.kind_name(kind) %></p>
-    <% kind_tags.each do |catalog_tag| %>
-      <% chosen = catalog_tag == selected %>
-      <%# The selected tag stays selectable-looking even if none of the user's recipes have it. %>
-      <% if chosen || tag_counts.key?(catalog_tag.id) %>
-        <%= link_to recipes_path(tag: catalog_tag.key, q: query.presence),
-                    class: "tag-catalog-link #{'tag-catalog-link--selected' if chosen}",
-                    aria: { current: ("page" if chosen) }, data: { search_form_target: "link" } do %>
-          <span class="tag-catalog-name"><%= catalog_tag.name %></span>
-          <span class="tag-catalog-count"><%= tag_counts[catalog_tag.id] %></span>
-        <% end %>
-      <% else %>
-        <span class="tag-catalog-link tag-catalog-link--empty">
-          <span class="tag-catalog-name"><%= catalog_tag.name %></span>
-        </span>
-      <% end %>
+<%# locals: (tags_by_kind:, tag_counts:, total:, picked:, query:, matching:) %>
+<%# Tags to tick, grouped by kind, each with how many recipes (as searched) ticking it would show (All recipes: all
+    of them, and clears the ticks). A tag at none is dimmed and can't be ticked, unless it already is. Ticking or
+    unticking one sends the form at once (the search box's text with it), back to page 1. Show closes the tags on a
+    phone. %>
+<div id="recipes-tag-catalog" data-action="click->search-form#cancelSearch">
+  <div class="tag-catalog" role="group" aria-label="<%= t(".label") %>">
+    <%= link_to recipes_path(q: query.presence),
+                class: "tag-catalog-link #{'tag-catalog-link--selected' if picked.empty?}",
+                aria: { current: ("page" if picked.empty?) },
+                data: { search_form_target: "link", turbo_frame: "recipe_results", turbo_action: "replace" } do %>
+      <span class="tag-catalog-name"><%= t(".all_recipes") %></span>
+      <span class="tag-catalog-count"><%= total %></span>
     <% end %>
-  <% end %>
-</nav>
+
+    <% tags_by_kind.each do |kind, kind_tags| %>
+      <fieldset class="tag-catalog-group">
+        <legend class="tag-catalog-kind"><%= Tag.kind_name(kind) %></legend>
+        <% kind_tags.each do |catalog_tag| %>
+          <% ticked = picked.include?(catalog_tag) %>
+          <label class="tag-catalog-option">
+            <input type="checkbox" name="tags[]" value="<%= catalog_tag.key %>" class="tag-catalog-check"
+                   <%= "checked" if ticked %> <%= "disabled" unless ticked || tag_counts.key?(catalog_tag.id) %>
+                   data-action="search-form#submitNow">
+            <span class="tag-catalog-box" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                   stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+            </span>
+            <span class="tag-catalog-name"><%= catalog_tag.name %></span>
+            <span class="tag-catalog-count"><%= tag_counts.fetch(catalog_tag.id, (0 if ticked)) %></span>
+          </label>
+        <% end %>
+      </fieldset>
+    <% end %>
+  </div>
+
+  <div class="tag-catalog-actions">
+    <% if picked.any? %>
+      <%= link_to t(".clear"), recipes_path(q: query.presence), class: "text-sm",
+            data: { search_form_target: "link", turbo_frame: "recipe_results", turbo_action: "replace" } %>
+    <% end %>
+    <button type="button" class="btn-pill-primary btn-pill-sm" data-action="dropdown#hideAndFocusButton">
+      <%= t(".show", count: matching) %>
+    </button>
+  </div>
+</div>

@@ -15,16 +15,12 @@
   <div class="page-header recipes-header">
     <div>
       <p class="home-eyebrow"><%= t(".eyebrow") %></p>
-      <h1 class="page-title">
-        <% if @selected_tag %>
-          <span aria-hidden="true"><%= @selected_tag.icon %></span> <%= @selected_tag.name %>
-        <% else %>
-          <%= t(".title") %>
-        <% end %>
-      </h1>
-      <%# The sidebar counts each tag's recipes, All recipes too; only a search's count shows here %>
-      <% if params[:q].present? %>
-        <p class="recipes-count"><%= t(".count", count: @pagy.count) %> · <%= t(".matching", query: params[:q]) %></p>
+      <h1 class="page-title"><%= t(".title") %></h1>
+      <%# The sidebar counts each tag's recipes, All recipes too; here only a search's or the ticked tags' count %>
+      <% if params[:q].present? || @picked_tags.any? %>
+        <p class="recipes-count">
+          <%= t(".count", count: @pagy.count) %><%= " · #{t('.matching', query: params[:q])}" if params[:q].present? %>
+        </p>
       <% end %>
     </div>
     <div class="recipes-actions">
@@ -35,6 +31,7 @@
   </div>
 
   <section class="recipes-results">
+    <%= render "recipes/picked_tags", picked: @picked_tags, query: params[:q] if @picked_tags.any? %>
     <% if @recipes.any? %>
       <ul class="recipes-list">
         <% @recipes.each do |recipe| %>
@@ -47,6 +44,15 @@
 
     <%= render "shared/pagination", pagy: @pagy %>
   </section>
+
+  <%# A search or a tick reloads only this frame; the tags' ticks and counts, and Filter's count, follow it here %>
+  <% if turbo_frame_request? %>
+    <%= turbo_stream.replace "recipes-tag-catalog", method: :morph, partial: "recipes/tag_catalog",
+                             locals: { tags_by_kind: @tags_by_kind, tag_counts: @tag_counts, total: @recipe_count,
+                                       picked: @picked_tags, query: params[:q], matching: @pagy.count } %>
+    <%= turbo_stream.update "recipes-filter-picked", partial: "recipes/filter_picked",
+                            locals: { count: @picked_tags.size } %>
+  <% end %>
   <% end %>
 
   <%# Outside the frame, so searching doesn't redraw it %>
@@ -56,42 +62,38 @@
     <%= render "shared/modal_frame", frame: "share_recipe", labelledby: "share_recipe_title" %>
   </div>
 
-  <%# Outside the frame, so searching doesn't redraw it and lose whether the tags are open. On a phone the search box
-      is always shown, with the tags folded behind Filter beside it (named after the picked tag, if any). %>
+  <%# Outside the frame, so searching or ticking a tag doesn't redraw it and lose the search box's focus or whether the
+      tags are open. One form: the search box and the tags' ticks go together. On a phone the search box is always
+      shown, with the tags folded behind Filter beside it (with how many are ticked). %>
   <aside class="recipes-sidebar">
-    <div class="recipes-search-row">
-      <%= form_with url: recipes_path, method: :get, class: "recipes-search-form",
-                    data: { search_form_target: "form", turbo_frame: "recipe_results",
-                            turbo_action: "replace" } do |f| %>
-        <%# Searching keeps the selected tag. %>
-        <%= hidden_field_tag :tag, @selected_tag.key if @selected_tag %>
+    <%= form_with url: recipes_path, method: :get,
+                  data: { search_form_target: "form", turbo_frame: "recipe_results", turbo_action: "replace" } do |f| %>
+      <div class="recipes-search-row">
         <%= f.search_field :q, value: params[:q], placeholder: t(".search_placeholder"),
                                aria: { label: t(".search_label") },
                                data: { action: "input->search-form#submitLater" }, class: "recipes-search" %>
-      <% end %>
-      <button type="button" class="recipes-filter-toggle group" data-action="dropdown#toggle"
-              data-dropdown-target="button" aria-controls="recipes-filters" aria-expanded="false"
-              <%= tag.attributes(aria: { label: (t(".filter_with_tag", tag: @selected_tag.name) if @selected_tag) }) %>>
-        <svg class="size-4 flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" aria-hidden="true">
-          <path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>
-        </svg>
-        <% if @selected_tag %>
-          <span class="truncate"><%= @selected_tag.name %></span>
-        <% else %>
+        <button type="button" class="recipes-filter-toggle group" data-action="dropdown#toggle"
+                data-dropdown-target="button" aria-controls="recipes-filters" aria-expanded="false">
+          <svg class="size-4 flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>
+          </svg>
           <%= t(".filter") %>
-        <% end %>
-        <svg class="size-4 flex-none transition-transform group-aria-expanded:rotate-180" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
-             aria-hidden="true">
-          <path d="M6 9l6 6 6-6"/>
-        </svg>
-      </button>
-    </div>
+          <span id="recipes-filter-picked" class="contents">
+            <%= render "recipes/filter_picked", count: @picked_tags.size %>
+          </span>
+          <svg class="size-4 flex-none transition-transform group-aria-expanded:rotate-180" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
+      </div>
 
-    <div id="recipes-filters" class="recipes-filters hidden md:block" data-dropdown-target="menu">
-      <%= render "recipes/tag_catalog", tags_by_kind: @tags_by_kind, tag_counts: @tag_counts, total: @recipe_count,
-                                        selected: @selected_tag, query: params[:q] %>
-    </div>
+      <div id="recipes-filters" class="recipes-filters hidden md:block" data-dropdown-target="menu">
+        <%= render "recipes/tag_catalog", tags_by_kind: @tags_by_kind, tag_counts: @tag_counts, total: @recipe_count,
+                                          picked: @picked_tags, query: params[:q], matching: @pagy.count %>
+      </div>
+    <% end %>
   </aside>
 </div>

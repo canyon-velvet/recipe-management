@@ -10,6 +10,12 @@ export default class extends Controller {
     this.timeout = setTimeout(() => this.formTarget.requestSubmit(), 350)
   }
 
+  // A tag ticked or unticked: the list follows at once, with the search box's text as it is
+  submitNow() {
+    clearTimeout(this.timeout)
+    this.formTarget.requestSubmit()
+  }
+
   // Following a link: the search it carries goes with it, so the one still waiting isn't sent as well. A click
   // anywhere else (a heading, a dimmed tag) leaves the search to go.
   cancelSearch(event) {

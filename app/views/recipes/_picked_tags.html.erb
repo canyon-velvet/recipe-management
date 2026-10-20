@@ -1,0 +1,15 @@
+<%# locals: (picked:, query:) %>
+<%# The ticked tags, each to untick with its ×, and Clear all %>
+<div class="recipes-picked" data-action="click->search-form#cancelSearch">
+  <% picked.each do |picked_tag| %>
+    <%= link_to recipes_path(tags: (picked - [ picked_tag ]).map(&:key), q: query.presence),
+                class: "recipes-picked-tag", aria: { label: t(".remove", tag: picked_tag.name) },
+                data: { search_form_target: "link", turbo_frame: "recipe_results", turbo_action: "replace" } do %>
+      <%= picked_tag.name %>
+      <svg class="size-3 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+           stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    <% end %>
+  <% end %>
+  <%= link_to t(".clear_all"), recipes_path(q: query.presence), class: "text-sm",
+        data: { search_form_target: "link", turbo_frame: "recipe_results", turbo_action: "replace" } %>
+</div>

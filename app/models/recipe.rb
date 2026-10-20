@@ -57,6 +57,13 @@ class Recipe < ApplicationRecord
   scope :tagged, ->(tag_key) {
     where(id: RecipeTag.joins(:tag).where(tags: { key: tag_key }).select(:recipe_id)) if tag_key.present?
   }
+  # The recipe list's tag filter: within a kind, any of the picked tags; across kinds, all of them. Breakfast + Lunch +
+  # Chinese is the Chinese recipes for breakfast or lunch.
+  scope :tagged_any_in_each_kind, ->(tags) {
+    tags.group_by(&:kind).each_value.inject(all) do |recipes, kind_tags|
+      recipes.where(id: RecipeTag.where(tag: kind_tags).select(:recipe_id))
+    end
+  }
   # Recipes with an ingredient whose name contains the text, e.g. "egg" finds "eggs" and "egg yolk".
   scope :with_ingredient, ->(text) { where(id: RecipeIngredient.named_like(text).select(:recipe_id)) }
   # What a card in the assistant's chat reads: the tags for its emoji, the ingredients for avoided items.
