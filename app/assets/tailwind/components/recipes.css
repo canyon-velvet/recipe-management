@@ -1,46 +1,59 @@
 @layer components {
   /* Recipe list: the heading across the top, like Meal Plans', then the catalog in a sticky panel on the left and the
-     recipes on the right, both starting level. On a phone the catalog folds behind "Search & filter" between the
-     heading and the recipes (order). The heading and the recipes sit in a display: contents Turbo frame, so they
-     are grid items of the page. */
+     recipes on the right, both starting level. On a phone the search box comes between the heading and the recipes
+     (order), with Filter beside it opening the tags as chips. The heading and the recipes sit in a display: contents
+     Turbo frame, so they are grid items of the page. */
   .recipes-page    { @apply grid gap-6 py-4 md:grid-cols-[15rem_1fr] md:gap-8; }
   /* With .page-header, so it looks like Meal Plans' */
   .recipes-header  { @apply md:col-span-2 md:row-start-1; }
   .recipes-count   { @apply mt-1 text-sm text-gray-500; }
   .recipes-actions { @apply flex gap-2; }
-  .recipes-filter-toggle {
-    @apply order-1 w-full cursor-pointer rounded-3xl border border-gray-200 bg-white px-5 py-3 text-left font-medium
-           text-gray-800 md:hidden;
-  }
-  /* Hidden on a phone until "Search & filter" opens it: the element's own hidden md:block, as utilities beat these */
+  /* A plain column on a phone; the white panel from md */
   .recipes-sidebar {
-    @apply order-1 self-start rounded-3xl border border-gray-200 bg-white p-4
-           md:order-none md:col-start-1 md:row-start-2
+    @apply order-1 min-w-0 self-start
+           md:order-none md:col-start-1 md:row-start-2 md:rounded-3xl md:border md:border-gray-200 md:bg-white md:p-4
            md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] md:overflow-y-auto;
   }
+  .recipes-search-row  { @apply flex gap-2; }
+  .recipes-search-form { @apply min-w-0 flex-1; }
+  /* 16px on a phone, so iOS doesn't zoom in on it; a placeholder too long for the box ends in … */
   .recipes-search {
-    @apply w-full rounded-xl border-0 bg-gray-100 px-3 py-2 text-sm focus:ring-2 focus:ring-sectiontext/30;
+    @apply min-h-12 w-full text-ellipsis rounded-2xl border border-gray-200 bg-white px-3 text-base
+           focus:ring-2 focus:ring-sectiontext/30
+           md:min-h-0 md:rounded-xl md:border-0 md:bg-gray-100 md:px-3 md:py-2 md:text-sm;
   }
+  .recipes-filter-toggle {
+    @apply flex max-w-40 flex-none cursor-pointer items-center gap-1.5 rounded-2xl border border-gray-200 bg-white px-3
+           text-sm font-medium text-sectiontext
+           aria-expanded:border-sectiontext aria-expanded:bg-sectionbackground md:hidden;
+  }
+  /* The tags: a white panel under the search on a phone, hidden until Filter opens it (the element's own hidden
+     md:block, as utilities beat these); part of the sidebar's panel from md */
+  .recipes-filters         { @apply mt-2 rounded-3xl border border-gray-200 bg-white p-4 md:mt-0 md:border-0 md:p-0; }
+  .recipes-filters-actions { @apply mt-4 flex justify-end md:hidden; }
   .recipes-results { @apply order-2 min-w-0 md:order-none md:col-start-2 md:row-start-2; }
   .recipes-list    { @apply flex flex-col gap-3; }
 
-  /* Tag catalog: each kind's tags with counts, one selectable at a time */
-  .tag-catalog { @apply mt-3 flex flex-col; }
+  /* Tag catalog: each kind's tags with counts, one selectable at a time. Chips on a phone, a list from md. */
+  .tag-catalog { @apply flex flex-wrap gap-2 md:mt-3 md:flex-col md:flex-nowrap md:gap-0; }
   .tag-catalog-kind {
-    @apply mt-4 mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400;
+    @apply mt-2 basis-full text-[11px] font-semibold uppercase tracking-wider text-gray-400 md:mt-4 md:mb-1 md:px-3;
   }
   .tag-catalog-link {
-    @apply flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50;
+    @apply inline-flex h-9 items-center gap-1.5 rounded-full bg-sectionbackground px-3.5 text-sm text-gray-700
+           md:flex md:h-auto md:gap-2 md:rounded-xl md:bg-transparent md:px-3 md:py-1.5 md:hover:bg-gray-50;
   }
   .tag-catalog-link--selected {
-    @apply bg-sectionbackground font-medium text-gray-900 hover:bg-sectionbackground;
+    @apply bg-sectiontext font-medium text-white
+           md:bg-sectionbackground md:text-gray-900 md:hover:bg-sectionbackground;
   }
   /* A tag none of the user's recipes have: shown, but dimmed and not a link */
   .tag-catalog-link--empty {
-    @apply text-gray-300 hover:bg-transparent cursor-default;
+    @apply bg-gray-50 text-gray-300 cursor-default md:bg-transparent md:hover:bg-transparent;
   }
-  .tag-catalog-name  { @apply flex-1; }
+  .tag-catalog-name  { @apply md:flex-1; }
   .tag-catalog-count { @apply text-xs text-gray-400; }
+  .tag-catalog-link--selected .tag-catalog-count { @apply text-white/75 md:text-gray-400; }
 
   /* A recipe card, all white: its emoji above a hairline (white, not cream, so the cards stand apart from the home
      page's cream hero), then the name with the ⋮ menu, a line or two of description, and the facts.

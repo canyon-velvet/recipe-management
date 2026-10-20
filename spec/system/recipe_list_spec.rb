@@ -124,31 +124,40 @@ RSpec.describe "The recipe list", type: :system do
     expect(hit).to eq "Delete"
   end
 
-  it "folds the sidebar behind “Search & filter” on a phone" do
+  it "shows the search box on a phone, with the tags folded behind Filter" do
     resize(390)
     log_in_as user
     visit recipes_path
 
-    expect(page).to have_no_css(".tag-catalog", visible: true)
-    # The heading, then "Search & filter", then the recipes
+    # The heading, then the search box with Filter, then the recipes; the tags start folded
     tops = page.evaluate_script(<<~JS)
-      [".recipes-header", ".recipes-filter-toggle", ".recipes-list"].map((selector) =>
+      [".recipes-header", ".recipes-search-row", ".recipes-list"].map((selector) =>
         document.querySelector(selector).getBoundingClientRect().top)
     JS
     expect(tops).to eq tops.sort
-    click_button "Search & filter"
-    expect(page).to have_css("button[aria-expanded='true']", text: "Search & filter")
+    expect(page).to have_no_css(".tag-catalog", visible: true)
 
-    # Searching leaves it open, and the search box focused (the keyboard stays up)
+    # Searching needs no tap first, and leaves the tags folded
     fill_in "Search recipes by name, ingredient or source", with: "o"
     expect(page).to have_text("matching “o”")
-    expect(page).to have_css(".tag-catalog", visible: true)
     expect(page).to have_css("input[name='q']:focus")
+    expect(page).to have_no_css(".tag-catalog", visible: true)
 
+    # Filter opens them (its arrow turns), and Done folds them again
+    click_button "Filter"
+    expect(page).to have_css("button[aria-expanded='true']", text: "Filter")
+    expect(page).to have_css(".tag-catalog", visible: true)
+    click_button "Done"
+    expect(page).to have_css("button[aria-expanded='false']", text: "Filter")
+    expect(page).to have_no_css(".tag-catalog", visible: true)
+
+    # A tag picked keeps the search and names the button, the tags folded again
+    click_button "Filter"
     within(".tag-catalog") { click_link "Soup" }
-
     expect(page).to have_css("h1", text: "Soup")
-    expect(page).to have_button("Search & filter · Soup")
+    expect(page).to have_field("Search recipes by name, ingredient or source", with: "o")
+    expect(page).to have_button("Filter: Soup")
+    expect(page).to have_no_css(".tag-catalog", visible: true)
     expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 390
   end
 
