@@ -42,14 +42,15 @@ RSpec.describe "Recipes", type: :request do
     expect(details.css("label, legend").map { _1.text.squish }).to include("Tags", "Servings", "Source", "Recipe link")
   end
 
-  it "shows the sidebar's tags without their emoji" do
+  it "shows the sidebar's tags without their emoji, counting the user's own recipes" do
     soup = create(:tag, key: "soup", kind: "meal")
     create(:recipe, user: user, tags: [ soup ])
+    create(:recipe, tags: [ soup ]) # someone else's
 
     get recipes_path
 
     catalog = Nokogiri::HTML(response.body).at_css(".tag-catalog")
-    expect(catalog.css("a").map { _1.text.squish }).to eq [ "All recipes", "Soup 1" ]
+    expect(catalog.css("a").map { _1.text.squish }).to eq [ "All recipes 1", "Soup 1" ]
     expect(catalog.text).not_to include(soup.icon)
   end
 

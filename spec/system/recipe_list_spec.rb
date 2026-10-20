@@ -15,11 +15,14 @@ RSpec.describe "The recipe list", type: :system do
 
   def resize(width) = page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: width, height: 900) }
 
-  it "filters by a tag from the sidebar, which counts each tag's recipes" do
+  it "filters by a tag from the sidebar, which counts each tag's recipes and all of them" do
     log_in_as user
     visit recipes_path
 
+    expect(page).to have_css("h1", text: "Recipes")
+    expect(page).to have_no_css(".recipes-count") # the count is All recipes' in the sidebar
     within(".tag-catalog") do
+      expect(page).to have_link("All recipes 3")
       expect(page).to have_link("Chinese 2")
       expect(page).to have_link("Soup 2")
       expect(page).to have_no_link("Italian") # none of the user's recipes
@@ -27,12 +30,11 @@ RSpec.describe "The recipe list", type: :system do
     end
 
     expect(page).to have_css("h1", text: "Chinese")
-    expect(page).to have_text("2 recipes")
     expect(page).to have_css(".recipe-row", count: 2)
     expect(page).to have_no_text("Minestrone")
   end
 
-  it "keeps the heading level with the top of the sidebar, even when the sidebar is the taller" do
+  it "starts the sidebar level with the first recipe, under a heading across the top, even when it is the taller" do
     %w[breakfast lunch dinner snack dessert appetizer salad drink].each { create(:tag, key: _1, kind: "meal") }
     %w[japanese mexican american].each { create(:tag, key: _1, kind: "cuisine") }
     log_in_as user
@@ -41,11 +43,11 @@ RSpec.describe "The recipe list", type: :system do
     box = lambda do |selector|
       page.evaluate_script("document.querySelector('#{selector}').getBoundingClientRect().toJSON()")
     end
-    # The sidebar is taller than the heading and the list together...
-    heading_and_list = box.(".recipes-header")["height"] + box.(".recipes-list")["height"]
-    expect(box.(".recipes-sidebar")["height"]).to be > heading_and_list
-    # ...and the heading still starts where the sidebar does
-    expect(box.(".recipes-title")["top"]).to be_within(2).of(box.(".recipes-sidebar")["top"])
+    # The sidebar is taller than the list...
+    expect(box.(".recipes-sidebar")["height"]).to be > box.(".recipes-list")["height"]
+    # ...and both start together, below the heading
+    expect(box.(".recipes-list")["top"]).to be_within(1).of(box.(".recipes-sidebar")["top"])
+    expect(box.(".recipes-sidebar")["top"]).to be > box.(".recipes-header")["bottom"]
   end
 
   it "searches as you type, keeping the search box's focus, and a tag picked next keeps the search" do
@@ -128,6 +130,12 @@ RSpec.describe "The recipe list", type: :system do
     visit recipes_path
 
     expect(page).to have_no_css(".tag-catalog", visible: true)
+    # The heading, then "Search & filter", then the recipes
+    tops = page.evaluate_script(<<~JS)
+      [".recipes-header", ".recipes-filter-toggle", ".recipes-list"].map((selector) =>
+        document.querySelector(selector).getBoundingClientRect().top)
+    JS
+    expect(tops).to eq tops.sort
     click_button "Search & filter"
     expect(page).to have_css("button[aria-expanded='true']", text: "Search & filter")
 

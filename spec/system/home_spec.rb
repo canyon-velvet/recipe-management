@@ -14,7 +14,7 @@ RSpec.describe "The home page", type: :system do
     expect(page).to have_css("header.is-scrolled")
 
     click_link "All Recipes"
-    expect(page).to have_css("h1", text: "All recipes")
+    expect(page).to have_css("h1", text: "Recipes")
     expect(navbar_color).to eq "rgb(247, 242, 237)"
   end
 end
