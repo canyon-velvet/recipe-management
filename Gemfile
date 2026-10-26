@@ -44,7 +44,7 @@ gem "mission_control-jobs", "~> 1.1"
 gem "ssrf_filter", "~> 1.6"
 
 # Claude cleans imported recipes (official Anthropic SDK)
-gem "anthropic", "~> 1.80"
+gem "anthropic", "~> 2.2"
 
 # Tells an imported screenshot's type from its bytes
 gem "marcel", "~> 1.0"
