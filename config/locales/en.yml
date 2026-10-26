@@ -168,8 +168,6 @@ en:
       browse_recipes: "Browse recipes"
       import_recipe: "Import from a link"
       ask_assistant: "Ask the assistant"
-      search_label: "Search recipes by name, ingredient or source"
-      search_placeholder: "Name, ingredient, source"
     stats:
       recipes: "Recipes"
       this_week: "This week"

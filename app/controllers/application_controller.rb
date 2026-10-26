@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   before_action :authenticate_user!
-  # "Today" and "this week" (tonight's dinner, the current meal plan) follow the user's time zone
+  # "Today" and "this week" (the current meal plan) follow the user's time zone
   around_action :use_time_zone, if: :logged_in?
 
   helper_method :current_user, :logged_in?, :assistant_available?, :assistant_open?

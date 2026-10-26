@@ -22,8 +22,8 @@
   <%= form_with url: recipes_path, method: :get, class: "home-search", html: { role: "search" } do |f| %>
     <svg class="size-[18px] flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
          stroke-linecap="round" aria-hidden="true"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"/></svg>
-    <%= f.search_field :q, placeholder: t(".search_placeholder"), aria: { label: t(".search_label") },
-                           class: "home-search-input" %>
+    <%= f.search_field :q, placeholder: t("recipes.index.search_placeholder"),
+                           aria: { label: t("recipes.index.search_label") }, class: "home-search-input" %>
   <% end %>
 
   <%= render "home/stats", recipe_count: recipe_count, meal_plan: meal_plan %>
