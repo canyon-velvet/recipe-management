@@ -214,7 +214,7 @@ GEM
     opentelemetry-api (1.11.1)
       logger
     ostruct (0.6.3)
-    pagy (43.7.1)
+    pagy (43.8.1)
       json
       uri
       yaml
@@ -422,7 +422,7 @@ DEPENDENCIES
   kamal
   marcel (~> 1.0)
   mission_control-jobs (~> 1.1)
-  pagy (~> 43.7)
+  pagy (~> 43.8)
   pg (~> 1.7)
   playwright-ruby-client (= 1.63.0)
   propshaft
