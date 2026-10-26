@@ -35,7 +35,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 # Background jobs, Action Cable and Rails.cache, each kept in the app's Postgres database: no Redis. The jobs run
 # inside Puma (config/puma.rb).
 gem "solid_queue", "~> 1.2"
-gem "solid_cable", "~> 3.0"
+gem "solid_cable", "~> 4.1"
 gem "solid_cache", "~> 1.0"
 # Admins' dashboard of the jobs: queued, running, failed
 gem "mission_control-jobs", "~> 1.1"
