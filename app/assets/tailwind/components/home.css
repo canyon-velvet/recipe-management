@@ -1,37 +1,55 @@
 @layer components {
-  /* The home page's hero: a cream band, wall to wall, with the intro on the left and the photo on the right (stacked
-     on a phone). It meets the navbar, which is the same cream, so they read as one. */
+  /* The home page's hero: a cream band, wall to wall, with the intro on the left and the photo on the right. On a
+     phone the photo runs edge to edge across the top and the intro sits on a cream sheet over its foot, all on one
+     screen. It meets the navbar, which is the same cream, so they read as one. */
   .home-hero {
     @apply -mt-6 bg-sectionbackground;
   }
   .home-hero-inner {
-    @apply container mx-auto grid items-center gap-12 px-5 py-12 md:grid-cols-2 md:py-20;
+    @apply container mx-auto grid grid-cols-[minmax(0,1fr)] items-center px-5 pb-10 md:grid-cols-2 md:gap-12 md:py-20;
+  }
+  .home-intro {
+    @apply relative -mx-5 -mt-7 rounded-t-[1.75rem] bg-sectionbackground px-5 pt-6
+           md:m-0 md:rounded-none md:p-0;
   }
 
   .home-eyebrow { @apply text-xs font-semibold uppercase tracking-[0.25em] text-sectiontext-light; }
   .home-title {
-    @apply mt-4 text-4xl font-bold leading-[1.05] tracking-tight text-gray-900 md:text-6xl;
+    @apply mt-3 text-3xl font-bold leading-[1.05] tracking-tight text-gray-900 md:mt-4 md:text-6xl;
   }
-  .home-lead    { @apply mt-5 max-w-md text-lg text-gray-600; }
-  .home-actions { @apply mt-8 flex flex-wrap items-center gap-3; }
+  .home-lead    { @apply mt-3 max-w-md text-gray-600 md:mt-5 md:text-lg; }
+  /* Side by side on a phone too, a little smaller. The assistant's button stays off a phone's: its ✦ is in the
+     navbar there, and the hero keeps to one screen. */
+  .home-actions { @apply mt-5 flex flex-wrap items-center gap-2.5 md:mt-8 md:gap-3; }
+  .home-actions > * { @apply max-md:px-4 max-md:py-2.5; }
+  .home-actions-assistant { @apply max-md:hidden; }
+
+  /* Opens the recipe list with the search. 16px text, so a phone doesn't zoom in on it. */
+  .home-search {
+    @apply mt-4 flex h-12 max-w-md items-center gap-2.5 rounded-2xl border border-sectiontext/20 bg-white px-4
+           text-gray-400 focus-within:ring-2 focus-within:ring-sectiontext/30 md:mt-6;
+  }
+  .home-search-input {
+    @apply min-w-0 flex-1 border-0 bg-transparent p-0 text-base text-ellipsis text-gray-900 focus:ring-0;
+  }
 
   /* Recipes · this week · to buy */
-  .home-stats       { @apply mt-12 grid max-w-md grid-cols-3 gap-6 border-t border-sectiontext/15 pt-6; }
+  .home-stats {
+    @apply mt-6 grid max-w-md grid-cols-3 gap-6 border-t border-sectiontext/15 pt-4 md:mt-12 md:pt-6;
+  }
   .home-stat-label  { @apply text-xs uppercase tracking-wider text-gray-500; }
-  .home-stat-value  { @apply mt-1 text-3xl font-bold text-gray-900; }
+  .home-stat-value  { @apply mt-1 text-2xl font-bold text-gray-900 md:text-3xl; }
   .home-stat-unit   { @apply text-sm font-normal text-gray-500; }
 
-  /* The photo, in a box of its own shape, with tonight's dinner on a card over its corner (inside it on a phone) */
+  /* The photo, in a box of its own shape (the login page's too) */
   .home-photo       { @apply relative mx-auto w-full max-w-md; }
   .home-photo-image { @apply aspect-[4/5] w-full rounded-[2rem] object-cover shadow-2xl; }
-  .home-tonight {
-    @apply absolute -bottom-6 left-4 max-w-64 rounded-2xl bg-white/95 p-4 shadow-xl backdrop-blur md:-left-6;
+  /* The home page's: on a phone, first and edge to edge, a short band rather than the full 4:5 */
+  .home-photo--hero { @apply -mx-5 order-first w-auto max-w-none md:order-none md:mx-auto md:w-full md:max-w-md; }
+  .home-photo--hero .home-photo-image {
+    @apply aspect-auto h-48 rounded-none object-[center_58%] shadow-none
+           md:aspect-[4/5] md:h-auto md:rounded-[2rem] md:object-center md:shadow-2xl;
   }
-  .home-tonight-label  { @apply text-xs font-semibold uppercase tracking-wider text-sectiontext-light; }
-  .home-tonight-recipe { @apply mt-1 block font-semibold text-gray-900; }
-  a.home-tonight-recipe { @apply hover:underline; }
-  .home-tonight-more   { @apply text-sm text-gray-500; }
-  .home-tonight-link   { @apply mt-1 inline-block text-sm text-sectiontext hover:underline; }
 
   /* Recently updated recipes, below the hero */
   .home-recent         { @apply py-12; }

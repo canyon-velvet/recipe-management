@@ -165,6 +165,8 @@ zh-CN:
       browse_recipes: "浏览菜谱"
       import_recipe: "从链接导入"
       ask_assistant: "问问助手"
+      search_label: "按菜名、食材或来源搜索菜谱"
+      search_placeholder: "菜名、食材或来源"
     stats:
       recipes: "菜谱"
       this_week: "本周"
@@ -172,10 +174,6 @@ zh-CN:
       to_buy: "待买"
     photo:
       image_alt: "早餐：吐司上的煎蛋"
-      tonight: "今晚"
-      more: "+%{count}"
-      nothing_planned: "还没有安排"
-      plan_the_week: "安排这一周 →"
     recent_recipes:
       title: "最近更新"
       all_recipes: "全部菜谱 →"

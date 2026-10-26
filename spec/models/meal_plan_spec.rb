@@ -36,22 +36,4 @@ RSpec.describe MealPlan do
       end
     end
   end
-
-  describe "#recipes_for" do
-    it "gives the recipes planned for one meal on a date" do
-      dinner = create(:recipe, user: user)
-      plan.meal_slots.find_by!(day_of_week: "friday", meal_type: "dinner").recipes << dinner
-
-      expect(plan.recipes_for(monday + 4.days, :dinner)).to eq [ dinner ]
-      expect(plan.recipes_for(monday + 4.days, :lunch)).to eq []
-      expect(plan.recipes_for(monday + 3.days, :dinner)).to eq []
-    end
-
-    it "gives none for a date outside the plan's week" do
-      plan.meal_slots.find_by!(day_of_week: "sunday", meal_type: "dinner").recipes << create(:recipe, user: user)
-
-      expect(plan.recipes_for(monday - 1.day, :dinner)).to eq []
-      expect(plan.recipes_for(monday + 13.days, :dinner)).to eq []
-    end
-  end
 end

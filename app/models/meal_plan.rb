@@ -47,14 +47,6 @@ class MealPlan < ApplicationRecord
   def this_week? = start_date == Date.current.beginning_of_week(:monday)
   def next_week? = start_date == Date.current.next_week(:monday)
 
-  # The recipes planned for one meal on a date in this plan's week, e.g. today's dinner; none outside the week
-  def recipes_for(date, meal_type)
-    return [] unless date.between?(start_date, end_date)
-
-    slot = meal_slots.find_by(day_of_week: DAYS_OF_WEEK[(date - start_date).to_i], meal_type: meal_type)
-    slot ? slot.recipes.to_a : []
-  end
-
   private
 
   def start_date_must_be_monday

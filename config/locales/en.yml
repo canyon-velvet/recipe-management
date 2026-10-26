@@ -168,6 +168,8 @@ en:
       browse_recipes: "Browse recipes"
       import_recipe: "Import from a link"
       ask_assistant: "Ask the assistant"
+      search_label: "Search recipes by name, ingredient or source"
+      search_placeholder: "Name, ingredient, source"
     stats:
       recipes: "Recipes"
       this_week: "This week"
@@ -177,10 +179,6 @@ en:
       to_buy: "To buy"
     photo:
       image_alt: "A fried egg on toast for breakfast"
-      tonight: "Tonight"
-      more: "+%{count}"
-      nothing_planned: "Nothing planned yet"
-      plan_the_week: "Plan the week →"
     recent_recipes:
       title: "Recently updated"
       all_recipes: "All recipes →"
