@@ -36,7 +36,9 @@ RSpec.describe "Logging in", type: :system do
       page.evaluate_script("document.querySelector('#{selector}').getBoundingClientRect().toJSON()")
     end
     expect(box.(".home-photo-image")).to include("left" => 0, "width" => 390)
-    expect(box.(".home-intro")["top"]).to be < box.(".home-photo-image")["bottom"] # the form's sheet overlaps it
+    expect(box.(".home-intro")["top"]).to be < box.(".home-photo-image")["bottom"] # the form's sheet overlaps it…
+    # …drawn over it in every browser, not only those that paint in the shown order
+    expect(page.evaluate_script("parseInt(getComputedStyle(document.querySelector('.home-intro')).zIndex)")).to be > 0
     expect(box.(".login-note")["bottom"]).to be <= 700
     expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 390
   end

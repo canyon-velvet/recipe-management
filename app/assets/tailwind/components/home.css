@@ -10,8 +10,10 @@
     @apply container mx-auto grid grid-cols-[minmax(0,1fr)] items-center px-5 pb-10 max-md:max-w-none
            md:grid-cols-2 md:gap-12 md:py-20;
   }
+  /* Over the photo, though the photo comes after it in the page: Safari paints grid items in page order, not in
+     the order they're shown */
   .home-intro {
-    @apply relative -mx-5 -mt-7 rounded-t-[1.75rem] bg-sectionbackground px-5 pt-6
+    @apply relative z-10 -mx-5 -mt-7 rounded-t-[1.75rem] bg-sectionbackground px-5 pt-6
            md:m-0 md:rounded-none md:p-0;
   }
 
