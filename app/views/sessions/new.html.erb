@@ -24,7 +24,7 @@
       <p class="login-note"><%= t(".invite_only") %></p>
     </div>
 
-    <%# The 1-minute tour: a pill on the photo opens it in a pop-up. It's only downloaded once asked for. %>
+    <%# The tour of the app: a pill on the photo opens it in a pop-up. It's only downloaded once asked for. %>
     <div class="home-photo" data-controller="modal video">
       <%= image_tag "egg.jpg", alt: "", class: "home-photo-image", fetchpriority: "high" %>
       <button type="button" class="login-tour" aria-haspopup="dialog" data-action="modal#open video#play">

@@ -43,7 +43,7 @@ RSpec.describe "Logging in", type: :system do
     expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 390
   end
 
-  it "plays the 1-minute tour in a pop-up from the photo, and stops it when the pop-up closes" do
+  it "plays the tour in a pop-up from the photo, and stops it when the pop-up closes" do
     visit login_path
     # Nothing downloaded until asked for: the browser stopped short of fetching it
     expect(page.evaluate_script("document.querySelector('.tour-video').networkState")).to eq(1) # NETWORK_IDLE
