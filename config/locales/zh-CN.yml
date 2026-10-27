@@ -512,6 +512,9 @@ zh-CN:
       lead: "你的菜谱、本周计划和购物清单都在等你。"
       submit: "登录"
       title: "登录你的厨房"
+      tour: "观看演示"
+      tour_length: "1:00"
+      tour_title: "1 分钟演示"
 
   registrations:
     invite_only:

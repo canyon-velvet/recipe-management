@@ -24,8 +24,28 @@
       <p class="login-note"><%= t(".invite_only") %></p>
     </div>
 
-    <div class="home-photo">
+    <%# The 1-minute tour: a pill on the photo opens it in a pop-up. It's only downloaded once asked for. %>
+    <div class="home-photo" data-controller="modal video">
       <%= image_tag "egg.jpg", alt: "", class: "home-photo-image", fetchpriority: "high" %>
+      <button type="button" class="login-tour" aria-haspopup="dialog" data-action="modal#open video#play">
+        <span class="login-tour-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" class="size-3.5"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
+        </span>
+        <%= t(".tour") %>
+        <span class="login-tour-length" aria-hidden="true"><%= t(".tour_length") %></span>
+      </button>
+
+      <dialog data-modal-target="dialog" class="tour-dialog" aria-labelledby="tour-title"
+              data-action="click->modal#backdropClose close->modal#closed close->video#pause
+                           turbo:before-cache@document->modal#close">
+        <div class="tour-dialog-bar">
+          <span id="tour-title"><%= t(".tour_title") %></span>
+          <button type="button" class="tour-close" data-action="modal#close"
+                  aria-label="<%= t("actions.close") %>">×</button>
+        </div>
+        <%= video_tag "tour.mp4", controls: true, preload: "none", playsinline: true, class: "tour-video",
+                                  data: { video_target: "video" } %>
+      </dialog>
     </div>
   </div>
 </section>
