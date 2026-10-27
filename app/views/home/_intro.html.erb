@@ -1,5 +1,5 @@
 <%# locals: (recipe_count:, meal_plan:) %>
-<div>
+<div class="home-intro">
   <p class="home-eyebrow"><%= t(".eyebrow") %></p>
   <h1 class="home-title">
     <% t(".title").each do |phrase| %>
@@ -12,11 +12,19 @@
     <%= link_to t(".browse_recipes"), recipes_path, class: "btn-pill-primary" %>
     <%= link_to t(".import_recipe"), new_import_path, class: "btn-pill-secondary" %>
     <% if assistant_available? %>
-      <button type="button" class="btn-pill-ghost" data-assistant-panel-target="toggle"
+      <button type="button" class="btn-pill-ghost home-actions-assistant" data-assistant-panel-target="toggle"
               data-action="assistant-panel#toggle" aria-controls="<%= assistant_panel_id %>"
               aria-expanded="<%= assistant_open? %>">✦ <%= t(".ask_assistant") %></button>
     <% end %>
   </div>
+
+  <%# Opens the recipe list with the search, as typing there would %>
+  <%= form_with url: recipes_path, method: :get, class: "home-search", html: { role: "search" } do |f| %>
+    <svg class="size-[18px] flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" aria-hidden="true"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"/></svg>
+    <%= f.search_field :q, placeholder: t("recipes.index.search_placeholder"),
+                           aria: { label: t("recipes.index.search_label") }, class: "home-search-input" %>
+  <% end %>
 
   <%= render "home/stats", recipe_count: recipe_count, meal_plan: meal_plan %>
 </div>

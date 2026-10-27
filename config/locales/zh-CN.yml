@@ -172,10 +172,6 @@ zh-CN:
       to_buy: "待买"
     photo:
       image_alt: "早餐：吐司上的煎蛋"
-      tonight: "今晚"
-      more: "+%{count}"
-      nothing_planned: "还没有安排"
-      plan_the_week: "安排这一周 →"
     recent_recipes:
       title: "最近更新"
       all_recipes: "全部菜谱 →"

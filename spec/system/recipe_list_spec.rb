@@ -104,6 +104,7 @@ RSpec.describe "The recipe list", type: :system do
   it "keeps searches out of the history, so Back leaves the page" do
     log_in_as user
     click_link "All Recipes"
+    expect(page).to have_current_path(recipes_path) # not still on Home, whose search box has the same name
     fill_in "Search recipes by name, ingredient or source", with: "soup"
     expect(page).to have_text("matching “soup”")
     fill_in "Search recipes by name, ingredient or source", with: "minestrone"

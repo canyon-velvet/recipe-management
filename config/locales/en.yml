@@ -177,10 +177,6 @@ en:
       to_buy: "To buy"
     photo:
       image_alt: "A fried egg on toast for breakfast"
-      tonight: "Tonight"
-      more: "+%{count}"
-      nothing_planned: "Nothing planned yet"
-      plan_the_week: "Plan the week →"
     recent_recipes:
       title: "Recently updated"
       all_recipes: "All recipes →"
