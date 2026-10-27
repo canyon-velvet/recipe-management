@@ -530,6 +530,9 @@ en:
       lead: "Your recipes, this week's plan and the grocery list are waiting."
       submit: "Log in"
       title: "Log in to your kitchen"
+      tour: "Watch the tour"
+      tour_length: "1:00"
+      tour_title: "The 1-minute tour"
 
   registrations:
     invite_only:

@@ -42,4 +42,30 @@ RSpec.describe "Logging in", type: :system do
     expect(box.(".login-note")["bottom"]).to be <= 700
     expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 390
   end
+
+  it "plays the 1-minute tour in a pop-up from the photo, and stops it when the pop-up closes" do
+    visit login_path
+    # Nothing downloaded until asked for: the browser stopped short of fetching it
+    expect(page.evaluate_script("document.querySelector('.tour-video').networkState")).to eq(1) # NETWORK_IDLE
+
+    # The test browser can't decode H.264 video, as the browsers people use can, so what's checked is that the video
+    # is asked to play, and to stop
+    page.execute_script(<<~JS)
+      window.videoCalls = []
+      HTMLMediaElement.prototype.play = function () { videoCalls.push("play"); return Promise.resolve() }
+      HTMLMediaElement.prototype.pause = function () { videoCalls.push("pause") }
+    JS
+    within(".home-photo") { click_button "Watch the tour" }
+    expect(page).to have_css("dialog[open] video.tour-video")
+    expect(page.evaluate_script("videoCalls")).to eq([ "play" ])
+
+    click_button "Close"
+    expect(page).to have_no_css("dialog[open]")
+    expect(page.evaluate_script("videoCalls")).to eq([ "play", "pause" ])
+
+    # Also on a phone: the pill shows on the photo's band, above the form's sheet
+    page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: 390, height: 700) }
+    box = ->(selector) { page.evaluate_script("document.querySelector('#{selector}').getBoundingClientRect().toJSON()") }
+    expect(box.(".login-tour")["bottom"]).to be <= box.(".home-intro")["top"]
+  end
 end
