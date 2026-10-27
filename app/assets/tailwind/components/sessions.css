@@ -8,7 +8,7 @@
   .login-submit { @apply mt-2 w-full cursor-pointer justify-center; }
   .login-note   { @apply mt-3 max-w-md text-sm text-gray-500 md:mt-5; }
 
-  /* The 1-minute tour: a pill in the photo's corner (on a phone, above the form's sheet over the photo's foot), and
+  /* The tour of the app: a pill in the photo's corner (on a phone, above the form's sheet over the photo's foot), and
      the pop-up it plays in, the full width of a phone. The pop-up is no wider than lets the video, its title and
      controls all fit the screen's height, on a short laptop screen or a phone turned sideways. */
   .login-tour {

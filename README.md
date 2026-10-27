@@ -12,7 +12,7 @@ It's deployed on Render.
 One place for all the recipes I've saved, an assistant that helps me pick what to cook from them, and a weekly
 meal plan that writes my grocery list for me.
 
-![A tour of Recipe Manager: importing a recipe from a link, browsing by tag, searching, adding a dinner to the week's meal plan, and moving an item I already have off the grocery list](docs/images/demo.gif)
+![A tour of Recipe Manager: importing a recipe from a link, browsing by tag, searching, asking the assistant what to cook and to import a recipe from a link, adding a dinner to the week's meal plan, and moving an item I already have off the grocery list](docs/images/demo.gif)
 
 ## The problem
 
