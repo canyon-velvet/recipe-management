@@ -1,10 +1,10 @@
 @layer components {
   /* The log-in form, in the home page's hero (home.css): roomy white fields on the cream, and a full-width pill */
-  .login-form   { @apply mt-8 max-w-md space-y-4; }
+  .login-form   { @apply mt-5 max-w-md space-y-3 md:mt-8 md:space-y-4; }
   .login-input {
     @apply h-12 w-full rounded-2xl border border-sectiontext/25 bg-white px-4 text-base focus:border-sectiontext-light
            focus:outline-none focus:ring-2 focus:ring-sectiontext-light/30;
   }
   .login-submit { @apply mt-2 w-full cursor-pointer justify-center; }
-  .login-note   { @apply mt-5 max-w-md text-sm text-gray-500; }
+  .login-note   { @apply mt-3 max-w-md text-sm text-gray-500 md:mt-5; }
 }

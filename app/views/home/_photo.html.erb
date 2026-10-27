@@ -1,5 +1,5 @@
 <%# The photo fills a 4:5 box, so the page is laid out before it downloads, whatever the photo's size. On a phone it
     runs edge to edge across the top, under the intro. %>
-<div class="home-photo home-photo--hero">
+<div class="home-photo">
   <%= image_tag "egg.jpg", alt: t(".image_alt"), class: "home-photo-image", fetchpriority: "high" %>
 </div>

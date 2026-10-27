@@ -1,16 +1,14 @@
 @layer components {
   /* The home page's hero (and the login page's): a cream band, wall to wall, with the intro on the left and the
-     photo on the right (stacked on a phone). It meets the navbar, which is the same cream, so they read as one. */
+     photo on the right. On a phone the photo runs edge to edge across the top and the intro sits on a cream sheet
+     over its foot, all on one screen. It meets the navbar, which is the same cream, so they read as one. One column
+     on a phone, the screen's width, which a search box or field can't widen. */
   .home-hero {
     @apply -mt-6 bg-sectionbackground;
   }
   .home-hero-inner {
-    @apply container mx-auto grid items-center gap-12 px-5 py-12 md:grid-cols-2 md:py-20;
-  }
-  /* The home page's on a phone: the photo edge to edge across the top, and the intro on a cream sheet over its foot,
-     all on one screen. One column the screen's width, which the search box can't widen. */
-  .home-hero-inner--home {
-    @apply max-md:max-w-none max-md:grid-cols-[minmax(0,1fr)] max-md:gap-0 max-md:pt-0 max-md:pb-10;
+    @apply container mx-auto grid grid-cols-[minmax(0,1fr)] items-center px-5 pb-10 max-md:max-w-none
+           md:grid-cols-2 md:gap-12 md:py-20;
   }
   .home-intro {
     @apply relative -mx-5 -mt-7 rounded-t-[1.75rem] bg-sectionbackground px-5 pt-6
@@ -19,12 +17,9 @@
 
   .home-eyebrow { @apply text-xs font-semibold uppercase tracking-[0.25em] text-sectiontext-light; }
   .home-title {
-    @apply mt-4 text-4xl font-bold leading-[1.05] tracking-tight text-gray-900 md:text-6xl;
+    @apply mt-3 text-3xl font-bold leading-[1.05] tracking-tight text-gray-900 md:mt-4 md:text-6xl;
   }
-  .home-lead    { @apply mt-5 max-w-md text-lg text-gray-600; }
-  /* A little smaller on the home page's phone screen, to keep to one screen */
-  .home-intro .home-title { @apply max-md:mt-3 max-md:text-3xl; }
-  .home-intro .home-lead  { @apply max-md:mt-3 max-md:text-base; }
+  .home-lead    { @apply mt-3 max-w-md text-gray-600 md:mt-5 md:text-lg; }
   /* Side by side on a phone too, a little smaller (from 360px wide). The assistant's button stays off a phone's:
      its ✦ is in the navbar there, and the hero keeps to one screen. */
   .home-actions { @apply mt-5 flex flex-wrap items-center gap-2 md:mt-8 md:gap-3; }
@@ -48,13 +43,10 @@
   .home-stat-value  { @apply mt-1 text-2xl font-bold text-gray-900 md:text-3xl; }
   .home-stat-unit   { @apply text-sm font-normal text-gray-500; }
 
-  /* The photo, in a box of its own shape (the login page's too) */
-  .home-photo       { @apply relative mx-auto w-full max-w-md; }
-  .home-photo-image { @apply aspect-[4/5] w-full rounded-[2rem] object-cover shadow-2xl; }
-  /* The home page's: on a phone, first and edge to edge, a short band rather than the full 4:5 */
-  .home-photo--hero { @apply -mx-5 order-first w-auto max-w-none md:order-none md:mx-auto md:w-full md:max-w-md; }
-  .home-photo--hero .home-photo-image {
-    @apply aspect-auto h-48 rounded-none object-[center_58%] shadow-none
+  /* The photo: on a phone first and edge to edge, a short band; from md in a 4:5 box of its own shape */
+  .home-photo { @apply relative -mx-5 order-first md:order-none md:mx-auto md:w-full md:max-w-md; }
+  .home-photo-image {
+    @apply h-48 w-full object-cover object-[center_58%]
            md:aspect-[4/5] md:h-auto md:rounded-[2rem] md:object-center md:shadow-2xl;
   }
 

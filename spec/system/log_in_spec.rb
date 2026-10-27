@@ -27,4 +27,17 @@ RSpec.describe "Logging in", type: :system do
     expect(page).to have_text("Incorrect username or password.")
     expect(page).to have_no_css(".account-toggle")
   end
+
+  it "shows the photo across the top on a phone, like the home page, with the form all on one screen" do
+    page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: 390, height: 700) }
+    visit login_path
+
+    box = lambda do |selector|
+      page.evaluate_script("document.querySelector('#{selector}').getBoundingClientRect().toJSON()")
+    end
+    expect(box.(".home-photo-image")).to include("left" => 0, "width" => 390)
+    expect(box.(".home-intro")["top"]).to be < box.(".home-photo-image")["bottom"] # the form's sheet overlaps it
+    expect(box.(".login-note")["bottom"]).to be <= 700
+    expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 390
+  end
 end
