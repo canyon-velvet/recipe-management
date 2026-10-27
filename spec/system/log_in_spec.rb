@@ -65,7 +65,26 @@ RSpec.describe "Logging in", type: :system do
 
     # Also on a phone: the pill shows on the photo's band, above the form's sheet
     page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: 390, height: 700) }
-    box = ->(selector) { page.evaluate_script("document.querySelector('#{selector}').getBoundingClientRect().toJSON()") }
+    box = lambda do |selector|
+      page.evaluate_script("document.querySelector('#{selector}').getBoundingClientRect().toJSON()")
+    end
     expect(box.(".login-tour")["bottom"]).to be <= box.(".home-intro")["top"]
+  end
+
+  it "fits the tour's pop-up, controls and all, on a short screen" do
+    { "laptop" => [ 1366, 657 ], "phone turned sideways" => [ 844, 390 ] }.each do |screen, (width, height)|
+      page.driver.with_playwright_page { |pw| pw.set_viewport_size(width: width, height: height) }
+      visit login_path
+      click_button "Watch the tour"
+
+      fit = page.evaluate_script(<<~JS)
+        (dialog => ({
+          scrolls: dialog.scrollHeight > dialog.clientHeight,
+          videoBottom: dialog.querySelector("video").getBoundingClientRect().bottom
+        }))(document.querySelector("dialog[open]"))
+      JS
+      expect(fit["scrolls"]).to be(false), "the pop-up scrolls on a #{screen}"
+      expect(fit["videoBottom"]).to be <= height
+    end
   end
 end
