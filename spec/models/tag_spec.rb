@@ -84,6 +84,8 @@ RSpec.describe Tag do
       expect(user.tags.build(name: "korean")).not_to be_valid
       expect(user.tags.build(name: "Dinner")).not_to be_valid
       expect(user.tags.build(name: "晚餐")).not_to be_valid # Dinner, in Chinese
+      expect(user.tags.build(name: "\u3000晚餐")).not_to be_valid # with the wide space a Chinese keyboard can add
+      expect(user.tags.build(name: "\u00A0korean\u00A0")).not_to be_valid # non-breaking spaces
       expect(create(:user).tags.build(name: "Korean")).to be_valid # another user's is theirs
     end
 
@@ -93,7 +95,13 @@ RSpec.describe Tag do
       expect(user.tags.create!(name: "Korean", emoji: "🇰🇷").icon).to eq "🇰🇷" # a flag: two code points
       expect(user.tags.create!(name: "Plain", emoji: " ").icon).to be_nil
 
-      %w[🍜🍜 a ab :)].each { |emoji| expect(user.tags.build(name: "Other #{emoji}", emoji: emoji)).not_to be_valid }
+      expect(user.tags.create!(name: "First", emoji: "1️⃣").icon).to eq "1️⃣" # a keycap
+
+      zalgo = "🍜#{"\u0301" * 50}" # one character on screen, with accents piled on it
+      forty_bowls = ([ "🍜" ] * 40).join("\u200D") # joined into one character, drawn as 40
+      [ "🍜🍜", "a", "ab", ":)", "©", "🇰", zalgo, forty_bowls ].each do |emoji|
+        expect(user.tags.build(name: "Other", emoji: emoji)).not_to be_valid, "#{emoji.inspect} was taken"
+      end
     end
 
     it "is seen only by its user, besides the built-in tags, and listed after them" do

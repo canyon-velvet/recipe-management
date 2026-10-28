@@ -5,9 +5,15 @@ class Tag < ApplicationRecord
 
   KINDS = %w[meal cuisine diet flavor convenience other].freeze
   NAME_MAX_LENGTH = 30
+  # The longest emoji people pick (a family, a flag of a country's region) are about this many code points
+  EMOJI_MAX_LENGTH = 10
   # Users' tags come after the built-in ones, in the order they were made
   CUSTOM_POSITION = 10_000
-  EMOJI_START = /\A(\p{Extended_Pictographic}|\p{Regional_Indicator})/
+  # Drawn as an emoji, not text-style like ©: a flag is two regional indicators, a keycap a digit, # or * with ⃣
+  EMOJI_START = /\A(
+    \p{Regional_Indicator}{2} | (?!\p{Regional_Indicator})\p{Emoji_Presentation} | \p{Extended_Pictographic}\u{FE0F} |
+    [\#*0-9]\u{FE0F}?\u{20E3}
+  )/x
 
   # Shown on recipe cards. Plain emoji, drawn by the viewer's system font: nothing to download or credit.
   ICONS = {
@@ -26,7 +32,9 @@ class Tag < ApplicationRecord
   # A user's tag goes under Other unless they choose another group
   enum :kind, KINDS.index_by(&:itself), validate: true, default: "other"
 
-  normalizes :name, :emoji, with: ->(value) { value.strip.presence }
+  # squish: also the wide and non-breaking spaces keyboards add. Not for the emoji, joined by invisible characters.
+  normalizes :name, with: ->(name) { name.squish.presence }
+  normalizes :emoji, with: ->(emoji) { emoji.strip.presence }
 
   validates :key, uniqueness: true
   validates :position, presence: true
@@ -79,8 +87,10 @@ class Tag < ApplicationRecord
     errors.add(:name, :taken) if taken.any? { |label| label.casecmp?(self[:name]) }
   end
 
-  # One emoji as people pick it: a single character on screen, such as 🍜, 🌶️ (with its variation selector) or 🇰🇷
+  # One emoji as people pick it: a single character on screen, such as 🍜, 🌶️ (with its variation selector) or 🇰🇷,
+  # and short, so it isn't one with marks piled on it or dozens joined into one
   def emoji_must_be_one_emoji
-    errors.add(:emoji, :invalid) unless emoji.grapheme_clusters.one? && emoji.match?(EMOJI_START)
+    one = emoji.length <= EMOJI_MAX_LENGTH && emoji.grapheme_clusters.one? && emoji.match?(EMOJI_START)
+    errors.add(:emoji, :invalid) unless one
   end
 end

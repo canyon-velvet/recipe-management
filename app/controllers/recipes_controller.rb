@@ -74,10 +74,10 @@ class RecipesController < ApplicationController
     @draft = current_user.drafts.ready.find(params[:draft_id]) if params[:draft_id].present?
   end
 
-  # The form's source and ingredients must be the user's own. The models refuse to save anyone else's, but by then
-  # the form would show its name, so another user's id is not found at all.
+  # The form's source, ingredients and tags must be the user's own (or, for tags, built in). The models refuse to save
+  # anyone else's, but by then the form would show its name, so another user's id is not found at all.
   def ensure_own_records!
-    records = [ @recipe.source, *@recipe.recipe_ingredients.map(&:ingredient) ].compact
+    records = [ @recipe.source, *@recipe.recipe_ingredients.map(&:ingredient), *@recipe.tags.select(&:user_id) ].compact
     raise ActiveRecord::RecordNotFound unless records.all? { |record| record.user_id == current_user.id }
   end
 

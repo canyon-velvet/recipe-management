@@ -434,11 +434,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_28_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
-    t.string "name"
-    t.string "emoji"
+    t.string "name", limit: 30
+    t.string "emoji", limit: 10
     t.index "user_id, lower((name)::text)", name: "index_tags_on_user_id_and_lower_name", unique: true, where: "(user_id IS NOT NULL)"
     t.index ["key"], name: "index_tags_on_key", unique: true
     t.index ["user_id"], name: "index_tags_on_user_id"
+    t.check_constraint "user_id IS NULL OR name IS NOT NULL", name: "tags_users_named"
   end
 
   create_table "users", force: :cascade do |t|

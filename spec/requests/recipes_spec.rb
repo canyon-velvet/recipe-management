@@ -68,13 +68,18 @@ RSpec.describe "Recipes", type: :request do
     expect(Nokogiri::HTML(response.body).css("select.tag-select option").map(&:text)).to eq [ "Korean" ]
   end
 
-  it "won't tag a recipe with another user's tag" do
+  it "doesn't find another user's tag to tag a recipe with, as for their sources" do
     recipe = create(:recipe, user: user)
+    thai = create(:user).tags.create!(name: "Thai")
 
-    patch recipe_path(recipe), params: { recipe: { tag_ids: [ "", create(:user).tags.create!(name: "Thai").id ] } }
-
-    expect(response).to have_http_status(:unprocessable_content)
+    patch recipe_path(recipe), params: { recipe: { tag_ids: [ "", thai.id ] } }
+    expect(response).to have_http_status(:not_found)
     expect(recipe.reload.tags).to be_empty
+
+    steps = { "0" => { body: "Fry.", position: "1" } }
+    post recipes_path, params: { recipe: { name: "Pad thai", steps_attributes: steps, tag_ids: [ "", thai.id ] } }
+    expect(response).to have_http_status(:not_found)
+    expect(user.recipes.count).to eq 1
   end
 
   it "names each row's ⋮ menu button for screen readers" do
