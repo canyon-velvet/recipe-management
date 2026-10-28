@@ -23,4 +23,12 @@ RSpec.describe BuildRecipeFromDraftService do
     expect(counts(recipe)).to all(be_nil)
     expect(recipe).to be_valid
   end
+
+  it "tags it with the built-in tags and the user's own that the draft names, not another user's" do
+    dinner = create(:tag, key: "dinner", kind: "meal")
+    korean = user.tags.create!(name: "Korean")
+    thai = create(:user).tags.create!(name: "Thai")
+
+    expect(build_recipe("tags" => [ "dinner", korean.key, thai.key ]).tags).to contain_exactly(dinner, korean)
+  end
 end

@@ -55,6 +55,7 @@ en:
     diet: "Diet"
     flavor: "Flavor"
     convenience: "Convenience"
+    other: "Other"
 
   tags:
     breakfast: "Breakfast"

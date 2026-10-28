@@ -117,4 +117,13 @@ RSpec.describe Recipe do
     expect(build(:ingredient, user: user, aisle: other_user.aisles.first).tap(&:validate).errors.attribute_names).to include(:aisle)
     expect(build(:ingredient, user: user, aisle: user.aisles.first)).to be_valid
   end
+
+  it "takes the built-in tags and the user's own, but not another user's" do
+    user, other_user = create_list(:user, 2)
+    built_in = create(:tag, key: "dinner", kind: "meal")
+
+    expect(build(:recipe, user: user, tags: [ built_in, user.tags.create!(name: "Korean") ])).to be_valid
+    expect(build(:recipe, user: user, tags: [ other_user.tags.create!(name: "Thai") ])
+             .tap(&:validate).errors.attribute_names).to include(:tags)
+  end
 end

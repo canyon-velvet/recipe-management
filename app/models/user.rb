@@ -10,6 +10,7 @@ class User < ApplicationRecord
   has_many :sources, dependent: :destroy
   has_many :ingredients, dependent: :destroy
   has_many :aisles, dependent: :destroy
+  has_many :tags, dependent: :destroy
   has_many :drafts, dependent: :destroy
   has_many :preferences, dependent: :destroy
   has_many :conversations, dependent: :destroy

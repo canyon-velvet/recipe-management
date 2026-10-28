@@ -22,6 +22,14 @@ RSpec.describe Assistant::RecommendSpecialist do
     expect(described_class.new(create(:user)).system_prompt).to include("(none yet)")
   end
 
+  it "lists the user's own tags with the built-in ones, never another user's" do
+    korean = user.tags.create!(name: "Korean")
+    create(:user).tags.create!(name: "Thai")
+
+    expect(specialist.system_prompt).to include("#{korean.key}: Korean")
+    expect(specialist.system_prompt).not_to include("Thai")
+  end
+
   it "ends with the language rule, after the user's data, falling back to the app's language" do
     create(:ingredient, user: user, name: "生抽")
 

@@ -40,7 +40,7 @@ module Assistant
         #{preferences_list}
 
         Tags (key: name):
-        #{Tag.ordered.map { |tag| "#{tag.key}: #{tag.name}" }.join("\n")}
+        #{Tag.visible_to(@user).ordered.map { |tag| "#{tag.key}: #{tag.name}" }.join("\n")}
 
         Ingredients in the user's recipes: #{@user.ingredients.order(:name).pluck(:name).join(", ")}
 

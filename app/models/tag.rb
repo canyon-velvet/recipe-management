@@ -1,7 +1,13 @@
+# A recipe tag: a built-in one everyone shares (no user; named in the locale files by its key), or one a user made
+# for themselves, which keeps the name as typed and can have an emoji. Each user sees the built-in tags and their own.
 class Tag < ApplicationRecord
   include TranslatedName
 
-  KINDS = %w[meal cuisine diet flavor convenience].freeze
+  KINDS = %w[meal cuisine diet flavor convenience other].freeze
+  NAME_MAX_LENGTH = 30
+  # Users' tags come after the built-in ones, in the order they were made
+  CUSTOM_POSITION = 10_000
+  EMOJI_START = /\A(\p{Extended_Pictographic}|\p{Regional_Indicator})/
 
   # Shown on recipe cards. Plain emoji, drawn by the viewer's system font: nothing to download or credit.
   ICONS = {
@@ -13,19 +19,36 @@ class Tag < ApplicationRecord
     "quick" => "🍳", "kid_friendly" => "🧁", "make_ahead" => "🥫"
   }.freeze
 
+  belongs_to :user, optional: true
   has_many :recipe_tags, dependent: :destroy
   has_many :recipes, through: :recipe_tags
 
-  enum :kind, KINDS.index_by(&:itself), validate: true
+  # A user's tag goes under Other unless they choose another group
+  enum :kind, KINDS.index_by(&:itself), validate: true, default: "other"
+
+  normalizes :name, :emoji, with: ->(value) { value.strip.presence }
 
   validates :key, uniqueness: true
   validates :position, presence: true
+  with_options if: :user_id? do
+    validates :name, presence: true, length: { maximum: NAME_MAX_LENGTH },
+                     uniqueness: { scope: :user_id, case_sensitive: false }
+    validate :name_must_differ_from_built_in_tags
+  end
+  validate :emoji_must_be_one_emoji, if: :emoji?
 
-  scope :ordered, -> { order(:position) }
+  # Filters, drafts and the assistant refer to tags by key, so a user's tag gets one too; after the built-in tags.
+  before_validation :assign_key_and_position, on: :create, if: :user_id?
+
+  scope :visible_to, ->(user) { where(user_id: [ nil, user.id ]) }
+  scope :ordered, -> { order(:position, :id) }
 
   def self.kind_name(kind) = I18n.t(kind, scope: :tag_kinds)
 
-  def icon = ICONS[key]
+  def icon = emoji || ICONS[key]
+
+  # A user's tag is only ever named as typed: its key is made up, with nothing in the locale files
+  def name = user_id? ? self[:name] : super
 
   # { "meal" => [tags…], "cuisine" => […], … } in display order, for the recipe catalog.
   def self.by_kind = ordered.group_by(&:kind)
@@ -39,5 +62,25 @@ class Tag < ApplicationRecord
       counts.merge!(RecipeTag.joins(:tag).where(tags: { kind: kinds }, recipe_id: matching.select(:id))
                              .group(:tag_id).count)
     end
+  end
+
+  private
+
+  def assign_key_and_position
+    self.key ||= "u#{user_id}-#{SecureRandom.alphanumeric(8).downcase}"
+    self.position ||= CUSTOM_POSITION
+  end
+
+  # The built-in tags keep their names in the locale files, so the uniqueness index can't see them.
+  def name_must_differ_from_built_in_tags
+    taken = Tag.where(user_id: nil).pluck(:key).flat_map do |key|
+      I18n.available_locales.map { |locale| I18n.t(key, scope: :tags, locale: locale) }
+    end
+    errors.add(:name, :taken) if taken.any? { |label| label.casecmp?(self[:name]) }
+  end
+
+  # One emoji as people pick it: a single character on screen, such as 🍜, 🌶️ (with its variation selector) or 🇰🇷
+  def emoji_must_be_one_emoji
+    errors.add(:emoji, :invalid) unless emoji.grapheme_clusters.one? && emoji.match?(EMOJI_START)
   end
 end

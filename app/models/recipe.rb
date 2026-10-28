@@ -27,6 +27,7 @@ class Recipe < ApplicationRecord
   end
   validate :must_have_steps
   validates :source, same_user: true
+  validates :tags, same_user: { allow_shared: true }
 
   accepts_nested_attributes_for :recipe_ingredients, allow_destroy: true, reject_if: :blank_ingredient_row?
   accepts_nested_attributes_for :steps, allow_destroy: true,

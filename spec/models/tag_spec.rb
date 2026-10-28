@@ -62,4 +62,54 @@ RSpec.describe Tag do
         .to eq(chinese.id => 1, italian.id => 1, soup.id => 1, dinner.id => 1)
     end
   end
+
+  describe "a user's own tag" do
+    let(:user) { create(:user) }
+
+    it "goes under Other unless another group is chosen, named as typed in every language" do
+      tag = user.tags.create!(name: " Korean ")
+
+      expect(tag).to have_attributes(kind: "other", name: "Korean", user: user)
+      expect(tag.key).to be_present # what filters and imports refer to it by, as for the built-in tags
+      expect(I18n.with_locale(:"zh-CN") { tag.name }).to eq "Korean"
+      expect(user.tags.create!(name: "Gochujang", kind: "flavor").kind).to eq "flavor"
+    end
+
+    it "needs a name of at most 30 characters, not one of the user's other tags or a built-in one, ignoring case" do
+      expect { load Rails.root.join("db/seeds.rb") }.to output.to_stdout
+      user.tags.create!(name: "Korean")
+
+      expect(user.tags.build(name: " ")).not_to be_valid
+      expect(user.tags.build(name: "a" * 31)).not_to be_valid
+      expect(user.tags.build(name: "korean")).not_to be_valid
+      expect(user.tags.build(name: "Dinner")).not_to be_valid
+      expect(user.tags.build(name: "晚餐")).not_to be_valid # Dinner, in Chinese
+      expect(create(:user).tags.build(name: "Korean")).to be_valid # another user's is theirs
+    end
+
+    it "takes one emoji, or none, and shows it on cards" do
+      expect(user.tags.create!(name: "Noodles", emoji: "🍜").icon).to eq "🍜"
+      expect(user.tags.create!(name: "Hot", emoji: "🌶️").icon).to eq "🌶️" # with its variation selector
+      expect(user.tags.create!(name: "Korean", emoji: "🇰🇷").icon).to eq "🇰🇷" # a flag: two code points
+      expect(user.tags.create!(name: "Plain", emoji: " ").icon).to be_nil
+
+      %w[🍜🍜 a ab :)].each { |emoji| expect(user.tags.build(name: "Other #{emoji}", emoji: emoji)).not_to be_valid }
+    end
+
+    it "is seen only by its user, besides the built-in tags, and listed after them" do
+      dinner = create(:tag, key: "dinner", kind: "meal")
+      korean = user.tags.create!(name: "Korean", kind: "cuisine")
+      someone_elses = create(:user).tags.create!(name: "Thai")
+      chinese = create(:tag, key: "chinese", kind: "cuisine")
+
+      expect(Tag.visible_to(user).ordered).to eq [ dinner, chinese, korean ]
+      expect(Tag.visible_to(user)).not_to include(someone_elses)
+    end
+
+    it "is deleted with its user" do
+      user.tags.create!(name: "Korean")
+
+      expect { user.destroy }.to change(Tag, :count).by(-1)
+    end
+  end
 end

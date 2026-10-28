@@ -14,7 +14,7 @@ class BuildRecipeFromDraftService
     assign_source(recipe)
     ingredient_rows.each { |attributes| recipe.recipe_ingredients.build(attributes) }
     list("steps").map { text(_1) }.compact_blank.each.with_index(1) { |body, i| recipe.steps.build(body: body, position: i) }
-    recipe.tags = Tag.where(key: list("tags").map { text(_1) })
+    recipe.tags = Tag.visible_to(@user).where(key: list("tags").map { text(_1) })
     recipe
   end
 

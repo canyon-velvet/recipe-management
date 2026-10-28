@@ -115,7 +115,7 @@ class CleanRecipeService
       #{aisles.map { |id, name| "#{id}: #{name}" }.join("\n")}
       </aisles>
       <allowed_tags>
-      #{Tag.ordered.map { |tag| "#{tag.key}: #{tag.name}" }.join("\n")}
+      #{tags.map { |tag| "#{tag.key}: #{tag.name}" }.join("\n")}
       </allowed_tags>
       <structured_recipe>
       #{@recipe ? JSON.pretty_generate(capped_recipe) : "none"}
@@ -139,10 +139,13 @@ class CleanRecipeService
     end
   end
 
+  # The built-in tags and the user's own: another user's are never sent to Claude, nor kept from its reply
+  def tags = @tags ||= Tag.visible_to(@user).ordered.to_a
+
   def aisles = @aisles ||= @user.aisles.ordered.to_h { |aisle| [ aisle.id, aisle.name ] }
 
   def to_draft_data(cleanup)
-    tag_keys = Tag.pluck(:key)
+    tag_keys = tags.map(&:key)
     {
       "name" => cleanup.name.strip,
       "description" => cleanup.description.strip,
