@@ -127,6 +127,10 @@ zh-CN:
         position: "步骤序号"
       source:
         name: "名称"
+      tag:
+        emoji: "表情"
+        kind: "分组"
+        name: "名称"
       user:
         password: "密码"
         password_confirmation: "确认密码"
@@ -286,9 +290,15 @@ zh-CN:
       label: "菜谱分类"
       show: "显示 %{count} 道菜谱"
     tag_picker:
+      create: "＋ 新建标签“%{name}”"
       no_results: "没有匹配的标签"
       placeholder: "选择标签"
       remove: "移除"
+    tag_modal:
+      emoji_hint: "点一个，或用键盘输入任意表情。"
+      no_emoji: "不用表情"
+      optional: "可不填"
+      title: "新建标签"
     ingredient_modal:
       add_aisle: "＋ 新增“%{name}”"
       aisle_placeholder: "输入搜索，或新增货架区"

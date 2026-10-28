@@ -1,15 +1,21 @@
 <%# locals: (form:, tags:) %>
-<div class="field">
+<%# The tags to pick, each with its emoji. Typing one that isn't there offers to create it, in the New tag pop-up. %>
+<div class="field" data-controller="inline-create" data-inline-create-create-url-value="<%= tags_path %>"
+     data-inline-create-error-text-value="<%= t("recipes.form.save_failed") %>"
+     data-inline-create-reset-on-open-value="true">
   <%= form.label :tag_ids, Recipe.human_attribute_name(:tags), class: "form-label" %>
   <%= form.select :tag_ids,
-        options_from_collection_for_select(tags, :id, :name, form.object.tag_ids),
+        options_for_select(tags.map { |tag| tag_option(tag) }, form.object.tag_ids),
         {},
         multiple: true,
         placeholder: t(".placeholder"),
         class: "tag-select",
         data: {
           controller: "tag-select",
+          action: "tag-select:requestCreate->inline-create#openModal inline-create:created->tag-select#created",
           tag_select_no_results_value: t(".no_results"),
-          tag_select_remove_label_value: t(".remove")
+          tag_select_remove_label_value: t(".remove"),
+          tag_select_create_label_value: t(".create", name: "%{name}")
         } %>
+  <%= render "recipes/tag_modal" %>
 </div>

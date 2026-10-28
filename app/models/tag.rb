@@ -15,6 +15,11 @@ class Tag < ApplicationRecord
     [\#*0-9]\u{FE0F}?\u{20E3}
   )/x
 
+  # The New tag pop-up's emoji to tap; any other can be typed
+  EMOJI_CHOICES = %w[
+    🍜 🍲 🍛 🍝 🍣 🍱 🥟 🍙 🍚 🥘 🌮 🍔 🍕 🥗 🥪 🍳 🥞 🥐 🧀 🥩 🍗 🍤 🐟 🥦 🌶️ 🍄 🍅 🍋 🍰 🍪 ☕ 🧋 🍷 🎉 ❤️ ⭐
+  ].freeze
+
   # Shown on recipe cards. Plain emoji, drawn by the viewer's system font: nothing to download or credit.
   ICONS = {
     "breakfast" => "🥞", "lunch" => "🍱", "dinner" => "🍛", "snack" => "🍪", "dessert" => "🍰",

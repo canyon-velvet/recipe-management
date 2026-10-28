@@ -1,13 +1,17 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Reusable controller for inline-create modals (ingredients, sources, etc.)
-// Collects all named inputs inside the dialog and POSTs as FormData.
+// Reusable controller for inline-create modals (ingredients, sources, tags)
+// Collects all named inputs inside the dialog and POSTs as FormData. What was created goes back to the autocomplete
+// that asked for it, and as an inline-create:created event (the JSON as its detail) to whatever asked.
 export default class extends Controller {
   static targets = ["dialog", "errors", "prefill"]
-  static values = { createUrl: String, errorText: String }
+  // resetOnOpen: each opening starts afresh, not with what was chosen before a Cancel (the New tag pop-up)
+  static values = { createUrl: String, errorText: String, resetOnOpen: Boolean }
 
   openModal(event) {
+    this.trigger = event.target
     this.triggerAutocomplete = event.target.closest("[data-controller*='autocomplete']")
+    if (this.resetOnOpenValue) this.resetForm()
     if (this.hasPrefillTarget) {
       this.prefillTarget.value = event.detail.query || ""
     }
@@ -40,7 +44,7 @@ export default class extends Controller {
     try {
       const formData = new FormData()
       this.dialogTarget.querySelectorAll("input[name], select[name], textarea[name]").forEach(el => {
-        if (el.type === "checkbox") {
+        if (el.type === "checkbox" || el.type === "radio") {
           if (el.checked) formData.append(el.name, el.value)
         } else {
           formData.append(el.name, el.value)
@@ -64,6 +68,7 @@ export default class extends Controller {
         if (autocompleteCtrl) {
           autocompleteCtrl.setSelection(data.id, data.name)
         }
+        this.dispatch("created", { target: this.trigger, detail: data })
         this.closeModal()
         this.resetForm()
       } else {
@@ -78,8 +83,8 @@ export default class extends Controller {
 
   resetForm() {
     this.dialogTarget.querySelectorAll("input[name], select[name], textarea[name]").forEach(el => {
-      if (el.type === "checkbox") {
-        el.checked = false
+      if (el.type === "checkbox" || el.type === "radio") {
+        el.checked = el.defaultChecked
       } else if (el.tagName === "SELECT") {
         el.selectedIndex = 0
       } else {

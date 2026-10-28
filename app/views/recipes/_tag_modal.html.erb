@@ -1,0 +1,47 @@
+<%# The New tag pop-up, from the tag box: the name typed there, an emoji (tapped from a grid of food ones, typed from
+    the keyboard, or none) and the group, Other unless another is chosen. %>
+<%= render layout: "shared/inline_create_modal", locals: { title: t(".title"), name: "tag" } do %>
+  <div class="space-y-5" data-controller="emoji-picker" data-action="focusin->emoji-picker#sync">
+    <div class="field">
+      <label class="form-label" for="new_tag_name"><%= Tag.human_attribute_name(:name) %></label>
+      <input type="text" name="tag[name]" id="new_tag_name" class="modal-input" autofocus
+             maxlength="<%= Tag::NAME_MAX_LENGTH %>" data-inline-create-target="prefill">
+    </div>
+
+    <div class="field">
+      <label class="form-label" for="new_tag_emoji">
+        <%= Tag.human_attribute_name(:emoji) %>
+        <span class="tag-modal-optional"><%= t("recipes.tag_modal.optional") %></span>
+      </label>
+      <div class="tag-emoji-field">
+        <input type="text" name="tag[emoji]" id="new_tag_emoji" class="tag-emoji-input" autocomplete="off"
+               data-emoji-picker-target="input"
+               data-action="emoji-picker#sync">
+        <div class="tag-emoji-grid">
+          <% Tag::EMOJI_CHOICES.each do |emoji| %>
+            <button type="button" class="tag-emoji-choice" aria-pressed="false" data-emoji-picker-target="choice"
+                    data-emoji-picker-emoji-param="<%= emoji %>" data-action="emoji-picker#pick"><%= emoji %></button>
+          <% end %>
+        </div>
+      </div>
+      <p class="tag-emoji-hint">
+        <%= t("recipes.tag_modal.emoji_hint") %>
+        <button type="button" class="tag-emoji-none" data-action="emoji-picker#clear">
+          <%= t("recipes.tag_modal.no_emoji") %>
+        </button>
+      </p>
+    </div>
+
+    <fieldset>
+      <legend class="form-label"><%= Tag.human_attribute_name(:kind) %></legend>
+      <div class="source-chips">
+        <% [ "other", *(Tag::KINDS - [ "other" ]) ].each do |kind| %>
+          <label class="source-chip">
+            <%= radio_button_tag "tag[kind]", kind, kind == "other", id: nil, class: "sr-only" %>
+            <%= Tag.kind_name(kind) %>
+          </label>
+        <% end %>
+      </div>
+    </fieldset>
+  </div>
+<% end %>
