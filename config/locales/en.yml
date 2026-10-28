@@ -130,6 +130,10 @@ en:
         position: "Step number"
       source:
         name: "Name"
+      tag:
+        emoji: "Emoji"
+        kind: "Group"
+        name: "Name"
       user:
         password: "Password"
         password_confirmation: "Confirm password"
@@ -297,9 +301,17 @@ en:
         one: "Show %{count} recipe"
         other: "Show %{count} recipes"
     tag_picker:
+      create: "＋ Create tag “%{name}”"
       no_results: "No matching tags"
       placeholder: "Choose tags"
       remove: "Remove"
+    tag_modal:
+      emoji: "Emoji"
+      emoji_hint: "Tap one, or type any emoji."
+      group: "Group"
+      no_emoji: "No emoji"
+      optional: "optional"
+      title: "New tag"
     ingredient_modal:
       add_aisle: "＋ Add %{name}"
       aisle_placeholder: "Type to search, or add an aisle"

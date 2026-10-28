@@ -5,6 +5,24 @@
   }
 }
 
+@layer components {
+  /* The New tag pop-up (recipes/tag_modal): the emoji, in a box to type it beside a grid of food ones to tap (the
+     tapped one pressed), and "optional" beside its label */
+  .tag-modal-optional { @apply font-normal text-gray-400; }
+  .tag-emoji-field    { @apply mt-1 flex items-start gap-3; }
+  .tag-emoji-input {
+    @apply h-12 w-14 flex-none rounded-2xl border border-gray-200 bg-white text-center text-2xl
+           focus:border-sectiontext-light focus:outline-none focus:ring-2 focus:ring-sectiontext-light/30;
+  }
+  .tag-emoji-grid { @apply grid min-w-0 flex-1 grid-cols-8 gap-0.5 sm:grid-cols-12; }
+  .tag-emoji-choice {
+    @apply flex aspect-square cursor-pointer items-center justify-center rounded-xl text-xl hover:bg-sectionbackground
+           aria-pressed:bg-sectionbackground aria-pressed:ring-2 aria-pressed:ring-sectiontext;
+  }
+  .tag-emoji-hint { @apply mt-2 text-sm text-gray-500; }
+  .tag-emoji-none { @apply cursor-pointer font-medium text-sectiontext hover:underline; }
+}
+
 /* Tom Select tag picker, matched to .form-select. Unlayered so it overrides the vendored tom-select.css. */
 .ts-wrapper.tag-select .ts-control {
   @apply min-h-[42px] rounded-lg border-gray-300 px-3 py-1.5 text-base shadow-none;

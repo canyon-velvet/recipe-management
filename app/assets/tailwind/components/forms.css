@@ -21,7 +21,7 @@
   .autocomplete-item--create { @apply font-medium text-sectiontext border-b border-gray-100; }
 
   /* The source picker (shared/source_picker): sources as pills to tap (radio buttons), brown with a ✓ once picked,
-     and Other… outlined */
+     and Other… outlined. Also the New tag pop-up's groups (recipes/tag_modal). */
   .source-chips { @apply mt-1 flex flex-wrap gap-2; }
   .source-chip {
     @apply inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full bg-sectionbackground px-3.5 text-sm

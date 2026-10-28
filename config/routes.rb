@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   resources :sources, only: [ :create ] do
     get :search, on: :collection
   end
+  resources :tags, only: [ :create ]
 
   # Draft box: imported recipes waiting to be reviewed
   resources :imports, only: [ :new, :create ]
