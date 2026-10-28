@@ -54,6 +54,34 @@ RSpec.describe "Recipes", type: :request do
     expect(catalog.text).not_to include(soup.icon)
   end
 
+  it "offers the user's own tags, under Other, in the sidebar and the form, but never another user's" do
+    korean = user.tags.create!(name: "Korean")
+    create(:user).tags.create!(name: "Thai")
+    create(:recipe, user: user, tags: [ korean ])
+
+    get recipes_path
+    catalog = Nokogiri::HTML(response.body).at_css(".tag-catalog")
+    expect(catalog.css("legend").map(&:text)).to eq [ "Other" ]
+    expect(catalog.css("label").map { _1.text.squish }).to eq [ "Korean 1" ]
+
+    get new_recipe_path
+    expect(Nokogiri::HTML(response.body).css("select.tag-select option").map(&:text)).to eq [ "Korean" ]
+  end
+
+  it "doesn't find another user's tag to tag a recipe with, as for their sources" do
+    recipe = create(:recipe, user: user)
+    thai = create(:user).tags.create!(name: "Thai")
+
+    patch recipe_path(recipe), params: { recipe: { tag_ids: [ "", thai.id ] } }
+    expect(response).to have_http_status(:not_found)
+    expect(recipe.reload.tags).to be_empty
+
+    steps = { "0" => { body: "Fry.", position: "1" } }
+    post recipes_path, params: { recipe: { name: "Pad thai", steps_attributes: steps, tag_ids: [ "", thai.id ] } }
+    expect(response).to have_http_status(:not_found)
+    expect(user.recipes.count).to eq 1
+  end
+
   it "names each row's ⋮ menu button for screen readers" do
     create(:recipe, user: user)
 
@@ -314,6 +342,19 @@ RSpec.describe "Recipes", type: :request do
 
       expect(listed).to be_empty
       expect(Nokogiri::HTML(response.body).at_css(".tag-catalog label").text.squish).to eq "Breakfast 0"
+    end
+
+    it "filters by the user's own tags, but takes another user's as unknown" do
+      korean = user.tags.create!(name: "Korean")
+      with_ingredients("Bibimbap", "gochujang", tags: [ korean ])
+      thai = create(:user).tags.create!(name: "Thai")
+
+      get recipes_path(tags: [ korean.key ])
+      expect(listed).to eq [ "Bibimbap" ]
+
+      get recipes_path(tags: [ thai.key ])
+      expect(listed.size).to eq 5
+      expect(response.body).not_to include("Thai")
     end
 
     it "leaves out tags that are unknown or aren't a list of keys" do

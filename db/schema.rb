@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_20_120200) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_28_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -433,7 +433,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_120200) do
     t.integer "position", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.string "name", limit: 30
+    t.string "emoji", limit: 10
+    t.index "user_id, lower((name)::text)", name: "index_tags_on_user_id_and_lower_name", unique: true, where: "(user_id IS NOT NULL)"
     t.index ["key"], name: "index_tags_on_key", unique: true
+    t.index ["user_id"], name: "index_tags_on_user_id"
+    t.check_constraint "user_id IS NULL OR name IS NOT NULL", name: "tags_users_named"
   end
 
   create_table "users", force: :cascade do |t|
@@ -481,4 +487,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_120200) do
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "sources", "users"
   add_foreign_key "steps", "runs"
+  add_foreign_key "tags", "users"
 end

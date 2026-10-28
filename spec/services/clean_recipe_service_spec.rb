@@ -48,4 +48,18 @@ RSpec.describe CleanRecipeService do
     expect(content.map { _1[:type] }).to eq %w[image image text]
     expect(content.first[:source]).to eq(type: "base64", media_type: "image/png", data: Base64.strict_encode64("first"))
   end
+
+  it "offers Claude the built-in tags and the user's own, never another user's, and keeps only those it picks" do
+    create(:tag, key: "dinner", kind: "meal")
+    korean = user.tags.create!(name: "Korean")
+    thai = create(:user).tags.create!(name: "Thai")
+    client = fake_client(tags: [ "dinner", korean.key, thai.key ])
+
+    data = described_class.new(user: user, recipe: nil, text: "Bibimbap …", client: client).call
+
+    prompt = client.messages.sent[:messages].sole[:content].last[:text]
+    expect(prompt).to include("dinner: Dinner", "#{korean.key}: Korean")
+    expect(prompt).not_to include("Thai")
+    expect(data["tags"]).to eq [ "dinner", korean.key ]
+  end
 end
