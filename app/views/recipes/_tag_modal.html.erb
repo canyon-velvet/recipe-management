@@ -10,12 +10,12 @@
 
     <div class="field">
       <label class="form-label" for="new_tag_emoji">
-        <%= t("recipes.tag_modal.emoji") %>
+        <%= Tag.human_attribute_name(:emoji) %>
         <span class="tag-modal-optional"><%= t("recipes.tag_modal.optional") %></span>
       </label>
       <div class="tag-emoji-field">
         <input type="text" name="tag[emoji]" id="new_tag_emoji" class="tag-emoji-input" autocomplete="off"
-               maxlength="<%= Tag::EMOJI_MAX_LENGTH %>" data-emoji-picker-target="input"
+               data-emoji-picker-target="input"
                data-action="emoji-picker#sync">
         <div class="tag-emoji-grid">
           <% Tag::EMOJI_CHOICES.each do |emoji| %>
@@ -33,7 +33,7 @@
     </div>
 
     <fieldset>
-      <legend class="form-label"><%= t("recipes.tag_modal.group") %></legend>
+      <legend class="form-label"><%= Tag.human_attribute_name(:kind) %></legend>
       <div class="source-chips">
         <% [ "other", *(Tag::KINDS - [ "other" ]) ].each do |kind| %>
           <label class="source-chip">

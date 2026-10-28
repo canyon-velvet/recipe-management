@@ -58,8 +58,46 @@ RSpec.describe "Creating a tag from the recipe form", type: :system do
     expect(user.tags.sole.emoji).to be_nil
   end
 
+  it "keeps a long emoji typed whole, such as a flag of a country's region" do
+    scotland = "🏴\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}"
+    open_create_tag("Scottish")
+    within("dialog[open]") do
+      fill_in "Emoji", with: scotland
+      click_button "Save"
+    end
+
+    expect(page).to have_no_css("dialog[open]")
+    expect(user.tags.sole.emoji).to eq scotland
+  end
+
+  it "offers to create only a tag that isn't there, and takes a comma as part of the name" do
+    tag_box.click
+    tag_box.find("input").send_keys("dinner")
+    expect(page).to have_css(".ts-dropdown .option", text: "Dinner")
+    expect(page).to have_no_css(".ts-dropdown .create")
+
+    tag_box.find("input").send_keys(:backspace, :backspace, :backspace, :backspace, :backspace, :backspace,
+                                    "Quick, easy")
+    expect(page).to have_no_css("dialog[open]")
+    expect(page).to have_css(".ts-dropdown .create", text: "Create tag “Quick, easy”")
+  end
+
+  it "opens on Enter, and saves on Enter without saving the recipe" do
+    tag_box.click
+    tag_box.find("input").send_keys("Korean")
+    expect(page).to have_css(".ts-dropdown .create.active", text: "Create tag “Korean”")
+    tag_box.find("input").send_keys(:enter)
+    expect(page).to have_css("dialog[open]", text: "New tag")
+
+    find_field("Name", with: "Korean").send_keys(:enter)
+
+    expect(page).to have_no_css("dialog[open]")
+    expect(tag_box).to have_css(".item", text: "Korean")
+    expect(page).to have_current_path(edit_recipe_path(recipe))
+  end
+
   it "says why it couldn't, and keeps the pop-up open" do
-    open_create_tag("Dinner")
+    open_create_tag("晚餐") # Dinner, in Chinese
 
     within("dialog[open]") do
       click_button "Save"

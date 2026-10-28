@@ -14,6 +14,9 @@ export default class extends Controller {
         this.dispatch("requestCreate", { detail: { query: input } })
         callback() // nothing added yet: the pop-up adds the tag once it's saved
       },
+      // Only a tag that isn't there, by name (each option's data-data); a comma is part of the name typed
+      createFilter: (input) => this.isNewName(input),
+      delimiter: null,
       persist: false,
       maxOptions: null,
       render: {
@@ -30,8 +33,13 @@ export default class extends Controller {
 
   // The tag the New tag pop-up created: { id, name, label }
   created({ detail: tag }) {
-    this.tomSelect.addOption({ value: String(tag.id), text: tag.label })
+    this.tomSelect.addOption({ value: String(tag.id), text: tag.label, name: tag.name })
     this.tomSelect.addItem(String(tag.id))
+  }
+
+  isNewName(input) {
+    const name = input.trim().toLowerCase()
+    return name !== "" && !Object.values(this.tomSelect.options).some(option => option.name?.toLowerCase() === name)
   }
 
   noResultsElement() {
@@ -45,7 +53,7 @@ export default class extends Controller {
   createElement(input) {
     const div = document.createElement("div")
     div.className = "create"
-    div.textContent = this.createLabelValue.replace("%{name}", input)
+    div.textContent = this.createLabelValue.replace("%{name}", () => input) // a function: a $ typed stays a $
     return div
   }
 }

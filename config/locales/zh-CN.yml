@@ -295,9 +295,7 @@ zh-CN:
       placeholder: "选择标签"
       remove: "移除"
     tag_modal:
-      emoji: "表情"
       emoji_hint: "点一个，或用键盘输入任意表情。"
-      group: "分组"
       no_emoji: "不用表情"
       optional: "可不填"
       title: "新建标签"

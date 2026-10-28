@@ -5,7 +5,7 @@
      data-inline-create-reset-on-open-value="true">
   <%= form.label :tag_ids, Recipe.human_attribute_name(:tags), class: "form-label" %>
   <%= form.select :tag_ids,
-        options_from_collection_for_select(tags, :id, ->(tag) { tag_label(tag) }, form.object.tag_ids),
+        options_for_select(tags.map { |tag| tag_option(tag) }, form.object.tag_ids),
         {},
         multiple: true,
         placeholder: t(".placeholder"),
