@@ -16,6 +16,7 @@ export default class extends Controller {
       },
       // Only a tag that isn't there, by name (each option's data-data); a comma is part of the name typed
       createFilter: (input) => this.isNewName(input),
+      dataAttr: "data",
       delimiter: null,
       persist: false,
       maxOptions: null,
@@ -38,7 +39,7 @@ export default class extends Controller {
   }
 
   isNewName(input) {
-    const name = input.trim().toLowerCase()
+    const name = input.trim().replace(/\s+/g, " ").toLowerCase() // as the server squishes it
     return name !== "" && !Object.values(this.tomSelect.options).some(option => option.name?.toLowerCase() === name)
   }
 

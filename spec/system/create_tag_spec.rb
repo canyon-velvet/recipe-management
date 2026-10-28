@@ -73,7 +73,7 @@ RSpec.describe "Creating a tag from the recipe form", type: :system do
   it "offers to create only a tag that isn't there, and takes a comma as part of the name" do
     tag_box.click
     tag_box.find("input").send_keys("dinner")
-    expect(page).to have_css(".ts-dropdown .option", text: "Dinner")
+    expect(page).to have_css(".ts-dropdown .option .highlight", text: "Dinner") # the list as searched
     expect(page).to have_no_css(".ts-dropdown .create")
 
     tag_box.find("input").send_keys(:backspace, :backspace, :backspace, :backspace, :backspace, :backspace,
