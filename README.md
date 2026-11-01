@@ -26,10 +26,12 @@ turns a week of meals into a shopping list.
 
 ## What it does
 
-- **Import a recipe from a link.** Paste a link to a recipe site such as 下厨房, or paste the
-  recipe's text. It's read in the background, and Claude tidies it up: ingredients split into
-  amounts and units, steps in order, tags and the author's tips. It then waits in a Draft box
-  until I review and save it. I can also type a recipe in by hand.
+- **Import a recipe from a link, screenshots or text.** Paste a link to a recipe page; add up to
+  six screenshots from Photos or the camera, read together as one recipe, for one I found in a
+  video or a post; or paste the recipe's text, for sites that block importing, such as 小红书.
+  It's read in the background, and Claude tidies it up: ingredients split into amounts and units,
+  steps in order, tags and the author's tips. It then waits in a Draft box until I review and save
+  it. I can also type a recipe in by hand, or paste a link to the assistant.
 - **Browse my collection.** Tag recipes by meal, cuisine, diet and convenience, then browse them
   from a category sidebar or search by name or ingredient.
 - **Plan the week.** Drop recipes into breakfast, lunch, dinner or snack for each day.
