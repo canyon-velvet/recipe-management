@@ -48,9 +48,12 @@ export default class extends Controller {
     this.changed()
   }
 
-  // Space on the checked chip, which browsers don't click, as they do an unchecked one
+  // Space on the checked chip, which browsers don't click, as they do an unchecked one. A held key repeats: the
+  // chip it unchecked would be clicked, so checked again, when it's let go.
   toggleWithSpace(event) {
-    if (event.target.type !== "radio" || !event.target.checked) return
+    if (event.target.type !== "radio") return
+    if (event.repeat) return event.preventDefault()
+    if (!event.target.checked) return
     event.preventDefault()
     event.target.checked = false
     this.changed()

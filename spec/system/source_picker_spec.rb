@@ -46,11 +46,18 @@ RSpec.describe "Picking a recipe's source", type: :system do
     expect(recipe.reload.source).to eq mom
   end
 
-  it "unticks the source with Space, as with a tap" do
+  it "unticks the source with Space, as with a tap, also when the key is held down" do
     visit edit_recipe_path(recipe)
 
     find_field("小红书", visible: :all).send_keys(:space)
+    expect(page).to have_no_checked_field(visible: :all, name: "recipe[source_id]")
 
+    find_field("小红书", visible: :all).send_keys(:space) # ticked again
+    expect(page).to have_checked_field("小红书", visible: :all)
+    page.driver.with_playwright_page do |pw| # held: the key repeats before it's let go
+      3.times { pw.keyboard.down(" ") }
+      pw.keyboard.up(" ")
+    end
     expect(page).to have_no_checked_field(visible: :all, name: "recipe[source_id]")
   end
 
@@ -81,6 +88,9 @@ RSpec.describe "Picking a recipe's source", type: :system do
 
     expect(page).to have_checked_field("The Food Lab", visible: :all)
     expect(page).to have_no_field("Search sources...")
+    find(".source-chip", text: "The Food Lab").click # unticked, as the chips already there
+    expect(page).to have_no_checked_field(visible: :all, name: "recipe[source_id]")
+    find(".source-chip", text: "The Food Lab").click
     click_button "Update recipe"
 
     expect(page).to have_text("Recipe updated.")
