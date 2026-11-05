@@ -29,6 +29,53 @@ RSpec.describe "Picking a recipe's source", type: :system do
     expect(recipe.reload.source).to eq douyin
   end
 
+  it "unticks the source when its chip is tapped again, and won't save until one is picked" do
+    visit edit_recipe_path(recipe)
+
+    find(".source-chip", text: "小红书").click
+    expect(page).to have_no_checked_field(visible: :all, name: "recipe[source_id]")
+
+    click_button "Update recipe"
+    message = page.evaluate_script("document.querySelector('[name=\"recipe[source_id]\"]').validationMessage")
+    expect(message).to eq "Pick a source: tap one, or use Other… to find or create one."
+    expect(page).to have_current_path(edit_recipe_path(recipe)) # not sent
+
+    find(".source-chip", text: "Mom").click
+    click_button "Update recipe"
+    expect(page).to have_text("Recipe updated.")
+    expect(recipe.reload.source).to eq mom
+  end
+
+  it "unticks the source with Space, as with a tap, also when the key is held down" do
+    visit edit_recipe_path(recipe)
+
+    find_field("小红书", visible: :all).send_keys(:space)
+    expect(page).to have_no_checked_field(visible: :all, name: "recipe[source_id]")
+
+    find_field("小红书", visible: :all).send_keys(:space) # ticked again
+    expect(page).to have_checked_field("小红书", visible: :all)
+    page.driver.with_playwright_page do |pw| # held: the key repeats before it's let go
+      3.times { pw.keyboard.down(" ") }
+      pw.keyboard.up(" ")
+    end
+    expect(page).to have_no_checked_field(visible: :all, name: "recipe[source_id]")
+  end
+
+  it "drops a draft's new source when its chip is unticked" do
+    draft = user.drafts.create!(status: :ready, data: { "name" => "Mapo tofu", "source_name" => "Just One Cookbook",
+                                                        "steps" => [ "Cook it." ] })
+    visit new_recipe_path(draft_id: draft.id)
+
+    find(".source-chip", text: "Just One Cookbook").click
+    expect(page).to have_no_checked_field(visible: :all, name: "recipe[source_id]")
+    expect(page.evaluate_script("document.querySelector('[name=\"recipe[new_source_name]\"]').disabled")).to be true
+
+    find(".source-chip", text: "Just One Cookbook").click # and back
+    expect(page).to have_checked_field("Just One Cookbook New", visible: :all)
+    click_button "Create recipe"
+    expect(user.recipes.find_by(name: "Mapo tofu").source.name).to eq "Just One Cookbook"
+  end
+
   it "finds another source under Other…, which joins the chips checked" do
     cookbook = create(:source, user: user, name: "The Food Lab")
     5.times { create(:source, user: user) } # more sources than the chips show
@@ -41,6 +88,9 @@ RSpec.describe "Picking a recipe's source", type: :system do
 
     expect(page).to have_checked_field("The Food Lab", visible: :all)
     expect(page).to have_no_field("Search sources...")
+    find(".source-chip", text: "The Food Lab").click # unticked, as the chips already there
+    expect(page).to have_no_checked_field(visible: :all, name: "recipe[source_id]")
+    find(".source-chip", text: "The Food Lab").click
     click_button "Update recipe"
 
     expect(page).to have_text("Recipe updated.")
