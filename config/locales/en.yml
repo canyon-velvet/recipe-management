@@ -214,6 +214,7 @@ en:
       label: "Menu"
     source_picker:
       other: "Other…"
+      pick: "Pick a source: tap one, or use Other… to find or create one."
       required: "Pick a source, or create one: type its name, then Create source."
 
   recipe_shares:

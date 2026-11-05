@@ -209,6 +209,7 @@ zh-CN:
       label: "菜单"
     source_picker:
       other: "其他…"
+      pick: "请选择一个来源：点一个，或在“其他…”里查找或创建。"
       required: "请选择一个来源，或输入名称后点击“创建来源”。"
 
   recipe_shares:
