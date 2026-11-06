@@ -11,8 +11,8 @@
   </button>
 
   <%# Who's signed in (above the menu itself, which holds only its items), the everyday items (importing a recipe
-      first, from any page, above the Draft box it lands in), the admin's items as a group named by its label, and
-      Log out %>
+      first, from any page, above the Draft box it lands in), the admin's items as a group named by its label, Log
+      out, and below the menu the app's version, to tell which one someone has when they report a problem %>
   <div data-dropdown-target="menu" class="account-menu menu-card hidden">
     <div class="menu-who">
       <span class="menu-avatar" aria-hidden="true"><%= current_user.username.first.upcase %></span>
@@ -53,5 +53,6 @@
         <%= inline_icon "logout" %> <%= t(".logout") %>
       <% end %>
     </div>
+    <p class="menu-version"><%= t(".version", version: Rails.configuration.x.version) %></p>
   </div>
 </div>

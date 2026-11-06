@@ -38,6 +38,9 @@ module RecipeManagement
     config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
+    # The release (VERSION, CHANGELOG.md), shown at the foot of the account menu
+    config.x.version = File.read(File.expand_path("../VERSION", __dir__)).strip
+
     config.i18n.available_locales = [ :en, :"zh-CN" ]
     config.i18n.default_locale = :en
 

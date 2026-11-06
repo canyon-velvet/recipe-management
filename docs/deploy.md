@@ -37,6 +37,20 @@ accepts it.
 Deploys are manual: a merge to main doesn't deploy. Use **Manual Deploy** on the web service. Its pre-deploy command
 migrates the database before the new code goes live.
 
+Each release gets a version number, shown at the foot of the account menu:
+
+1. While it's being made, each pull request adds a line for what it changes to **Unreleased** in
+   [`CHANGELOG.md`](../CHANGELOG.md), in words for the people using the app.
+2. Before deploying, in one pull request: set the new version in `VERSION`, and rename **Unreleased** to it, with
+   the date, leaving an empty **Unreleased** above it. A new feature raises the middle number (1.1.0), a fix the last
+   (1.0.1).
+3. Once it's merged, tag it on main, deploy, and optionally make a GitHub release from the tag with the changelog's
+   lines as its notes:
+   ```sh
+   git switch main && git pull
+   git tag v1.1.0 && git push origin v1.1.0
+   ```
+
 The exception is a merge that changes `render.yaml`: Render syncs the Blueprint and redeploys the web service by
 itself if its settings changed.
 
