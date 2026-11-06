@@ -4,15 +4,24 @@ RSpec.describe WatchVideoService do
   let(:url) { "https://www.youtube.com/watch?v=dQw4w9WgXcQ" }
   let(:sent) { [] }
 
-  # Stands in for Gemini: answers with the given status and body, and keeps each request sent
-  def gemini(status, body)
-    response = Net::HTTPResponse::CODE_TO_OBJ[status.to_s].new("1.1", status.to_s, "")
-    allow(response).to receive(:body).and_return(body.is_a?(String) ? body : body.to_json)
+  # Stands in for Gemini: answers with the given status and body, or each request with the next of several
+  # [status, body] replies (the last one again once they run out), and keeps each request sent
+  def gemini(*replies)
+    replies = [ replies ] if replies.first.is_a?(Integer)
+    responses = replies.map do |status, body|
+      Net::HTTPResponse::CODE_TO_OBJ[status.to_s].new("1.1", status.to_s, "")
+                                                 .tap { allow(_1).to receive(:body).and_return(body.to_json) }
+    end
     http = instance_double(Net::HTTP)
-    allow(http).to receive(:request) { |request| sent << request && response }
+    allow(http).to receive(:request) do |request|
+      sent << request
+      responses.size > 1 ? responses.shift : responses.first
+    end
     allow(Net::HTTP).to receive(:start).with("generativelanguage.googleapis.com", 443, hash_including(use_ssl: true))
-                                       .and_yield(http).and_return(response)
+                                       .and_wrap_original { |_original, *, &block| block.call(http) }
   end
+
+  def model_of(request) = request.path[%r{/models/([^:]+):}, 1]
 
   # Why it failed
   def reason_of
@@ -52,14 +61,30 @@ RSpec.describe WatchVideoService do
     expect(reason_of { described_class.new(url).call }).to eq :video_unavailable
   end
 
-  it "waits out rate limits, outages and a connection that failed" do
+  it "has Flash-Lite watch it at once when Flash is busy" do
+    gemini([ 503, { error: { message: "The model is overloaded." } } ], [ 200, reply("Bibimbap …") ])
+
+    expect(described_class.new(url).call).to eq "Bibimbap …"
+    expect(sent.map { model_of(_1) }).to eq %w[gemini-flash-latest gemini-flash-lite-latest]
+  end
+
+  it "waits out rate limits, outages and a connection that failed, when both models have them" do
     [ 429, 500, 503 ].each do |status|
+      sent.clear
       gemini(status, { error: { message: "Try later" } })
       expect { described_class.new(url).call }.to raise_error(described_class::TemporaryError, /#{status}/)
+      expect(sent.size).to eq 2
     end
 
     allow(Net::HTTP).to receive(:start).and_raise(Net::ReadTimeout)
     expect { described_class.new(url).call }.to raise_error(described_class::TemporaryError, /ReadTimeout/)
+  end
+
+  it "doesn't try Flash-Lite for a video Flash can't watch" do
+    gemini(400, { error: { message: "Video is not public" } })
+
+    expect(reason_of { described_class.new(url).call }).to eq :video_unavailable
+    expect(sent.map { model_of(_1) }).to eq %w[gemini-flash-latest]
   end
 
   it "reports a wrong key or request, the app's to fix, instead of blaming the video" do

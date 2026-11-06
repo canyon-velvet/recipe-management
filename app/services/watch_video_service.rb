@@ -4,7 +4,10 @@
 # link sent is always a canonical watch link (RecipeLink), never one as the user typed it.
 class WatchVideoService
   MODEL = "gemini-flash-latest"
-  ENDPOINT = URI("https://generativelanguage.googleapis.com/v1beta/models/#{MODEL}:generateContent")
+  # The smaller model, tried at once when Flash is busy (its free tier often answers 503, overloaded), as it usually
+  # isn't: a little less careful, but a draft is always reviewed, and it saves minutes of waiting.
+  FALLBACK_MODEL = "gemini-flash-lite-latest"
+  HOST = "generativelanguage.googleapis.com"
   # Only the first 40 minutes are watched, so a long video can't use up the quota. At low resolution a second of video
   # is about 100 tokens: 40 minutes is about 240k, within the free tier's tokens a minute (an hour would be over).
   MAX_SECONDS = 2400
@@ -39,7 +42,7 @@ class WatchVideoService
 
   # Returns the recipe as text, no longer than a page's text sent to Claude
   def call
-    text = parse(post)
+    text = parse(watch)
     raise Error.new(:not_a_recipe) if text.strip == NO_RECIPE
 
     text.first(ExtractRecipeService::MAX_TEXT_CHARS)
@@ -47,11 +50,20 @@ class WatchVideoService
 
   private
 
-  def post
-    request = Net::HTTP::Post.new(ENDPOINT, "Content-Type" => "application/json",
+  # Only when both models are busy does ImportRecipeJob wait and try again
+  def watch
+    post(MODEL)
+  rescue TemporaryError => e
+    Rails.logger.info("Gemini #{MODEL} busy (#{e.message.first(100)}); trying #{FALLBACK_MODEL}")
+    post(FALLBACK_MODEL)
+  end
+
+  def post(model)
+    endpoint = URI("https://#{HOST}/v1beta/models/#{model}:generateContent")
+    request = Net::HTTP::Post.new(endpoint, "Content-Type" => "application/json",
                                             "x-goog-api-key" => self.class.api_key)
     request.body = body.to_json
-    response = Net::HTTP.start(ENDPOINT.host, ENDPOINT.port, use_ssl: true, **HTTP_OPTIONS) { _1.request(request) }
+    response = Net::HTTP.start(HOST, 443, use_ssl: true, **HTTP_OPTIONS) { _1.request(request) }
     raise_for(response) unless response.is_a?(Net::HTTPSuccess)
 
     JSON.parse(response.body)
