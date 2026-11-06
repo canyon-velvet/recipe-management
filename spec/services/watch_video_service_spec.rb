@@ -68,16 +68,28 @@ RSpec.describe WatchVideoService do
     expect(sent.map { model_of(_1) }).to eq %w[gemini-flash-latest gemini-flash-lite-latest]
   end
 
-  it "waits out rate limits, outages and a connection that failed, when both models have them" do
+  it "waits out rate limits and outages when both models have them" do
     [ 429, 500, 503 ].each do |status|
       sent.clear
       gemini(status, { error: { message: "Try later" } })
       expect { described_class.new(url).call }.to raise_error(described_class::TemporaryError, /#{status}/)
       expect(sent.size).to eq 2
     end
+  end
 
+  it "waits out a connection that failed or was too slow, without trying Flash-Lite at once: Flash wasn't busy" do
     allow(Net::HTTP).to receive(:start).and_raise(Net::ReadTimeout)
+
     expect { described_class.new(url).call }.to raise_error(described_class::TemporaryError, /ReadTimeout/)
+    expect(Net::HTTP).to have_received(:start).once
+  end
+
+  it "fails, reported, when Flash is busy and Flash-Lite can't be used, instead of waiting on a broken fallback" do
+    expect(Rails.error).to receive(:report)
+    gemini([ 503, { error: { message: "The model is overloaded." } } ],
+           [ 404, { error: { message: "models/gemini-flash-lite-latest is not found" } } ])
+
+    expect(reason_of { described_class.new(url).call }).to eq :video_failed
   end
 
   it "doesn't try Flash-Lite for a video Flash can't watch" do

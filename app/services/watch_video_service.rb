@@ -29,6 +29,9 @@ class WatchVideoService
 
   class TemporaryError < StandardError; end
 
+  # Google answered that it's busy or rate limited, which the other model may not be
+  class BusyError < TemporaryError; end
+
   TEMPORARY_STATUSES = [ 429, 500, 503, 504 ].freeze
 
   def self.api_key = Rails.application.credentials.dig(:gemini, :api_key) || ENV["GEMINI_API_KEY"]
@@ -50,10 +53,11 @@ class WatchVideoService
 
   private
 
-  # Only when both models are busy does ImportRecipeJob wait and try again
+  # Only when both models are busy does ImportRecipeJob wait and try again. A connection that failed or a reply too slow
+  # isn't Flash being busy, so it's left to the job: trying again at once could hold a worker twice as long.
   def watch
     post(MODEL)
-  rescue TemporaryError => e
+  rescue BusyError => e
     Rails.logger.info("Gemini #{MODEL} busy (#{e.message.first(100)}); trying #{FALLBACK_MODEL}")
     post(FALLBACK_MODEL)
   end
@@ -81,7 +85,7 @@ class WatchVideoService
   # access is forbidden (403): those, and anything else, are the app's to fix, so they're reported.
   def raise_for(response)
     message = "HTTP #{response.code}: #{response.body.to_s.first(500)}"
-    raise TemporaryError, message if TEMPORARY_STATUSES.include?(response.code.to_i)
+    raise BusyError, message if TEMPORARY_STATUSES.include?(response.code.to_i)
     raise Error.new(:video_unavailable, message) if response.code == "400" && !message.include?("API_KEY_INVALID")
 
     failed(message)
