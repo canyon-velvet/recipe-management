@@ -9,9 +9,9 @@ class StartImportService
   # From this many left, the import page shows the count in amber.
   FEW_LEFT = 5
 
-  # error: :blank, :invalid_link, :too_long (pasted text), :needs_claude, :already_saved (with the recipe),
-  # :already_in_draft_box, :rate_limited, :source_blank (pasted text or screenshots), or for screenshots :title_blank,
-  # :too_many_screenshots or :unreadable_screenshot
+  # error: :blank, :invalid_link, :too_long (pasted text), :needs_claude, :needs_gemini (a YouTube video),
+  # :already_saved (with the recipe), :already_in_draft_box, :rate_limited, :source_blank (pasted text or screenshots),
+  # or for screenshots :title_blank, :too_many_screenshots or :unreadable_screenshot
   Result = Data.define(:draft, :error, :recipe) do
     def success? = error.nil?
   end
@@ -62,6 +62,7 @@ class StartImportService
 
     recipe = @url && @user.recipes.find_by(source_url: @url)
     return failure(:already_saved, recipe: recipe) if recipe
+    return failure(:needs_gemini) if @text.nil? && RecipeLink.youtube?(@url) && !WatchVideoService.available?
 
     draft = draft_to_read
     return failure(:already_in_draft_box) unless draft

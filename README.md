@@ -5,6 +5,7 @@
 [![Rails 8.1](https://img.shields.io/badge/Rails-8.1-D30001?logo=rubyonrails&logoColor=white)](https://rubyonrails.org)
 [![Hotwire](https://img.shields.io/badge/Hotwire-Turbo%20%2B%20Stimulus-5CD8E5?logo=hotwire&logoColor=white)](https://hotwired.dev)
 [![LLM: Claude](https://img.shields.io/badge/LLM-Claude-D97757?logo=claude&logoColor=white)](https://www.anthropic.com/claude)
+[![LLM: Gemini](https://img.shields.io/badge/LLM-Gemini-8E75B2?logo=googlegemini&logoColor=white)](https://ai.google.dev/gemini-api)
 [![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7?logo=render&logoColor=white)](https://recipe-management-web-72dj.onrender.com)
 
 It's deployed on Render.
@@ -26,8 +27,9 @@ turns a week of meals into a shopping list.
 
 ## What it does
 
-- **Import a recipe from a link, screenshots or text.** Paste a link to a recipe page; add up to
-  six screenshots from Photos or the camera, read together as one recipe, for one I found in a
+- **Import a recipe from a link, a YouTube video, screenshots or text.** Paste a link to a recipe
+  page or a YouTube video, whose amounts are read from what's said and shown on screen; add up
+  to six screenshots from Photos or the camera, read together as one recipe, for one I found in a
   video or a post; or paste the recipe's text, for sites that block importing, such as 小红书.
   It's read in the background, and Claude tidies it up: ingredients split into amounts and units,
   steps in order, tags and the author's tips. It then waits in a Draft box until I review and save

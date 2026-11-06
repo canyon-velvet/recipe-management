@@ -1,11 +1,12 @@
 # Reads one Reading… Draft (ImportRecipeJob runs this in the background): fetches and extracts the page unless the
-# recipe text was pasted or it's from screenshots, has Claude clean it up, and leaves the draft Ready with its data, or
-# Failed with the reason. Screenshots are deleted once read; a failed draft keeps them, to be read again (Try again).
-# Without an Anthropic API key, a page's structured recipe is used as it is.
+# recipe text was pasted or it's from screenshots (a YouTube video is watched by Gemini instead), has Claude clean it
+# up, and leaves the draft Ready with its data, or Failed with the reason. Screenshots are deleted once read; a failed
+# draft keeps them, to be read again (Try again). Without an Anthropic API key, a page's structured recipe is used as
+# it is.
 class ImportRecipeService
   # Failures before Claude read anything (the page wouldn't open or blocked us, or there's no Claude to read it): the
   # import cost nothing, so its count is given back to the user.
-  UNREAD_FAILURES = %i[blocked fetch_failed needs_claude].freeze
+  UNREAD_FAILURES = %i[blocked fetch_failed needs_claude video_unavailable].freeze
 
   def initialize(draft)
     @draft = draft
@@ -14,9 +15,10 @@ class ImportRecipeService
   def call
     return unless @draft.reading?
 
-    extracted = fetch_and_extract if @draft.source_text.blank? && !screenshots?
+    watched = watch_video if video?
+    extracted = fetch_and_extract if @draft.source_text.blank? && !screenshots? && !video?
     show_title(extracted&.title)
-    data = CleanRecipeService.available? ? cleaned(extracted) : structured(extracted)
+    data = CleanRecipeService.available? ? cleaned(extracted, watched) : structured(extracted)
     data["name"] = @draft.name if screenshots? # the user's name for it
     # Where the user said pasted text or screenshots are from, or else the page's site
     data["source_name"] = @draft.data["source_name"].presence || extracted&.site_name ||
@@ -26,7 +28,7 @@ class ImportRecipeService
   rescue ImportFailure => e
     @draft.update!(status: :failed, failure_reason: e.reason)
     StartImportService.give_back(@draft.user) if UNREAD_FAILURES.include?(e.reason)
-  rescue CleanRecipeService::TemporaryError
+  rescue CleanRecipeService::TemporaryError, WatchVideoService::TemporaryError
     raise # ImportRecipeJob retries these
   rescue StandardError => e
     # Anything unexpected fails the draft (shown with the generic reason) instead of leaving it Reading… while the
@@ -44,12 +46,25 @@ class ImportRecipeService
 
   def screenshots? = @draft.screenshot_count.positive?
 
+  # A YouTube video is watched, not read as a page; unless its recipe text was pasted
+  # (A draft from before videos were watched may keep a link to one in another form, such as youtu.be.)
+  def video? = @draft.source_text.blank? && RecipeLink.youtube?(video_url)
+
+  def video_url = RecipeLink.normalize(@draft.source_url)
+
+  # Its recipe, written down by Gemini, is read by Claude like pasted text. Without Claude, it can't be made a draft.
+  def watch_video
+    raise ImportFailure.new(:needs_claude) unless CleanRecipeService.available?
+
+    WatchVideoService.new(video_url).call
+  end
+
   def fetch_and_extract
     ExtractRecipeService.new(FetchPageService.new(@draft.source_url).call, url: @draft.source_url).call
   end
 
-  def cleaned(extracted)
-    text = @draft.source_text.presence || extracted&.text
+  def cleaned(extracted, watched)
+    text = @draft.source_text.presence || watched || extracted&.text
     images = @draft.images.map { |image| { media_type: image.content_type, data: image.data } }
     cleaner = CleanRecipeService.new(user: @draft.user, recipe: extracted&.recipe, text: text, images: images)
     without_images(cleaner.call)

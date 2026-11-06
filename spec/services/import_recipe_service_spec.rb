@@ -50,6 +50,79 @@ RSpec.describe ImportRecipeService do
     expect(text_draft.reload.data).to include("name" => "红烧肉", "source_name" => "Mom")
   end
 
+  describe "a YouTube video" do
+    let(:video) { user.drafts.create!(source_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ") }
+    let(:cleaner) do
+      instance_double(CleanRecipeService, call: { "name" => "Bibimbap", "description" => "", "steps" => [ "Mix." ] })
+    end
+
+    def gemini_raises(error)
+      watcher = instance_double(WatchVideoService)
+      allow(watcher).to receive(:call).and_raise(error)
+      allow(WatchVideoService).to receive(:new).and_return(watcher)
+    end
+
+    it "has Gemini watch it instead of reading its page, and Claude read what Gemini wrote down" do
+      allow(WatchVideoService).to receive(:new).with(video.source_url)
+                                               .and_return(instance_double(WatchVideoService, call: "Bibimbap …"))
+      expect(FetchPageService).not_to receive(:new)
+      expect(CleanRecipeService).to receive(:new).with(user: user, recipe: nil, text: "Bibimbap …", images: [])
+                                                 .and_return(cleaner)
+
+      described_class.new(video).call
+
+      expect(video.reload).to have_attributes(status: "ready")
+      expect(video.data).to include("name" => "Bibimbap", "source_name" => "YouTube")
+    end
+
+    it "gives the import back when Gemini can't watch the video" do
+      gemini_raises(WatchVideoService::Error.new(:video_unavailable))
+      expect(StartImportService).to receive(:give_back).with(user)
+
+      described_class.new(video).call
+
+      expect(video.reload).to have_attributes(status: "failed", failure_reason: "video_unavailable")
+    end
+
+    it "lets the job wait out Gemini's rate limits" do
+      gemini_raises(WatchVideoService::TemporaryError)
+
+      expect { described_class.new(video).call }.to raise_error(WatchVideoService::TemporaryError)
+      expect(video.reload).to be_reading
+    end
+
+    it "watches a video kept from before in another form of its link" do
+      video.update_columns(source_url: "https://youtu.be/dQw4w9WgXcQ")
+      expect(WatchVideoService).to receive(:new).with("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+                                                .and_return(instance_double(WatchVideoService, call: "Bibimbap …"))
+      allow(CleanRecipeService).to receive(:new).and_return(cleaner)
+
+      described_class.new(video).call
+
+      expect(video.reload).to be_ready
+    end
+
+    it "fails without Claude, before Gemini watches it, and gives the import back" do
+      allow(CleanRecipeService).to receive(:available?).and_return(false)
+      expect(WatchVideoService).not_to receive(:new)
+      expect(StartImportService).to receive(:give_back).with(user)
+
+      described_class.new(video).call
+
+      expect(video.reload).to have_attributes(status: "failed", failure_reason: "needs_claude")
+    end
+
+    it "reads its recipe text when that was pasted instead" do
+      video.update!(source_text: "Bibimbap, from the video …")
+      expect(WatchVideoService).not_to receive(:new)
+      allow(CleanRecipeService).to receive(:new).and_return(cleaner)
+
+      described_class.new(video).call
+
+      expect(video.reload).to be_ready
+    end
+  end
+
   it "deletes a draft's screenshots with it" do
     draft.destroy
 

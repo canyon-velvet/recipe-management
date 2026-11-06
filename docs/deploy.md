@@ -25,6 +25,9 @@ The smallest paid plans come to about $13 a month, plus the database's storage a
 4. Log in, then invite people from the account menu → **Invites**. Signing up is by invite link only.
 5. In the Claude Console, set a monthly spend limit on the workspace the API key belongs to (or on the organization).
    The app limits each user's imports and assistant messages, but nothing caps the total.
+6. For importing YouTube videos, which Gemini watches, add a Gemini API key to the production credentials, beside
+   Anthropic's: `gemini: { api_key: … }`. Without one, a YouTube link is refused with a message saying so. On
+   Gemini's free tier, Google may use what's sent (the video's public link and the prompt) to improve its products.
 
 To use your own domain, add it in Render, then set `APP_HOSTS` on the web service (comma-separated) so the app
 accepts it.
