@@ -16,10 +16,21 @@ class Recipe < ApplicationRecord
   # values within the integer columns (a week is the longest time a recipe can take).
   COUNT_LIMITS = { servings: 100, prep_minutes: 10_080, cook_minutes: 10_080, total_minutes: 10_080 }.freeze
 
+  # The icons to tap in the form: food, and a few for the occasion. They include every emoji a built-in tag had, which
+  # recipes' icons started from. A recipe without one shows the placeholder.
+  ICON_CHOICES = %w[
+    🍜 🍲 🍛 🍝 🍣 🍱 🥟 🍙 🍚 🥘 🌮 🍔 🍕 🥗 🥪 🍳 🥞 🥐 🧀 🥩 🍗 🍤 🐟 🥦 🌶️ 🍄 🍅 🍋 🍰 🍪 ☕ 🧋 🍷 🎉 ❤️ ⭐
+    🍢 🥑 🧁 🥫 🍞 🥧 🍩 🥚 🍠 🥙 🍿
+  ].freeze
+
   # A draft's source the user doesn't have yet; it's created when the recipe saves.
   attr_accessor :new_source_name
 
+  # Not squish: an emoji's parts are joined by invisible characters
+  normalizes :icon, with: ->(icon) { icon.strip.presence }
+
   validates :name, presence: true
+  validates :icon, one_emoji: true, allow_nil: true
   include HasRecipeLink # its link validations here, so the form lists the errors top to bottom (name, then link)
   COUNT_LIMITS.each do |attribute, max|
     validates attribute, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: max },

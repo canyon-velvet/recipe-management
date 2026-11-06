@@ -138,6 +138,23 @@
   .recipe-form-hint  { @apply mt-1 text-sm text-gray-500; }
   .recipe-form       { @apply mt-6 grid items-start gap-6 lg:grid-cols-[1fr_20rem]; }
   .recipe-form-main  { @apply min-w-0 space-y-6; }
+  /* The recipe's icon (recipes/icon_picker) beside its name: a tile with a pencil badge, which opens a grid to tap
+     one from, the chosen one pressed */
+  .recipe-name-row   { @apply flex items-center gap-2.5; }
+  .recipe-icon-tile {
+    @apply relative flex size-[42px] flex-none cursor-pointer items-center justify-center rounded-[10px]
+           bg-sectionbackground text-2xl leading-none ring-2 ring-sectiontext ring-offset-0 hover:bg-sectiontext/10;
+  }
+  .recipe-icon-tile-edit {
+    @apply absolute -right-1.5 -bottom-1.5 flex size-5 items-center justify-center rounded-full bg-white text-[11px]
+           text-sectiontext shadow;
+  }
+  .icon-picker-grid { @apply grid grid-cols-8 gap-0.5 sm:grid-cols-12; }
+  .icon-picker-choice {
+    @apply flex aspect-square cursor-pointer items-center justify-center rounded-xl text-2xl leading-none
+           hover:bg-sectionbackground aria-pressed:bg-sectionbackground aria-pressed:ring-2
+           aria-pressed:ring-sectiontext aria-pressed:ring-inset;
+  }
   .recipe-form-card  { @apply space-y-4 rounded-3xl border border-gray-200 bg-white p-6; }
   .recipe-form-card-title { @apply text-lg font-bold text-gray-900; }
   .recipe-form-details {

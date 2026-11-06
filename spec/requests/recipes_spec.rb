@@ -96,6 +96,20 @@ RSpec.describe "Recipes", type: :request do
     expect(Nokogiri::HTML(response.body).at_css(".recipe-heading-icon").text.strip).to eq "🍜"
   end
 
+  it "saves the icon chosen in the form, none for the placeholder, and refuses one that isn't an emoji" do
+    recipe = create(:recipe, user: user)
+
+    patch recipe_path(recipe), params: { recipe: { icon: "🍣" } }
+    expect(recipe.reload.icon).to eq "🍣"
+
+    patch recipe_path(recipe), params: { recipe: { icon: "<b>" } }
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(recipe.reload.icon).to eq "🍣"
+
+    patch recipe_path(recipe), params: { recipe: { icon: "" } }
+    expect(recipe.reload.icon).to be_nil
+  end
+
   it "names each row's ⋮ menu button for screen readers" do
     create(:recipe, user: user)
 

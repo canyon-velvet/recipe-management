@@ -5,15 +5,8 @@ class Tag < ApplicationRecord
 
   KINDS = %w[meal cuisine diet flavor convenience other].freeze
   NAME_MAX_LENGTH = 30
-  # The longest emoji people pick (a family, a flag of a country's region) are about this many code points
-  EMOJI_MAX_LENGTH = 10
   # Users' tags come after the built-in ones, in the order they were made
   CUSTOM_POSITION = 10_000
-  # Drawn as an emoji, not text-style like ©: a flag is two regional indicators, a keycap a digit, # or * with ⃣
-  EMOJI_START = /\A(
-    \p{Regional_Indicator}{2} | (?!\p{Regional_Indicator})\p{Emoji_Presentation} | \p{Extended_Pictographic}\u{FE0F} |
-    [\#*0-9]\u{FE0F}?\u{20E3}
-  )/x
 
   # The New tag pop-up's emoji to tap; any other can be typed
   EMOJI_CHOICES = %w[
@@ -48,7 +41,7 @@ class Tag < ApplicationRecord
                      uniqueness: { scope: :user_id, case_sensitive: false }
     validate :name_must_differ_from_built_in_tags
   end
-  validate :emoji_must_be_one_emoji, if: :emoji?
+  validates :emoji, one_emoji: true, allow_nil: true
 
   # Filters, drafts and the assistant refer to tags by key, so a user's tag gets one too; after the built-in tags.
   before_validation :assign_key_and_position, on: :create, if: :user_id?
@@ -90,12 +83,5 @@ class Tag < ApplicationRecord
       I18n.available_locales.map { |locale| I18n.t(key, scope: :tags, locale: locale) }
     end
     errors.add(:name, :taken) if taken.any? { |label| label.casecmp?(self[:name]) }
-  end
-
-  # One emoji as people pick it: a single character on screen, such as 🍜, 🌶️ (with its variation selector) or 🇰🇷,
-  # and short, so it isn't one with marks piled on it or dozens joined into one
-  def emoji_must_be_one_emoji
-    one = emoji.length <= EMOJI_MAX_LENGTH && emoji.grapheme_clusters.one? && emoji.match?(EMOJI_START)
-    errors.add(:emoji, :invalid) unless one
   end
 end

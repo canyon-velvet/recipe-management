@@ -114,6 +114,7 @@ en:
       recipe:
         cook_minutes: "Cook time (min)"
         description: "Description"
+        icon: "Icon"
         name: "Name"
         prep_minutes: "Prep time (min)"
         servings: "Servings"
@@ -306,6 +307,11 @@ en:
       no_results: "No matching tags"
       placeholder: "Choose tags"
       remove: "Remove"
+    icon_picker:
+      choose: "Choose an icon"
+      hint: "Shown on the recipe's card and page. Tap one; the first is none, for the placeholder."
+      none: "No icon"
+      title: "Choose an icon"
     tag_modal:
       emoji_hint: "Tap one, or type any emoji."
       no_emoji: "No emoji"

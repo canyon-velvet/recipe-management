@@ -118,6 +118,15 @@ RSpec.describe Recipe do
     expect(build(:ingredient, user: user, aisle: user.aisles.first)).to be_valid
   end
 
+  it "takes one emoji for its icon, or none" do
+    expect(build(:recipe, icon: "🍜")).to be_valid
+    expect(build(:recipe, icon: "🇰🇷")).to be_valid
+    expect(build(:recipe, icon: " ").icon).to be_nil
+    [ "🍜🍜", "a", "©" ].each do |icon|
+      expect(build(:recipe, icon: icon)).not_to be_valid, "#{icon.inspect} was taken"
+    end
+  end
+
   it "takes the built-in tags and the user's own, but not another user's" do
     user, other_user = create_list(:user, 2)
     built_in = create(:tag, key: "dinner", kind: "meal")

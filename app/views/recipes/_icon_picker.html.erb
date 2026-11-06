@@ -1,0 +1,37 @@
+<%# locals: (form:) %>
+<%# The recipe's icon, beside its name: a tile that opens Choose an icon, where a tap picks one and closes it. The
+    first is none, for the placeholder. An icon not among them (one a recipe started with, from a tag) leads, so it can
+    be kept. %>
+<% icon = form.object.icon %>
+<% choices = [ icon, *Recipe::ICON_CHOICES ].compact.uniq %>
+<div class="recipe-icon-picker" data-controller="modal icon-picker">
+  <%= form.hidden_field :icon, data: { icon_picker_target: "input" } %>
+  <button type="button" class="recipe-icon-tile" aria-haspopup="dialog" aria-label="<%= t(".choose") %>"
+          data-action="modal#open">
+    <span data-icon-picker-target="emoji" <%= "hidden" unless icon %>><%= icon %></span>
+    <%= image_tag "icons/recipe-placeholder.svg", alt: "", class: "size-7", hidden: icon.present?,
+                                                  data: { icon_picker_target: "placeholder" } %>
+    <span class="recipe-icon-tile-edit" aria-hidden="true">✎</span>
+  </button>
+
+  <dialog data-modal-target="dialog" class="modal-dialog--roomy" aria-labelledby="recipe_icon_title"
+          data-action="click->modal#backdropClose close->modal#closed">
+    <div class="modal-panel modal-panel--roomy">
+      <button type="button" class="modal-close" data-action="modal#close"
+              aria-label="<%= t("actions.close") %>">&times;</button>
+      <h3 id="recipe_icon_title" class="modal-heading"><%= t(".title") %></h3>
+      <p class="modal-lead"><%= t(".hint") %></p>
+      <div class="icon-picker-grid">
+        <button type="button" class="icon-picker-choice" aria-pressed="<%= icon.nil? %>" aria-label="<%= t(".none") %>"
+                data-icon-picker-target="choice" data-icon-picker-icon-param="" data-action="icon-picker#pick modal#close">
+          <%= image_tag "icons/recipe-placeholder.svg", alt: "", class: "size-7" %>
+        </button>
+        <% choices.each do |choice| %>
+          <button type="button" class="icon-picker-choice" aria-pressed="<%= choice == icon %>"
+                  data-icon-picker-target="choice" data-icon-picker-icon-param="<%= choice %>"
+                  data-action="icon-picker#pick modal#close"><%= choice %></button>
+        <% end %>
+      </div>
+    </div>
+  </dialog>
+</div>

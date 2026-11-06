@@ -111,6 +111,7 @@ zh-CN:
       recipe:
         cook_minutes: "烹饪时间（分钟）"
         description: "描述"
+        icon: "图标"
         name: "菜名"
         prep_minutes: "准备时间（分钟）"
         servings: "份量（人）"
@@ -295,6 +296,11 @@ zh-CN:
       no_results: "没有匹配的标签"
       placeholder: "选择标签"
       remove: "移除"
+    icon_picker:
+      choose: "选择图标"
+      hint: "显示在菜谱卡片和菜谱页上。点一个；第一个是不用图标，显示默认图案。"
+      none: "不用图标"
+      title: "选择图标"
     tag_modal:
       emoji_hint: "点一个，或用键盘输入任意表情。"
       no_emoji: "不用表情"
