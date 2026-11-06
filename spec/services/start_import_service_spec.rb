@@ -87,6 +87,17 @@ RSpec.describe StartImportService do
     expect(result.draft).to have_attributes(status: "reading", source_url: "https://example.com/soup")
   end
 
+  it "takes a YouTube video only with Gemini set up to watch it, as one link however it was copied" do
+    allow(WatchVideoService).to receive(:available?).and_return(false)
+    expect(start(url: "https://youtu.be/dQw4w9WgXcQ").error).to eq :needs_gemini
+    expect(user.drafts).to be_empty
+
+    allow(WatchVideoService).to receive(:available?).and_return(true)
+    expect(start(url: "https://youtu.be/dQw4w9WgXcQ").draft.source_url)
+      .to eq "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    expect(start(url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=10s").error).to eq :already_in_draft_box
+  end
+
   it "starts #{described_class::HOURLY_LIMIT} imports an hour, then refuses more" do
     described_class::HOURLY_LIMIT.times { |i| expect(start(url: "https://example.com/#{i}")).to be_success }
 

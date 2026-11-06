@@ -2,11 +2,15 @@
 class ImportRecipeJob < ApplicationJob
   queue_as :default
 
-  # Claude rate limits and outages are worth waiting out; after the last attempt the draft shows the failure.
-  retry_on CleanRecipeService::TemporaryError, wait: :polynomially_longer, attempts: 5 do |job, _error|
-    draft, locale = job.arguments
-    I18n.with_locale(locale || I18n.default_locale) { draft.update!(status: :failed, failure_reason: :cleanup_failed) }
-  end
+  # Claude's and Gemini's rate limits and outages are worth waiting out; after the last attempt the draft shows the
+  # failure.
+  { CleanRecipeService::TemporaryError => :cleanup_failed, WatchVideoService::TemporaryError => :video_failed }
+    .each do |error, reason|
+      retry_on error, wait: :polynomially_longer, attempts: 5 do |job, _error|
+        draft, locale = job.arguments
+        I18n.with_locale(locale || I18n.default_locale) { draft.update!(status: :failed, failure_reason: reason) }
+      end
+    end
 
   # The draft was discarded before it was read.
   discard_on ActiveJob::DeserializationError
