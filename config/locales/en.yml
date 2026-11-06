@@ -308,7 +308,6 @@ en:
       placeholder: "Choose tags"
       remove: "Remove"
     icon_picker:
-      choose: "Choose an icon"
       hint: "Shown on the recipe's card and page. Tap one; the first is none, for the placeholder."
       none: "No icon"
       title: "Choose an icon"

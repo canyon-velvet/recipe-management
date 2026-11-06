@@ -297,7 +297,6 @@ zh-CN:
       placeholder: "选择标签"
       remove: "移除"
     icon_picker:
-      choose: "选择图标"
       hint: "显示在菜谱卡片和菜谱页上。点一个；第一个是不用图标，显示默认图案。"
       none: "不用图标"
       title: "选择图标"

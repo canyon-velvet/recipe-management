@@ -6,6 +6,8 @@ RSpec.describe "Choosing a recipe's icon", type: :system do
   before { log_in_as user }
 
   def tile = find(".recipe-icon-tile")
+  # The tile's name as a screen reader reads it (Capybara's text would include the hidden ✎)
+  def tile_named?(name) = page.driver.with_playwright_page { _1.get_by_role("button", name:, exact: true).count == 1 }
 
   it "taps one from the pop-up beside the name, which closes with it chosen, and none for the placeholder" do
     recipe = create(:recipe, user: user, name: "Bibimbap", icon: "🍜")
@@ -20,6 +22,12 @@ RSpec.describe "Choosing a recipe's icon", type: :system do
     end
     expect(page).to have_no_css("dialog[open]")
     expect(tile).to have_text("🍣")
+    expect(tile_named?("Choose an icon: 🍣")).to be true
+    click_button "Choose an icon" # opened again, it's the one pressed
+    within("dialog[open]") do
+      expect(page).to have_css("button[aria-pressed=true]", count: 1, exact_text: "🍣")
+      find(".modal-close").click
+    end
     click_button "Update recipe"
     expect(page).to have_text("Recipe updated.")
     expect(page).to have_css(".recipe-heading-icon", text: "🍣")
@@ -28,6 +36,7 @@ RSpec.describe "Choosing a recipe's icon", type: :system do
     click_button "Choose an icon"
     within("dialog[open]") { click_button "No icon" }
     expect(tile).to have_css("img[src*='recipe-placeholder']", visible: true)
+    expect(tile_named?("Choose an icon: No icon")).to be true
     expect(tile).to have_no_text("🍣")
     click_button "Update recipe"
     expect(page).to have_text("Recipe updated.")

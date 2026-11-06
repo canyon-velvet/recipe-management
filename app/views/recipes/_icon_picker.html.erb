@@ -6,10 +6,11 @@
 <% choices = [ icon, *Recipe::ICON_CHOICES ].compact.uniq %>
 <div class="recipe-icon-picker" data-controller="modal icon-picker">
   <%= form.hidden_field :icon, data: { icon_picker_target: "input" } %>
-  <button type="button" class="recipe-icon-tile" aria-haspopup="dialog" aria-label="<%= t(".choose") %>"
-          data-action="modal#open">
+  <%# Named "Choose an icon" and the one chosen, read out as it changes: the emoji, or the placeholder's "No icon" %>
+  <button type="button" class="recipe-icon-tile" aria-haspopup="dialog" data-action="modal#open">
+    <span class="sr-only"><%= t(".title") %>:</span>
     <span data-icon-picker-target="emoji" <%= "hidden" unless icon %>><%= icon %></span>
-    <%= image_tag "icons/recipe-placeholder.svg", alt: "", class: "size-7", hidden: icon.present?,
+    <%= image_tag "icons/recipe-placeholder.svg", alt: t(".none"), class: "size-7", hidden: icon.present?,
                                                   data: { icon_picker_target: "placeholder" } %>
     <span class="recipe-icon-tile-edit" aria-hidden="true">✎</span>
   </button>
