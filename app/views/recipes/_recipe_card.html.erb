@@ -4,7 +4,7 @@
   <%= link_to "", recipe_path(recipe), class: "recipe-card-link", "aria-label": recipe.name %>
 
   <div class="recipe-card-art">
-    <% if (icon = recipe.card_icon) %>
+    <% if (icon = recipe.icon) %>
       <span class="recipe-card-icon" aria-hidden="true"><%= icon %></span>
     <% else %>
       <%= image_tag "icons/recipe-placeholder.svg", alt: "", class: "w-16 h-16 object-contain", loading: "lazy" %>

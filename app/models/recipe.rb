@@ -67,8 +67,8 @@ class Recipe < ApplicationRecord
   }
   # Recipes with an ingredient whose name contains the text, e.g. "egg" finds "eggs" and "egg yolk".
   scope :with_ingredient, ->(text) { where(id: RecipeIngredient.named_like(text).select(:recipe_id)) }
-  # What a card in the assistant's chat reads: the tags for its emoji, the ingredients for avoided items.
-  scope :for_cards, -> { includes(:tags, recipe_ingredients: :ingredient) }
+  # What a card in the assistant's chat reads: the ingredients for avoided items.
+  scope :for_cards, -> { includes(recipe_ingredients: :ingredient) }
 
   # Shown with a "new" badge in the form until the recipe saves.
   def new_source? = new_source_name.present? && (source.nil? || source.new_record?)
@@ -85,13 +85,6 @@ class Recipe < ApplicationRecord
     headings = I18n.available_locales.map { |locale| Regexp.escape(I18n.t("recipes.tips_heading", locale: locale)) }
     text, *tips = description.to_s.gsub("\r\n", "\n").split(/^\*\*(?:#{headings.join("|")})\*\*[ \t]*$/)
     [ text.to_s.strip.presence, tips.map(&:strip).compact_blank.join("\n\n").presence ]
-  end
-
-  # The emoji on the recipe's card: one of its tags', picked by the recipe's id, so cards vary but a recipe always
-  # shows the same one. Nil without tags. Uses the loaded tags, so a list that includes them adds no queries.
-  def card_icon
-    with_icons = tags.select(&:icon)
-    with_icons[id.to_i % with_icons.size].icon if with_icons.any?
   end
 
   # The items of a user's avoid list (see User#avoided_ingredients) that this recipe's ingredients contain, ignoring

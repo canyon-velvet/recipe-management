@@ -8,7 +8,7 @@
              title="<%= t(".on_grocery_list", recipe: msr.recipe.name) %>"
              aria-label="<%= t(".on_grocery_list", recipe: msr.recipe.name) %>"
              data-action="change->recipe-select#toggleGrocery" data-url="<%= meal_slot_recipe_path(msr) %>">
-      <span aria-hidden="true"><%= msr.recipe.card_icon || "🍽️" %></span>
+      <span aria-hidden="true"><%= msr.recipe.icon || "🍽️" %></span>
       <%= link_to msr.recipe.name, recipe_path(msr.recipe), class: "meal-pill-name", data: { turbo_frame: "_top" } %>
       <%= button_to "×", meal_slot_recipe_path(msr), method: :delete, class: "meal-pill-remove",
                     title: t(".remove", recipe: msr.recipe.name), aria: { label: t(".remove", recipe: msr.recipe.name) },

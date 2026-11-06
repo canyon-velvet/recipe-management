@@ -40,7 +40,7 @@ class MealSlotRecipesController < ApplicationController
 
   # Redraws the changed meals, and the page's header for its counts of recipes planned and items to buy
   def render_meal_slots(meal_plan, slot_ids)
-    slots = MealSlot.includes(meal_slot_recipes: { recipe: :tags }).where(id: slot_ids)
+    slots = MealSlot.includes(meal_slot_recipes: :recipe).where(id: slot_ids)
     streams = slots.map do |slot|
       turbo_stream.update("meal_slot_#{slot.id}", partial: "meal_plans/meal_slot_cell", locals: { meal_slot: slot })
     end

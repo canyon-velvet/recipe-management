@@ -6,7 +6,7 @@
              (t("assistant.servings", count: recipe.servings) if recipe.servings) ].compact %>
 <%= link_to recipe_path(recipe), class: "assistant-recipe" do %>
   <span class="assistant-recipe-icon" aria-hidden="true">
-    <% if (icon = recipe.card_icon) %>
+    <% if (icon = recipe.icon) %>
       <%= icon %>
     <% else %>
       <%= image_tag "icons/recipe-placeholder.svg", alt: "", class: "h-6 w-6" %>

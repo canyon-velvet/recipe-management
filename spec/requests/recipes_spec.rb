@@ -82,6 +82,20 @@ RSpec.describe "Recipes", type: :request do
     expect(user.recipes.count).to eq 1
   end
 
+  it "shows the recipe's own icon, whatever its tags, and the placeholder without one" do
+    create(:recipe, user: user, name: "Bibimbap", icon: "🍜", tags: [ create(:tag, key: "spicy", kind: "flavor") ])
+    create(:recipe, user: user, name: "Plain rice")
+
+    get recipes_path
+    rows = Nokogiri::HTML(response.body).css(".recipe-row").to_h { [ _1.at_css(".recipe-row-link")["aria-label"], _1 ] }
+    expect(rows["Bibimbap"].text).to include("🍜")
+    expect(rows["Bibimbap"].text).not_to include("🌶️")
+    expect(rows["Plain rice"].at_css("img[src*='recipe-placeholder']")).to be_present
+
+    get recipe_path(user.recipes.find_by!(name: "Bibimbap"))
+    expect(Nokogiri::HTML(response.body).at_css(".recipe-heading-icon").text.strip).to eq "🍜"
+  end
+
   it "names each row's ⋮ menu button for screen readers" do
     create(:recipe, user: user)
 

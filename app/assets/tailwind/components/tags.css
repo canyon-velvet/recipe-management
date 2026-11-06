@@ -1,5 +1,5 @@
 @layer components {
-  /* A recipe card's emoji (one of its tags', see Recipe#card_icon); line-height 1 keeps it centred */
+  /* A recipe card's emoji (Recipe#icon); line-height 1 keeps it centred */
   .recipe-card-icon {
     @apply text-6xl leading-none select-none;
   }
