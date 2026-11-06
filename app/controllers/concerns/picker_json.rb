@@ -7,10 +7,9 @@ module PickerJson
     render json: records.order(:name).limit(20).map { |record| record.slice(:id, :name) }
   end
 
-  # extra: more for the picker to show, such as a tag's emoji and name together
-  def render_created(record, **extra)
+  def render_created(record)
     if record.persisted?
-      render json: record.slice(:id, :name).merge(extra), status: :created
+      render json: record.slice(:id, :name), status: :created
     else
       render json: { errors: record.errors.full_messages }, status: :unprocessable_entity
     end

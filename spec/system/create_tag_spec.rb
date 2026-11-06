@@ -20,54 +20,23 @@ RSpec.describe "Creating a tag from the recipe form", type: :system do
     visit edit_recipe_path(recipe)
   end
 
-  it "fills in the typed name, takes an emoji and a group, and adds the tag to the recipe's" do
+  it "fills in the typed name, takes a group, and adds the tag to the recipe's" do
     open_create_tag("Korean")
 
     within("dialog[open]") do
       expect(page).to have_field("Name", with: "Korean")
       expect(page).to have_checked_field("Other", visible: :all)
-      click_button "🍜"
-      expect(page).to have_field("Emoji", with: "🍜")
-      expect(page).to have_css("button[aria-pressed=true]", text: "🍜")
       choose "Cuisine", allow_label_click: true
       click_button "Save"
     end
 
     expect(page).to have_no_css("dialog[open]")
-    expect(tag_box).to have_css(".item", text: "🍜 Korean")
-    expect(user.tags.sole).to have_attributes(name: "Korean", emoji: "🍜", kind: "cuisine")
+    expect(tag_box).to have_css(".item", text: /\AKorean\b/) # its name alone, then ×
+    expect(user.tags.sole).to have_attributes(name: "Korean", kind: "cuisine")
 
     click_button "Update recipe"
     expect(page).to have_current_path(recipe_path(recipe))
     expect(recipe.reload.tags.map(&:name)).to eq [ "Korean" ]
-  end
-
-  it "takes an emoji typed from the keyboard, or none" do
-    open_create_tag("Grandma's")
-
-    within("dialog[open]") do
-      click_button "🍜"
-      fill_in "Emoji", with: "👵"
-      expect(page).to have_no_css("button[aria-pressed=true]")
-      click_button "No emoji"
-      expect(page).to have_field("Emoji", with: "")
-      click_button "Save"
-    end
-
-    expect(tag_box).to have_css(".item", text: "Grandma's")
-    expect(user.tags.sole.emoji).to be_nil
-  end
-
-  it "keeps a long emoji typed whole, such as a flag of a country's region" do
-    scotland = "🏴\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}"
-    open_create_tag("Scottish")
-    within("dialog[open]") do
-      fill_in "Emoji", with: scotland
-      click_button "Save"
-    end
-
-    expect(page).to have_no_css("dialog[open]")
-    expect(user.tags.sole.emoji).to eq scotland
   end
 
   it "offers to create only a tag that isn't there, and takes a comma as part of the name" do
@@ -109,7 +78,6 @@ RSpec.describe "Creating a tag from the recipe form", type: :system do
   it "adds nothing when the pop-up is cancelled, and starts afresh the next time" do
     open_create_tag("Korean")
     within("dialog[open]") do
-      click_button "🍜"
       choose "Cuisine", allow_label_click: true
       click_button "Cancel"
     end
@@ -122,8 +90,7 @@ RSpec.describe "Creating a tag from the recipe form", type: :system do
     within("dialog[open]") do
       expect(page).to have_field("Name", with: "Thai")
       expect(page).to have_checked_field("Other", visible: :all)
-      expect(page).to have_field("Emoji", with: "")
-      expect(page).to have_no_css("button[aria-pressed=true]")
+      expect(page).to have_no_field("Emoji") # tags have none: a recipe has its own icon
     end
   end
 end

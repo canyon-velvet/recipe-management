@@ -119,10 +119,16 @@ RSpec.describe Recipe do
   end
 
   it "takes one emoji for its icon, or none" do
-    expect(build(:recipe, icon: "🍜")).to be_valid
-    expect(build(:recipe, icon: "🇰🇷")).to be_valid
+    scotland = "🏴\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}" # a flag of a country's region, kept whole
+    # with its variation selector, a flag (two code points), a keycap
+    [ "🍜", "🌶️", "🇰🇷", "1️⃣", scotland ].each do |icon|
+      expect(build(:recipe, icon: icon)).to be_valid, "#{icon.inspect} was refused"
+    end
     expect(build(:recipe, icon: " ").icon).to be_nil
-    [ "🍜🍜", "a", "©" ].each do |icon|
+
+    zalgo = "🍜#{"\u0301" * 50}" # one character on screen, with accents piled on it
+    forty_bowls = ([ "🍜" ] * 40).join("\u200D") # joined into one character, drawn as 40
+    [ "🍜🍜", "a", "ab", ":)", "©", "🇰", zalgo, forty_bowls ].each do |icon|
       expect(build(:recipe, icon: icon)).not_to be_valid, "#{icon.inspect} was taken"
     end
   end

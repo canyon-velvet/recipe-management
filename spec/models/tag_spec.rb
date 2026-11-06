@@ -9,9 +9,8 @@ RSpec.describe Tag do
       expect(Tag.by_kind.keys).to eq %w[meal cuisine diet flavor convenience]
     end
 
-    it "gives every tag an emoji and a name in both languages" do
+    it "gives every tag a name in both languages" do
       Tag.find_each do |tag|
-        expect(tag.icon).to be_present, "#{tag.key} has no emoji"
         I18n.available_locales.each do |locale|
           expect(I18n.t(tag.key, scope: :tags, locale: locale, raise: true)).to be_present
         end
@@ -87,21 +86,6 @@ RSpec.describe Tag do
       expect(user.tags.build(name: "\u3000晚餐")).not_to be_valid # with the wide space a Chinese keyboard can add
       expect(user.tags.build(name: "\u00A0korean\u00A0")).not_to be_valid # non-breaking spaces
       expect(create(:user).tags.build(name: "Korean")).to be_valid # another user's is theirs
-    end
-
-    it "takes one emoji, or none, and shows it on cards" do
-      expect(user.tags.create!(name: "Noodles", emoji: "🍜").icon).to eq "🍜"
-      expect(user.tags.create!(name: "Hot", emoji: "🌶️").icon).to eq "🌶️" # with its variation selector
-      expect(user.tags.create!(name: "Korean", emoji: "🇰🇷").icon).to eq "🇰🇷" # a flag: two code points
-      expect(user.tags.create!(name: "Plain", emoji: " ").icon).to be_nil
-
-      expect(user.tags.create!(name: "First", emoji: "1️⃣").icon).to eq "1️⃣" # a keycap
-
-      zalgo = "🍜#{"\u0301" * 50}" # one character on screen, with accents piled on it
-      forty_bowls = ([ "🍜" ] * 40).join("\u200D") # joined into one character, drawn as 40
-      [ "🍜🍜", "a", "ab", ":)", "©", "🇰", zalgo, forty_bowls ].each do |emoji|
-        expect(user.tags.build(name: "Other", emoji: emoji)).not_to be_valid, "#{emoji.inspect} was taken"
-      end
     end
 
     it "is seen only by its user, besides the built-in tags, and listed after them" do

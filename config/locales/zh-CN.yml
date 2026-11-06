@@ -129,7 +129,6 @@ zh-CN:
       source:
         name: "名称"
       tag:
-        emoji: "表情"
         kind: "分组"
         name: "名称"
       user:
@@ -301,9 +300,6 @@ zh-CN:
       none: "不用图标"
       title: "选择图标"
     tag_modal:
-      emoji_hint: "点一个，或用键盘输入任意表情。"
-      no_emoji: "不用表情"
-      optional: "可不填"
       title: "新建标签"
     ingredient_modal:
       add_aisle: "＋ 新增“%{name}”"
