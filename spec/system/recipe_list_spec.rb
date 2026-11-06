@@ -49,7 +49,7 @@ RSpec.describe "The recipe list", type: :system do
     # The ticked tags show above the list, each to untick, and Clear all
     within(".recipes-picked") { click_link "Remove Soup" }
     expect(page).to have_css(".recipe-row", count: 1, text: "Kung Pao Chicken")
-    expect(find_field("Soup", visible: :all)).not_to be_checked
+    expect(page).to have_unchecked_field("Soup", visible: :all)
     within(".recipes-picked") { click_link "Clear all" }
     expect(page).to have_css(".recipe-row", count: 4)
     expect(page).to have_no_css(".recipes-picked")

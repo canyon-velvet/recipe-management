@@ -73,6 +73,7 @@ RSpec.describe "Picking a recipe's source", type: :system do
     find(".source-chip", text: "Just One Cookbook").click # and back
     expect(page).to have_checked_field("Just One Cookbook New", visible: :all)
     click_button "Create recipe"
+    expect(page).to have_text("Recipe saved from your Draft box.")
     expect(user.recipes.find_by(name: "Mapo tofu").source.name).to eq "Just One Cookbook"
   end
 
