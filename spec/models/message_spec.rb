@@ -3,7 +3,9 @@ require "rails_helper"
 RSpec.describe Message do
   def count_queries(&)
     count = 0
-    ActiveSupport::Notifications.subscribed(->(*) { count += 1 }, "sql.active_record", &)
+    # Not Rails' one-off look-ups of a table's columns, which depend on what ran before
+    counter = ->(*, payload) { count += 1 unless payload[:name] == "SCHEMA" }
+    ActiveSupport::Notifications.subscribed(counter, "sql.active_record", &)
     count
   end
 
@@ -59,8 +61,8 @@ RSpec.describe Message do
 
       # The panel loads every message's cards in one go
       question = create(:message, conversation: conversation)
-      # recipes, tags, recipe_ingredients (and their ingredients, when there are any)
-      expect(count_queries { Message.load_cards([ reply, question ], conversation.user) }).to eq 3
+      # recipes, recipe_ingredients (and their ingredients, when there are any)
+      expect(count_queries { Message.load_cards([ reply, question ], conversation.user) }).to eq 2
       expect(count_queries { expect([ reply.recipes, question.recipes ]).to eq [ [ noodles, tofu ], [] ] }).to eq 0
     end
   end
