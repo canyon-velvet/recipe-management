@@ -47,13 +47,16 @@ class ImportRecipeService
   def screenshots? = @draft.screenshot_count.positive?
 
   # A YouTube video is watched, not read as a page; unless its recipe text was pasted
-  def video? = @draft.source_text.blank? && RecipeLink.youtube?(@draft.source_url)
+  # (A draft from before videos were watched may keep a link to one in another form, such as youtu.be.)
+  def video? = @draft.source_text.blank? && RecipeLink.youtube?(video_url)
+
+  def video_url = RecipeLink.normalize(@draft.source_url)
 
   # Its recipe, written down by Gemini, is read by Claude like pasted text. Without Claude, it can't be made a draft.
   def watch_video
     raise ImportFailure.new(:needs_claude) unless CleanRecipeService.available?
 
-    WatchVideoService.new(@draft.source_url).call
+    WatchVideoService.new(video_url).call
   end
 
   def fetch_and_extract

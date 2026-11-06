@@ -47,8 +47,10 @@ module RecipeLink
   end
 
   # A readable stand-in for a page's title: "…/apple-oatmeal-cake/" → "Apple oatmeal cake"; a link without
-  # words, like "…/recipe/107110062/", is shown short instead: "xiachufang.com/recipe/107110062".
+  # words, like "…/recipe/107110062/", is shown short instead: "xiachufang.com/recipe/107110062", as is a video's.
   def self.title(url)
+    return url.delete_prefix("https://www.") if youtube?(url) # its only word is "watch"
+
     uri = URI.parse(url.to_s)
     return unless uri.host
 

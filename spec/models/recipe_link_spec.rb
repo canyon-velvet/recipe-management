@@ -11,11 +11,15 @@ RSpec.describe RecipeLink do
 
       expect(described_class.youtube?(watch)).to be true
       expect(described_class.site_name(watch)).to eq "YouTube"
+      expect(described_class.title(watch)).to eq "youtube.com/watch?v=dQw4w9WgXcQ" # not "Watch"
     end
 
     it "is only a link to one video" do
       [ "https://www.youtube.com/@channel", "https://www.youtube.com/watch?v=short",
-        "https://www.youtube.com/watch?v=dQw4w9WgXcQ%22%3E", "https://notyoutube.com/watch?v=dQw4w9WgXcQ" ]
+        "https://www.youtube.com/watch?v=dQw4w9WgXcQ%22%3E", "https://notyoutube.com/watch?v=dQw4w9WgXcQ",
+        "https://youtube.com.evil.example/watch?v=dQw4w9WgXcQ",
+        "https://www.youtube.com@evil.example/watch?v=dQw4w9WgXcQ",
+        "https://youtu.be/dQw4w9WgXcQ/extra" ]
         .each { |link| expect(described_class.youtube?(described_class.normalize(link))).to be(false), link }
     end
   end

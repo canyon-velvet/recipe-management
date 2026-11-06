@@ -27,7 +27,7 @@ RSpec.describe WatchVideoService do
 
   before { allow(described_class).to receive(:api_key).and_return("test-key") }
 
-  it "has Gemini watch the video's first hour at low resolution, and gives back the recipe it wrote down" do
+  it "has Gemini watch the video's first 40 minutes at low resolution, and gives back the recipe it wrote down" do
     gemini(200, reply("Bibimbap\n\nIngredients:\n- rice, 2 cups"))
 
     expect(described_class.new(url).call).to eq "Bibimbap\n\nIngredients:\n- rice, 2 cups"
@@ -35,7 +35,7 @@ RSpec.describe WatchVideoService do
     expect(request["x-goog-api-key"]).to eq "test-key"
     body = JSON.parse(request.body)
     expect(body.dig("contents", 0, "parts", 0)).to eq(
-      "file_data" => { "file_uri" => url }, "video_metadata" => { "end_offset" => "3600s" }
+      "file_data" => { "file_uri" => url }, "video_metadata" => { "end_offset" => "2400s" }
     )
     expect(body.dig("generationConfig", "mediaResolution")).to eq "MEDIA_RESOLUTION_LOW"
   end
@@ -52,10 +52,30 @@ RSpec.describe WatchVideoService do
     expect(reason_of { described_class.new(url).call }).to eq :video_unavailable
   end
 
-  it "waits out rate limits and outages" do
-    gemini(429, { error: { message: "Quota exceeded" } })
+  it "waits out rate limits, outages and a connection that failed" do
+    [ 429, 500, 503 ].each do |status|
+      gemini(status, { error: { message: "Try later" } })
+      expect { described_class.new(url).call }.to raise_error(described_class::TemporaryError, /#{status}/)
+    end
 
-    expect { described_class.new(url).call }.to raise_error(described_class::TemporaryError, /429/)
+    allow(Net::HTTP).to receive(:start).and_raise(Net::ReadTimeout)
+    expect { described_class.new(url).call }.to raise_error(described_class::TemporaryError, /ReadTimeout/)
+  end
+
+  it "reports a wrong key or request, the app's to fix, instead of blaming the video" do
+    expect(Rails.error).to receive(:report).exactly(3).times
+    gemini(400, { error: { message: "API key not valid", details: [ { reason: "API_KEY_INVALID" } ] } })
+    expect(reason_of { described_class.new(url).call }).to eq :video_failed
+    gemini(403, { error: { status: "PERMISSION_DENIED" } })
+    expect(reason_of { described_class.new(url).call }).to eq :video_failed
+    gemini(404, { error: { message: "models/gemini-flash-latest is not found" } })
+    expect(reason_of { described_class.new(url).call }).to eq :video_failed
+  end
+
+  it "sends Claude no more of what Gemini wrote than of a page" do
+    gemini(200, reply("a" * (ExtractRecipeService::MAX_TEXT_CHARS + 1)))
+
+    expect(described_class.new(url).call.length).to eq ExtractRecipeService::MAX_TEXT_CHARS
   end
 
   it "fails a reply cut short or empty" do

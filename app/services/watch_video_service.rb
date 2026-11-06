@@ -5,9 +5,9 @@
 class WatchVideoService
   MODEL = "gemini-flash-latest"
   ENDPOINT = URI("https://generativelanguage.googleapis.com/v1beta/models/#{MODEL}:generateContent")
-  # Only the first hour is watched, so a long stream can't use up the day's free quota. At low resolution a second of
-  # video is about 100 tokens.
-  MAX_SECONDS = 3600
+  # Only the first 40 minutes are watched, so a long video can't use up the quota. At low resolution a second of video
+  # is about 100 tokens: 40 minutes is about 240k, within the free tier's tokens a minute (an hour would be over).
+  MAX_SECONDS = 2400
   # Watching a long video takes Gemini a minute or more
   HTTP_OPTIONS = { open_timeout: 10, read_timeout: 300 }.freeze
   NO_RECIPE = "NO_RECIPE"
@@ -20,7 +20,8 @@ class WatchVideoService
   PROMPT
 
   # reason: :video_unavailable (Gemini can't watch it: private, unlisted, removed or age-restricted), :not_a_recipe,
-  # or :video_failed. Temporary problems (rate limits, outages) raise TemporaryError, which ImportRecipeJob waits out.
+  # or :video_failed (also when the key or the request is wrong, which is reported). Temporary problems (rate limits,
+  # outages) raise TemporaryError, which ImportRecipeJob waits out.
   class Error < ImportFailure; end
 
   class TemporaryError < StandardError; end
@@ -36,12 +37,12 @@ class WatchVideoService
     @url = url
   end
 
-  # Returns the recipe as text
+  # Returns the recipe as text, no longer than a page's text sent to Claude
   def call
     text = parse(post)
     raise Error.new(:not_a_recipe) if text.strip == NO_RECIPE
 
-    text
+    text.first(ExtractRecipeService::MAX_TEXT_CHARS)
   end
 
   private
@@ -64,20 +65,26 @@ class WatchVideoService
       generationConfig: { mediaResolution: "MEDIA_RESOLUTION_LOW" } }
   end
 
-  # A video Gemini can't watch is refused as a bad request (400) or forbidden (403)
+  # A video Gemini can't watch is refused as a bad request (400). So is a bad key (API_KEY_INVALID), and a key without
+  # access is forbidden (403): those, and anything else, are the app's to fix, so they're reported.
   def raise_for(response)
     message = "HTTP #{response.code}: #{response.body.to_s.first(500)}"
     raise TemporaryError, message if TEMPORARY_STATUSES.include?(response.code.to_i)
-    raise Error.new(:video_unavailable, message) if response.code.to_i.in?([ 400, 403, 404 ])
+    raise Error.new(:video_unavailable, message) if response.code == "400" && !message.include?("API_KEY_INVALID")
 
+    failed(message)
+  end
+
+  def failed(message)
+    Rails.error.report(Error.new(:video_failed, message), handled: true, context: { url: @url })
     raise Error.new(:video_failed, message)
   end
 
   def parse(json)
     candidate = json.dig("candidates", 0)
     text = candidate&.dig("content", "parts")&.filter_map { _1["text"] }&.join
-    raise Error.new(:video_failed, "no text: #{json.to_s.first(500)}") if text.blank?
-    raise Error.new(:video_failed, "stopped: #{candidate["finishReason"]}") unless candidate["finishReason"] == "STOP"
+    failed("no text: #{json.to_s.first(500)}") if text.blank?
+    failed("stopped: #{candidate["finishReason"]}") unless candidate["finishReason"] == "STOP"
 
     text
   end

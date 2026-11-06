@@ -60,10 +60,9 @@ class StartImportService
     return failure(:source_blank) if @draft.nil? && (@text || @screenshots.any?) && @source_name.nil?
     return from_screenshots if @screenshots.any?
 
-    return failure(:needs_gemini) if @text.nil? && RecipeLink.youtube?(@url) && !WatchVideoService.available?
-
     recipe = @url && @user.recipes.find_by(source_url: @url)
     return failure(:already_saved, recipe: recipe) if recipe
+    return failure(:needs_gemini) if @text.nil? && RecipeLink.youtube?(@url) && !WatchVideoService.available?
 
     draft = draft_to_read
     return failure(:already_in_draft_box) unless draft

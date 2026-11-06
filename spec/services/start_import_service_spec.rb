@@ -98,6 +98,15 @@ RSpec.describe StartImportService do
     expect(start(url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=10s").error).to eq :already_in_draft_box
   end
 
+  it "takes a YouTube video's recipe text pasted in without Gemini, and points to a recipe already saved from it" do
+    allow(WatchVideoService).to receive(:available?).and_return(false)
+    allow(CleanRecipeService).to receive(:available?).and_return(true)
+    expect(start(url: "https://youtu.be/dQw4w9WgXcQ", text: "Bibimbap …", source_name: "YouTube")).to be_success
+
+    saved = create(:recipe, user: user, source_url: "https://www.youtube.com/watch?v=AAAAAAAAAAA")
+    expect(start(url: "https://youtu.be/AAAAAAAAAAA")).to have_attributes(error: :already_saved, recipe: saved)
+  end
+
   it "starts #{described_class::HOURLY_LIMIT} imports an hour, then refuses more" do
     described_class::HOURLY_LIMIT.times { |i| expect(start(url: "https://example.com/#{i}")).to be_success }
 

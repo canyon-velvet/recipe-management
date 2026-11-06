@@ -91,6 +91,27 @@ RSpec.describe ImportRecipeService do
       expect(video.reload).to be_reading
     end
 
+    it "watches a video kept from before in another form of its link" do
+      video.update_columns(source_url: "https://youtu.be/dQw4w9WgXcQ")
+      expect(WatchVideoService).to receive(:new).with("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+                                                .and_return(instance_double(WatchVideoService, call: "Bibimbap …"))
+      allow(CleanRecipeService).to receive(:new).and_return(cleaner)
+
+      described_class.new(video).call
+
+      expect(video.reload).to be_ready
+    end
+
+    it "fails without Claude, before Gemini watches it, and gives the import back" do
+      allow(CleanRecipeService).to receive(:available?).and_return(false)
+      expect(WatchVideoService).not_to receive(:new)
+      expect(StartImportService).to receive(:give_back).with(user)
+
+      described_class.new(video).call
+
+      expect(video.reload).to have_attributes(status: "failed", failure_reason: "needs_claude")
+    end
+
     it "reads its recipe text when that was pasted instead" do
       video.update!(source_text: "Bibimbap, from the video …")
       expect(WatchVideoService).not_to receive(:new)
