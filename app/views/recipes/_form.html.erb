@@ -11,7 +11,10 @@
     <section class="recipe-form-card">
       <div class="field">
         <%= f.label :name, class: "form-label" %>
-        <%= f.text_field :name, class: "form-input", autofocus: true %>
+        <div class="recipe-name-row">
+          <%= render "recipes/icon_picker", form: f %>
+          <%= f.text_field :name, class: "form-input", autofocus: true %>
+        </div>
       </div>
       <%= render "shared/markdown_editor", form: f, field: :description, label: Recipe.human_attribute_name(:description),
             rows: 6, min_height: "156px" %>

@@ -103,7 +103,7 @@ class RecipesController < ApplicationController
 
   def recipe_params
     params.require(:recipe).permit(
-      :name, :description, :source_id, :new_source_name, :source_url, *Recipe::COUNT_LIMITS.keys, tag_ids: [],
+      :name, :icon, :description, :source_id, :new_source_name, :source_url, *Recipe::COUNT_LIMITS.keys, tag_ids: [],
       recipe_ingredients_attributes: [ :id, :ingredient_id, :new_ingredient_name, :new_aisle_id, :quantity, :unit, :_destroy ],
       steps_attributes: [ :id, :body, :position, :_destroy ]
     )

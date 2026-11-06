@@ -1,5 +1,5 @@
 <%# locals: (meal_slot:) %>
-<%# One meal's recipes as pills (the grocery tick, the emoji, the name linking to the recipe, × to remove), and ＋ Add.
+<%# One meal's recipes as pills (the grocery tick, the icon, the name linking to the recipe, × to remove), and ＋ Add.
     Redrawn by meal_slot_recipes after adding, removing or ticking. %>
 <div class="meal-slot-recipes">
   <% meal_slot.meal_slot_recipes.each do |msr| %>
@@ -8,7 +8,11 @@
              title="<%= t(".on_grocery_list", recipe: msr.recipe.name) %>"
              aria-label="<%= t(".on_grocery_list", recipe: msr.recipe.name) %>"
              data-action="change->recipe-select#toggleGrocery" data-url="<%= meal_slot_recipe_path(msr) %>">
-      <span aria-hidden="true"><%= msr.recipe.icon || "🍽️" %></span>
+      <% if (icon = msr.recipe.icon) %>
+        <span aria-hidden="true"><%= icon %></span>
+      <% else %>
+        <%= image_tag "icons/recipe-placeholder.svg", alt: "", class: "size-4 shrink-0" %>
+      <% end %>
       <%= link_to msr.recipe.name, recipe_path(msr.recipe), class: "meal-pill-name", data: { turbo_frame: "_top" } %>
       <%= button_to "×", meal_slot_recipe_path(msr), method: :delete, class: "meal-pill-remove",
                     title: t(".remove", recipe: msr.recipe.name), aria: { label: t(".remove", recipe: msr.recipe.name) },
