@@ -34,7 +34,6 @@ class Tag < ApplicationRecord
 
   def self.kind_name(kind) = I18n.t(kind, scope: :tag_kinds)
 
-
   # A user's tag is only ever named as typed: its key is made up, with nothing in the locale files
   def name = user_id? ? self[:name] : super
 
