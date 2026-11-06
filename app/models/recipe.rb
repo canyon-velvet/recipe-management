@@ -87,13 +87,6 @@ class Recipe < ApplicationRecord
     [ text.to_s.strip.presence, tips.map(&:strip).compact_blank.join("\n\n").presence ]
   end
 
-  # The emoji on the recipe's card: one of its tags', picked by the recipe's id, so cards vary but a recipe always
-  # shows the same one. Nil without tags. Uses the loaded tags, so a list that includes them adds no queries.
-  def card_icon
-    with_icons = tags.select(&:icon)
-    with_icons[id.to_i % with_icons.size].icon if with_icons.any?
-  end
-
   # The items of a user's avoid list (see User#avoided_ingredients) that this recipe's ingredients contain, ignoring
   # case: "peanut" matches "Peanut butter". Uses the loaded ingredients, so a list that includes
   # recipe_ingredients: :ingredient adds no queries.
