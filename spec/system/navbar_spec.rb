@@ -74,6 +74,9 @@ RSpec.describe "The navbar", type: :system do
       expect(find("[role='group'][aria-labelledby='account_menu_admin']")).to have_link("Invites")
       expect(page).to have_no_css("[role='menu'] .menu-who")
       expect(page).to have_css(".menu-item--logout", text: "Log out")
+      # Below the menu, the app's version (VERSION), to tell which one someone has when they report a problem
+      expect(find(".menu-version")).to have_text("Version #{File.read(Rails.root.join("VERSION")).strip}")
+      expect(page).to have_no_css("[role='menu'] .menu-version")
     end
   end
 

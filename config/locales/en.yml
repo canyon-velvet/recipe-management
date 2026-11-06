@@ -196,6 +196,7 @@ en:
       logout: "Log out"
       preferences: "Preferences"
       signed_in: "Signed in"
+      version: "Version %{version}"
     locale_switcher:
       label: "Language"
     markdown_editor:

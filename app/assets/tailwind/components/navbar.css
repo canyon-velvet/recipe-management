@@ -112,4 +112,5 @@
   /* A group's name ("Admin", "Language") */
   .menu-label   { @apply px-3 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-500; }
   .menu-divider { @apply my-1 border-t border-gray-100; }
+  .menu-version { @apply px-3 pt-1 pb-1.5 text-xs text-gray-500; }
 }

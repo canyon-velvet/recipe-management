@@ -191,6 +191,7 @@ zh-CN:
       logout: "退出"
       preferences: "饮食偏好"
       signed_in: "已登录"
+      version: "版本 %{version}"
     locale_switcher:
       label: "语言"
     markdown_editor:
