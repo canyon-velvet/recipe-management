@@ -5,6 +5,7 @@
 [![Rails 8.1](https://img.shields.io/badge/Rails-8.1-D30001?logo=rubyonrails&logoColor=white)](https://rubyonrails.org)
 [![Hotwire](https://img.shields.io/badge/Hotwire-Turbo%20%2B%20Stimulus-5CD8E5?logo=hotwire&logoColor=white)](https://hotwired.dev)
 [![LLM: Claude](https://img.shields.io/badge/LLM-Claude-D97757?logo=claude&logoColor=white)](https://www.anthropic.com/claude)
+[![LLM: Gemini](https://img.shields.io/badge/LLM-Gemini-8E75B2?logo=googlegemini&logoColor=white)](https://ai.google.dev/gemini-api)
 [![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7?logo=render&logoColor=white)](https://recipe-management-web-72dj.onrender.com)
 
 It's deployed on Render.
