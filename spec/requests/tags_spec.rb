@@ -8,25 +8,24 @@ RSpec.describe "Tags", type: :request do
   def create_tag(**tag) = post(tags_path, params: { tag: tag }, as: :json)
 
   it "makes the user a tag, under Other unless another group is chosen, and answers with it for the tag box" do
-    create_tag(name: "Korean", emoji: "🍜")
+    create_tag(name: "Korean")
 
     expect(response).to have_http_status(:created)
     tag = user.tags.sole
-    expect(tag).to have_attributes(name: "Korean", emoji: "🍜", kind: "other")
-    expect(response.parsed_body).to eq("id" => tag.id, "name" => "Korean", "label" => "🍜 Korean")
+    expect(tag).to have_attributes(name: "Korean", kind: "other")
+    expect(response.parsed_body).to eq("id" => tag.id, "name" => "Korean")
 
     create_tag(name: "Gochujang", kind: "flavor")
     expect(user.tags.find_by!(name: "Gochujang").kind).to eq "flavor"
-    expect(response.parsed_body["label"]).to eq "Gochujang"
   end
 
   it "says why it couldn't, in the pop-up's language" do
     user.tags.create!(name: "Korean")
 
-    create_tag(name: "korean", emoji: "no")
+    create_tag(name: "korean")
 
     expect(response).to have_http_status(:unprocessable_content)
-    expect(response.parsed_body["errors"]).to eq [ "Name has already been taken", "Emoji is invalid" ]
+    expect(response.parsed_body["errors"]).to eq [ "Name has already been taken" ]
   end
 
   it "makes it the user's own, whatever else is sent" do

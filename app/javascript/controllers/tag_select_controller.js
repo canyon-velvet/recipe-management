@@ -32,9 +32,9 @@ export default class extends Controller {
     this.tomSelect?.destroy()
   }
 
-  // The tag the New tag pop-up created: { id, name, label }
+  // The tag the New tag pop-up created: { id, name }
   created({ detail: tag }) {
-    this.tomSelect.addOption({ value: String(tag.id), text: tag.label, name: tag.name })
+    this.tomSelect.addOption({ value: String(tag.id), text: tag.name, name: tag.name })
     this.tomSelect.addItem(String(tag.id))
   }
 

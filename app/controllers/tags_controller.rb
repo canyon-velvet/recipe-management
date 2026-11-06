@@ -9,10 +9,10 @@ class TagsController < ApplicationController
     rescue ActiveRecord::RecordNotUnique # the same name sent twice at once: the index caught the second
       tag.errors.add(:name, :taken)
     end
-    render_created tag, label: helpers.tag_label(tag)
+    render_created tag
   end
 
   private
 
-  def tag_params = params.expect(tag: [ :name, :kind, :emoji ])
+  def tag_params = params.expect(tag: [ :name, :kind ])
 end
