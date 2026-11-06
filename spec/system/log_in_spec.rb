@@ -61,6 +61,10 @@ RSpec.describe "Logging in", type: :system do
 
     click_button "Close"
     expect(page).to have_no_css("dialog[open]")
+    # The dialog's close event, which pauses it, comes a moment after it closes
+    page.document.synchronize do
+      raise Capybara::ExpectationNotMet, "not paused" unless page.evaluate_script("videoCalls").include?("pause")
+    end
     expect(page.evaluate_script("videoCalls")).to eq([ "play", "pause" ])
 
     # Also on a phone: the pill shows on the photo's band, above the form's sheet
