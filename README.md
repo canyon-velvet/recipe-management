@@ -27,7 +27,7 @@ turns a week of meals into a shopping list.
 ## What it does
 
 - **Import a recipe from a link, a YouTube video, screenshots or text.** Paste a link to a recipe
-  page, or to a YouTube video, which Gemini watches for the amounts said and shown on screen; add up
+  page or a YouTube video, whose amounts are read from what's said and shown on screen; add up
   to six screenshots from Photos or the camera, read together as one recipe, for one I found in a
   video or a post; or paste the recipe's text, for sites that block importing, such as 小红书.
   It's read in the background, and Claude tidies it up: ingredients split into amounts and units,
