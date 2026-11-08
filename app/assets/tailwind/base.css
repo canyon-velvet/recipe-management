@@ -10,7 +10,8 @@
 }
 
 /* Formatted text (descriptions, steps, the assistant's replies) in the app's greys and brown, which dark mode turns
-   the other way round, instead of the typography plugin's own fixed greys. Unlayered, to win over the plugin's. */
+   the other way round, instead of the typography plugin's own fixed greys. Code blocks keep the plugin's dark ones,
+   at home in both modes. Unlayered, to win over the plugin's. */
 .prose {
   --tw-prose-body: var(--color-gray-700);
   --tw-prose-headings: var(--color-gray-900);
@@ -25,8 +26,6 @@
   --tw-prose-captions: var(--color-gray-500);
   --tw-prose-kbd: var(--color-gray-900);
   --tw-prose-code: var(--color-gray-900);
-  --tw-prose-pre-code: var(--color-gray-200);
-  --tw-prose-pre-bg: var(--color-gray-800);
   --tw-prose-th-borders: var(--color-gray-300);
   --tw-prose-td-borders: var(--color-gray-200);
 }

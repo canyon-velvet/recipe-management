@@ -21,6 +21,16 @@ RSpec.describe "Dark mode", type: :system do
     expect(style(".recipe-description strong", "color")).not_to eq "rgb(241, 234, 226)"
   end
 
+  it "shows the phone's account icon in the caramel, as the rest of the navbar" do
+    user = create(:user)
+    log_in_as user
+    color_scheme("dark")
+    page.driver.with_playwright_page { _1.set_viewport_size(width: 390, height: 844) }
+    visit recipes_path
+
+    expect(style(".account-icon svg", "color")).to eq "rgb(212, 180, 140)" # the caramel, not the light mode's brown
+  end
+
   it "keeps white text on the tour's black strip white" do
     color_scheme("dark")
     visit login_path

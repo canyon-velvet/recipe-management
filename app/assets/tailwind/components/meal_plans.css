@@ -47,6 +47,7 @@
     @apply min-h-14 cursor-pointer rounded-2xl bg-sectionbackground px-3 py-2 text-gray-900
            has-checked:bg-sectiontext has-checked:text-white
            has-focus-visible:ring-2 has-focus-visible:ring-sectiontext-light has-focus-visible:ring-offset-2
+           has-focus-visible:ring-offset-white
            has-disabled:cursor-not-allowed has-disabled:opacity-50;
   }
   .week-chip-label  { @apply block text-sm font-semibold; }

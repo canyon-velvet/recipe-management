@@ -17,6 +17,8 @@ body .ts-wrapper .ts-dropdown .optgroup-header {
 }
 body .ts-wrapper.multi .ts-control > div        { @apply bg-gray-100 text-gray-900; }
 body .ts-wrapper.multi .ts-control > div.active { @apply bg-gray-200 text-gray-900; }
+/* "＋ Create tag …" in the brown, as the aisle box's is (modal.css), not the vendored half-transparent dark grey */
+.ts-wrapper.tag-select .ts-dropdown .create { @apply text-sectiontext; }
 
 /* Tom Select tag picker, matched to .form-select. Unlayered so it overrides the vendored tom-select.css. */
 .ts-wrapper.tag-select .ts-control {
