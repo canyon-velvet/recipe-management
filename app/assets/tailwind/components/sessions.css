@@ -24,12 +24,13 @@
     @apply w-full max-w-[min(64rem,calc((100dvh-6rem)*16/9))] bg-transparent p-0 backdrop:bg-black/75
            max-md:backdrop:bg-black/85;
   }
-  /* Its title and ×: over the dimmed page on a large screen, a black strip atop the video on a phone */
+  /* Its title and ×: over the dimmed page on a large screen, a black strip atop the video on a phone; white in dark
+     mode too (snow) */
   .tour-dialog-bar {
-    @apply flex items-center justify-between pl-4 text-sm text-white/80 max-md:bg-black md:pb-2 md:pl-1;
+    @apply flex items-center justify-between pl-4 text-sm text-snow/80 max-md:bg-black md:pb-2 md:pl-1;
   }
   .tour-close {
-    @apply flex size-11 cursor-pointer items-center justify-center rounded-full text-2xl text-white hover:bg-white/15;
+    @apply flex size-11 cursor-pointer items-center justify-center rounded-full text-2xl text-snow hover:bg-snow/15;
   }
   .tour-video { @apply block aspect-video w-full bg-black md:rounded-2xl; }
 }

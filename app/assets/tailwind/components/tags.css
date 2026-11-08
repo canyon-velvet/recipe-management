@@ -5,6 +5,21 @@
   }
 }
 
+/* Every Tom Select box (the tag box, the aisle box): the vendored tom-select.css's light greys and white in the app's
+   own colours, so they follow dark mode. Unlayered, like the rules below, and under body, so they override it: it
+   loads after this, with selectors as specific. */
+body .ts-wrapper .ts-control,
+body .ts-wrapper .ts-control input,
+body .ts-wrapper.single.input-active .ts-control,
+body .ts-wrapper .ts-dropdown,
+body .ts-wrapper .ts-dropdown .optgroup-header {
+  @apply bg-white text-gray-900;
+}
+body .ts-wrapper.multi .ts-control > div        { @apply bg-gray-100 text-gray-900; }
+body .ts-wrapper.multi .ts-control > div.active { @apply bg-gray-200 text-gray-900; }
+/* "＋ Create tag …" in the brown, as the aisle box's is (modal.css), not the vendored half-transparent dark grey */
+.ts-wrapper.tag-select .ts-dropdown .create { @apply text-sectiontext; }
+
 /* Tom Select tag picker, matched to .form-select. Unlayered so it overrides the vendored tom-select.css. */
 .ts-wrapper.tag-select .ts-control {
   @apply min-h-[42px] rounded-lg border-gray-300 px-3 py-1.5 text-base shadow-none;

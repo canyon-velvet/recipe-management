@@ -4,7 +4,7 @@
   header {
     @apply flex flex-row w-full bg-sectionbackground h-20 items-center sticky top-0 z-30;
   }
-  header.is-scrolled { box-shadow: 0 1px 0 rgb(120 95 64 / 0.15); }
+  header.is-scrolled { box-shadow: 0 1px 0 color-mix(in srgb, var(--color-sectiontext) 15%, transparent); }
 
   header .logo-text {
     @apply flex text-sectiontext font-semibold text-base tracking-widest uppercase whitespace-nowrap;
@@ -53,6 +53,7 @@
      Before the compact rules below, which override these at the same specificity. */
   .account-name { @apply max-w-48 truncate; }
   .account-icon { @apply hidden w-5 h-5; }
+  .account-icon svg { @apply size-full; }
 
   /* Compact, where the bar is short of room: tighter ends, and a person icon for the username (screen readers still
      read the name). On a phone; and between md and xl beside the open assistant panel, which covers the right of the

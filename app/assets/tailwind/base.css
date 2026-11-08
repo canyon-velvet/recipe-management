@@ -9,6 +9,27 @@
   }
 }
 
+/* Formatted text (descriptions, steps, the assistant's replies) in the app's greys and brown, which dark mode turns
+   the other way round, instead of the typography plugin's own fixed greys. Code blocks keep the plugin's dark ones,
+   at home in both modes. Unlayered, to win over the plugin's. */
+.prose {
+  --tw-prose-body: var(--color-gray-700);
+  --tw-prose-headings: var(--color-gray-900);
+  --tw-prose-lead: var(--color-gray-600);
+  --tw-prose-links: var(--color-gray-900);
+  --tw-prose-bold: var(--color-gray-900);
+  --tw-prose-counters: var(--color-gray-500);
+  --tw-prose-bullets: var(--color-gray-300);
+  --tw-prose-hr: var(--color-gray-200);
+  --tw-prose-quotes: var(--color-gray-900);
+  --tw-prose-quote-borders: var(--color-gray-200);
+  --tw-prose-captions: var(--color-gray-500);
+  --tw-prose-kbd: var(--color-gray-900);
+  --tw-prose-code: var(--color-gray-900);
+  --tw-prose-th-borders: var(--color-gray-300);
+  --tw-prose-td-borders: var(--color-gray-200);
+}
+
 /* iPhone and iPad zoom the page in when a box with text under 16px gets the keyboard, and the page then scrolls
    sideways. On iOS only (-webkit-touch-callout is iOS's alone), every box is 16px. Outside any layer, so it wins over
    the components' text-sm. */

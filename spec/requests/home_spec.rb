@@ -30,8 +30,10 @@ RSpec.describe "Home page", type: :request do
 
     stats = Nokogiri::HTML(response.body).css(".home-stat-value").map { |value| value.text.squish }
     expect(stats).to eq [ "3", "2 dishes", "2" ]
-    # A phone's status bar matches the cream navbar (on every page)
-    expect(response.body).to include(%(<meta name="theme-color" content="#F7F2ED">))
+    # A phone's status bar matches the cream navbar (on every page), or the dark one in dark mode
+    theme_colors = Nokogiri::HTML(response.body).css("meta[name=theme-color]").map { [ _1["content"], _1["media"] ] }
+    expect(theme_colors).to eq [ [ "#F7F2ED", "(prefers-color-scheme: light)" ],
+                                 [ "#342A22", "(prefers-color-scheme: dark)" ] ]
   end
 
   it "works out this week in the user's time zone" do
