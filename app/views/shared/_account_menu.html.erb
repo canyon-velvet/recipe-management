@@ -11,8 +11,9 @@
   </button>
 
   <%# Who's signed in (above the menu itself, which holds only its items), the everyday items (importing a recipe
-      first, from any page, above the Draft box it lands in), the admin's items as a group named by its label, Log
-      out, and below the menu the app's version, to tell which one someone has when they report a problem %>
+      first, from any page, above the Draft box it lands in), the admin's items as a group named by its label, the
+      Light / Dark / Auto switch, Log out, and below the menu the app's version, to tell which one someone has when
+      they report a problem %>
   <div data-dropdown-target="menu" class="account-menu menu-card hidden">
     <div class="menu-who">
       <span class="menu-avatar" aria-hidden="true"><%= current_user.username.first.upcase %></span>
@@ -47,6 +48,8 @@
           <% end %>
         </div>
       <% end %>
+      <div class="menu-divider" role="separator"></div>
+      <%= render "shared/appearance", appearance: current_user.appearance %>
       <div class="menu-divider" role="separator"></div>
       <%= link_to logout_path, class: "menu-item menu-item--logout", role: "menuitem",
                                data: { turbo_method: :delete } do %>

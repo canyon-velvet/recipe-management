@@ -192,6 +192,14 @@ zh-CN:
       preferences: "饮食偏好"
       signed_in: "已登录"
       version: "版本 %{version}"
+    appearance:
+      auto: "自动"
+      auto_hint: "跟随手机或电脑的设置"
+      dark: "深色"
+      dark_hint: "全天深色"
+      light: "浅色"
+      light_hint: "全天浅色"
+      title: "外观"
     locale_switcher:
       label: "语言"
     markdown_editor:

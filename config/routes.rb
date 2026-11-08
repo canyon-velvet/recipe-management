@@ -41,6 +41,7 @@ Rails.application.routes.draw do
   # What the user eats, for the assistant's recommendations
   resources :preferences, only: [ :index, :create, :destroy ]
   resource :time_zone, only: :update
+  resource :appearance, only: :update
 
   # The assistant side panel
   namespace :assistant do

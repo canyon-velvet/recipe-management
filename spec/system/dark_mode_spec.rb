@@ -31,6 +31,30 @@ RSpec.describe "Dark mode", type: :system do
     expect(style(".account-icon svg", "color")).to eq "rgb(212, 180, 140)" # the caramel, not the light mode's brown
   end
 
+  it "turns dark or light from the account menu at once, whatever the device's setting, and stays so" do
+    user = create(:user, username: "home_cook")
+    color_scheme("light")
+    log_in_as user
+
+    click_button "home_cook"
+    click_button "Dark"
+    expect(style("body", "backgroundColor")).to eq "rgb(26, 21, 18)"
+    expect(page).to have_css("#appearance [aria-checked=true]", text: "Dark") # saved, and the switch redrawn
+    expect(user.reload.appearance).to eq "dark"
+    visit recipes_path
+    expect(style("body", "backgroundColor")).to eq "rgb(26, 21, 18)"
+
+    color_scheme("dark")
+    click_button "home_cook"
+    click_button "Light"
+    expect(style("body", "backgroundColor")).not_to eq "rgb(26, 21, 18)"
+
+    click_button "Auto" # the device's dark again
+    expect(style("body", "backgroundColor")).to eq "rgb(26, 21, 18)"
+    expect(page).to have_css("#appearance [aria-checked=true]", text: "Auto")
+    expect(user.reload.appearance).to eq "auto"
+  end
+
   it "keeps white text on the tour's black strip white" do
     color_scheme("dark")
     visit login_path

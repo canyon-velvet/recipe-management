@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  # Light or dark all day, or Auto, following the phone's or computer's own setting (dark mode, theme.css)
+  APPEARANCES = %w[light dark auto].freeze
+
   has_secure_password
 
   has_many :recipes, dependent: :destroy
@@ -21,6 +24,7 @@ class User < ApplicationRecord
                        length: { minimum: 2, maximum: 50 }
   validates :password, length: { minimum: 8 }, on: :create
   validates :time_zone, inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
+  validates :appearance, inclusion: { in: APPEARANCES }
 
   normalizes :username, with: ->(username) { username.strip }
 

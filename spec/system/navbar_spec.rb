@@ -100,7 +100,7 @@ RSpec.describe "The navbar", type: :system do
 
     within(".account-menu") do
       expect(page).to have_link("Preferences")
-      expect(page).to have_no_css(".menu-label")
+      expect(page).to have_no_css("#account_menu_admin") # the admin's label
       expect(page).to have_no_link("Invites")
     end
   end
