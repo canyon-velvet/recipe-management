@@ -115,11 +115,11 @@
   .menu-divider { @apply my-1 border-t border-gray-100; }
   .menu-version { @apply px-3 pt-1 pb-1.5 text-xs text-gray-500; }
 
-  /* The Light / Dark / Auto switch (shared/appearance): three segments on the cream, the chosen one raised */
+  /* The Light / Dark / Auto switch (shared/appearance): three segments on the cream, the chosen one raised, ringed */
   .appearance-switch { @apply mx-2 mb-2 flex gap-0.5 rounded-[10px] bg-sectionbackground p-[3px]; }
   .appearance-option {
     @apply flex h-8 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg text-xs text-gray-600
            hover:text-gray-900 aria-checked:bg-white aria-checked:font-semibold aria-checked:text-gray-900
-           aria-checked:shadow-sm;
+           aria-checked:shadow-sm aria-checked:ring-1 aria-checked:ring-sectiontext/40;
   }
 }

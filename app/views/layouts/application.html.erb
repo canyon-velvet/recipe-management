@@ -25,8 +25,10 @@
   </head>
 
   <%# The Edit-aisles pop-up can be opened from any page (account menu, grocery list), and so can the assistant. %>
+  <%# data-appearance: the page's colours for <html data-theme>, carried in the <body> Turbo Drive swaps in
+      (application.js) %>
   <%= tag.body class: [ "bg-gray-50 min-h-screen", ("assistant-open" if assistant_open?) ],
-               data: { controller: body_controllers } do %>
+               data: { controller: body_controllers, appearance: appearance } do %>
     <%= render "shared/navbar" %>
 
     <main class="container mx-auto px-5 py-6">
