@@ -6,6 +6,8 @@ account menu; releasing is in [docs/deploy.md](docs/deploy.md#numbering-a-releas
 
 ## Unreleased
 
+- Dark mode: the app turns a warm espresso brown when your phone or computer is set to dark.
+
 ## 1.0.0 (2026-11-06)
 
 The first numbered release: the app as it is today.

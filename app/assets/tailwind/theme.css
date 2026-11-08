@@ -16,9 +16,65 @@
   --color-light: #f0f0f0;
   --color-dark: #333333;
   --color-muted: #666666;
+  /* White that stays white in dark mode, for text on a photo or on black (the tour's video) */
+  --color-snow: #ffffff;
 
   /* Fonts */
   --font-sans: "Inter", sans-serif;
   --font-serif: "Merriweather", serif;
   --font-mono: monospace;
+}
+
+/* Dark mode: on <html>, data-theme="dark", or "auto" to follow the phone's or computer's own setting. The `dark:`
+   variant, and the colours below, apply in either case. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where([data-theme="auto"], [data-theme="auto"] *) {
+      @slot;
+    }
+  }
+}
+
+/* Warm espresso: the page a dark coffee brown, white surfaces (cards, menus, boxes) a shade lighter, the cream darker
+   still, the greys turned the other way round (900 is the lightest text), and the brown a soft caramel. White text on
+   a brown button so becomes dark text on caramel. Photos and emoji keep their colours. In base, after the theme's
+   own layer, so it wins. */
+@layer base {
+  :root {
+    @variant dark {
+      color-scheme: dark;
+      --color-white: #262019;
+      --color-gray-50: #1a1512;
+      --color-gray-100: #2e2620;
+      --color-gray-200: #3d332a;
+      --color-gray-300: #4c4136;
+      --color-gray-400: #7d7063;
+      --color-gray-500: #9a8c7d;
+      --color-gray-600: #ada090;
+      --color-gray-700: #c4b6a6;
+      --color-gray-800: #dcd2c7;
+      --color-gray-900: #f1eae2;
+      --color-sectionbackground: #342a22;
+      --color-sectiontext: #d4b48c;
+      --color-sectiontext-light: #c9a57a;
+      --color-red-50: #3a1f22;
+      --color-red-100: #4a2428;
+      --color-red-300: #8c3a44;
+      --color-red-400: #e07a86;
+      --color-red-500: #ef8a96;
+      --color-red-600: #f29aa5;
+      --color-red-700: #f4a9b2;
+      --color-red-800: #f7bec5;
+      --color-rose-50: #3a1f26;
+      --color-rose-700: #f4a9ba;
+      --color-rose-800: #f7bec9;
+      --color-amber-50: #3a2e17;
+      --color-amber-200: #6b5320;
+      --color-amber-400: #e0b04a;
+      --color-amber-800: #f2cf7e;
+    }
+  }
 }

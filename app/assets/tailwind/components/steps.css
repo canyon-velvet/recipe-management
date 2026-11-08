@@ -6,10 +6,10 @@
   .step-action  { @apply rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700; }
   .step-action--remove { @apply hover:text-red-500; }
 
-  /* Step number badge in the form */
+  /* Step number badge in the form; light text on its pale brown in dark mode too */
   .step-number {
     @apply inline-flex size-7 shrink-0 items-center justify-center rounded-full
-           bg-sectiontext/40 text-sm font-semibold text-white;
+           bg-sectiontext/40 text-sm font-semibold text-white dark:text-gray-900;
   }
 
   /* Reorder mode: each step collapses to a one-line preview, which drags with a mouse; on a touch screen it scrolls the
