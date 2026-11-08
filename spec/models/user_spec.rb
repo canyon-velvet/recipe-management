@@ -14,6 +14,12 @@ RSpec.describe User do
     expect(user.update(time_zone: "Mars/Olympus")).to be false
   end
 
+  it "starts on Auto, and takes only Light, Dark or Auto, in the model and the database" do
+    expect(create(:user).appearance).to eq "auto"
+    expect(build(:user, appearance: "sepia")).not_to be_valid
+    expect { create(:user).update_column(:appearance, "sepia") }.to raise_error(ActiveRecord::StatementInvalid)
+  end
+
   it "counts the assistant's daily limit over the last 24 hours, whatever the time zone says the day is" do
     user = create(:user)
     conversation = user.current_conversation!

@@ -1,0 +1,17 @@
+<%# locals: (appearance:) %>
+<%# The account menu's Light / Dark / Auto switch (dark mode, theme.css): a tap turns the page at once (appearance
+    controller) and saves the choice for the account, which redraws this. Auto follows the phone's or computer's own
+    setting. In the menu, a group of radio items named by its label. %>
+<div id="appearance" role="group" aria-labelledby="appearance_label">
+  <p id="appearance_label" class="menu-label" role="none"><%= t(".title") %></p>
+  <%= form_with url: appearance_path, method: :patch, class: "appearance-switch",
+                data: { controller: "appearance", action: "turbo:submit-end->appearance#refocus" } do %>
+    <% { "light" => "sun", "dark" => "moon", "auto" => "auto" }.each do |choice, icon| %>
+      <button type="submit" name="appearance" value="<%= choice %>" class="appearance-option" role="menuitemradio"
+              aria-checked="<%= choice == appearance %>" title="<%= t(".#{choice}_hint") %>"
+              data-appearance-target="option" data-action="appearance#pick">
+        <%= inline_icon icon %> <%= t(".#{choice}") %>
+      </button>
+    <% end %>
+  <% end %>
+</div>

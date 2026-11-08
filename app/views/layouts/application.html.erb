@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= I18n.locale %>" data-theme="auto">
+<html lang="<%= I18n.locale %>" data-theme="<%= appearance %>">
   <head>
     <title><%= content_for(:title) || t("app_name") %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -7,9 +7,7 @@
     <meta name="application-name" content="<%= t("app_name") %>">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="<%= t("short_app_name") %>">
-    <%# The phone's status bar, in the navbar's cream, or its dark mode colour (theme.css) %>
-    <meta name="theme-color" content="#F7F2ED" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#342A22" media="(prefers-color-scheme: dark)">
+    <%= theme_color_tags %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -27,8 +25,10 @@
   </head>
 
   <%# The Edit-aisles pop-up can be opened from any page (account menu, grocery list), and so can the assistant. %>
+  <%# data-appearance: the page's colours for <html data-theme>, carried in the <body> Turbo Drive swaps in
+      (application.js) %>
   <%= tag.body class: [ "bg-gray-50 min-h-screen", ("assistant-open" if assistant_open?) ],
-               data: { controller: body_controllers } do %>
+               data: { controller: body_controllers, appearance: appearance } do %>
     <%= render "shared/navbar" %>
 
     <main class="container mx-auto px-5 py-6">

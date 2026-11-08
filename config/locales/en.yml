@@ -197,6 +197,14 @@ en:
       preferences: "Preferences"
       signed_in: "Signed in"
       version: "Version %{version}"
+    appearance:
+      auto: "Auto"
+      auto_hint: "Follows your phone or computer"
+      dark: "Dark"
+      dark_hint: "Dark all day"
+      light: "Light"
+      light_hint: "Light all day"
+      title: "Appearance"
     locale_switcher:
       label: "Language"
     markdown_editor:

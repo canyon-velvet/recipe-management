@@ -6,7 +6,8 @@ account menu; releasing is in [docs/deploy.md](docs/deploy.md#numbering-a-releas
 
 ## Unreleased
 
-- Dark mode: the app turns a warm espresso brown when your phone or computer is set to dark.
+- Dark mode: the app turns a warm espresso brown when your phone or computer is set to dark. Or choose Light or Dark
+  for all day, under Appearance in the account menu.
 
 ## 1.0.0 (2026-11-06)
 

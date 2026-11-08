@@ -38,6 +38,25 @@ module ApplicationHelper
     Rails.root.join("app/assets/images/icons/#{name}.svg").read.html_safe
   end
 
+  # The page's colours, on <html data-theme> (theme.css): the user's choice, or for anyone else the device's own setting
+  def appearance = logged_in? ? current_user.appearance : "auto"
+
+  # The phone's status bar: the cream navbar's colour, or the dark one's. Both tags are always there, each shown when
+  # its colours are (media), so the switch (appearance controller) only has to change which.
+  THEME_COLORS = { "light" => "#F7F2ED", "dark" => "#342A22" }.freeze
+
+  def theme_color_tags
+    safe_join(THEME_COLORS.map do |scheme, color|
+      tag.meta(name: "theme-color", content: color, media: theme_color_media(scheme), data: { scheme: scheme })
+    end, "\n")
+  end
+
+  def theme_color_media(scheme)
+    return "(prefers-color-scheme: #{scheme})" if appearance == "auto"
+
+    appearance == scheme ? "all" : "not all"
+  end
+
   # Stimulus controllers on <body>, for what any page can open: the Edit-aisles pop-up and the assistant panel.
   def body_controllers
     return unless logged_in?
