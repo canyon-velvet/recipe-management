@@ -214,7 +214,7 @@ GEM
     opentelemetry-api (1.11.1)
       logger
     ostruct (0.6.3)
-    pagy (43.8.2)
+    pagy (43.8.5)
       json
       uri
       yaml
