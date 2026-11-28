@@ -6,10 +6,13 @@ class RecipeIngredient < ApplicationRecord
   # A draft's ingredient the user doesn't have yet: its name and the aisle chosen for it in the review form.
   attr_accessor :new_ingredient_name, :new_aisle_id
 
+  validates :position, numericality: { only_integer: true, greater_than: 0 }
   validate :ingredient_must_belong_to_recipe_owner
   validate :ingredient_must_be_listed_once
 
   before_validation :use_new_ingredient, if: -> { ingredient.nil? && new_ingredient_name.present? }
+  # One saved on its own, not with its recipe (which numbers its rows), goes last.
+  before_validation :go_last, if: -> { position.nil? && recipe&.persisted? }
 
   # Rows whose ingredient's name contains any of the texts, ignoring case.
   scope :named_like, ->(*texts) {
@@ -21,6 +24,10 @@ class RecipeIngredient < ApplicationRecord
   def new_ingredient? = new_ingredient_name.present? && (ingredient.nil? || ingredient.new_record?)
 
   private
+
+  def go_last
+    self.position = recipe.recipe_ingredients.maximum(:position).to_i + 1
+  end
 
   # Reuses the user's ingredient with that name, else one another row of this recipe is already creating,
   # else builds it in the chosen aisle (Other if none).

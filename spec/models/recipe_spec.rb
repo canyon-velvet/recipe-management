@@ -13,6 +13,41 @@ RSpec.describe Recipe do
     end
   end
 
+  describe "ingredient order" do
+    let(:recipe) { create(:recipe) }
+    let(:egg) { create(:ingredient, user: recipe.user, name: "Egg") }
+    let(:milk) { create(:ingredient, user: recipe.user, name: "Milk") }
+    let(:salt) { create(:ingredient, user: recipe.user, name: "Salt") }
+
+    def names = recipe.reload.recipe_ingredients.map { _1.ingredient.name }
+
+    it "lists the ingredients in their saved order" do
+      egg_row, milk_row = [ egg, milk ].map { recipe.recipe_ingredients.create!(ingredient: _1) }
+
+      recipe.update!(recipe_ingredients_attributes: [ { id: egg_row.id, position: 2 },
+                                                      { id: milk_row.id, position: 1 } ])
+
+      expect(names).to eq %w[Milk Egg]
+    end
+
+    it "puts an ingredient added on its own last" do
+      [ egg, milk ].each { recipe.recipe_ingredients.create!(ingredient: _1) }
+
+      expect(names).to eq %w[Egg Milk]
+      expect(recipe.recipe_ingredients.map(&:position)).to eq [ 1, 2 ]
+    end
+
+    it "numbers new rows after the saved ones, in the form's order, and closes the gap a removed one leaves" do
+      egg_row, milk_row = [ egg, milk ].map { recipe.recipe_ingredients.create!(ingredient: _1) }
+
+      recipe.update!(recipe_ingredients_attributes: [ { id: egg_row.id, _destroy: "1" }, { id: milk_row.id },
+                                                      { ingredient_id: salt.id }, { new_ingredient_name: "Sugar" } ])
+
+      expect(names).to eq %w[Milk Salt Sugar]
+      expect(recipe.recipe_ingredients.map(&:position)).to eq [ 1, 2, 3 ]
+    end
+  end
+
   describe "servings and times" do
     it "fills a blank total from prep and cook time" do
       recipe = create(:recipe, prep_minutes: 15, cook_minutes: 30)

@@ -6,6 +6,8 @@ account menu; releasing is in [docs/deploy.md](docs/deploy.md#numbering-a-releas
 
 ## Unreleased
 
+- Fixed: a recipe's ingredients keep their order. Before, changing an ingredient's amount could move it to the end
+  of the list.
 - Security: Ruby is updated to 3.4.13, which fixes seven flaws, several of which could let an attacker run code on
   the server. The web server (Puma) and a deploy tool's SSH library are updated for their security fixes too.
 
