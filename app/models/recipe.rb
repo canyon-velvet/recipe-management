@@ -3,7 +3,7 @@ class Recipe < ApplicationRecord
 
   belongs_to :source, autosave: true
   belongs_to :user
-  has_many :recipe_ingredients, dependent: :destroy, inverse_of: :recipe
+  has_many :recipe_ingredients, -> { order(:position) }, dependent: :destroy, inverse_of: :recipe
   has_many :ingredients, through: :recipe_ingredients
   has_many :steps, -> { order(:position) }, class_name: "RecipeStep", dependent: :destroy, inverse_of: :recipe
   has_many :recipe_tags, dependent: :destroy
@@ -44,8 +44,9 @@ class Recipe < ApplicationRecord
   accepts_nested_attributes_for :steps, allow_destroy: true,
                                         reject_if: ->(attributes) { attributes["id"].blank? && attributes["body"].blank? }
 
-  # The form submits each step's position; renumber 1..n in that order so gaps or duplicates never persist.
-  before_validation :renumber_steps
+  # The form submits each step's and ingredient's position; renumber 1..n in that order so gaps or duplicates never
+  # persist. A row without one goes last.
+  before_validation :renumber_rows
   before_validation :use_new_source, if: -> { source.nil? && new_source_name.present? }
   # Sources often give prep and cook time without a total. Filled only when saving, so a form that fails
   # validation comes back with Total still blank and keeps adding up later changes.
@@ -128,10 +129,12 @@ class Recipe < ApplicationRecord
     errors.add(:steps, :blank) if kept_steps.empty?
   end
 
-  def renumber_steps
-    kept_steps.each_with_index
-              .sort_by { |step, index| [ step.position || Float::INFINITY, index ] }
-              .each.with_index(1) { |(step, _), position| step.position = position }
+  def renumber_rows
+    [ kept_steps, recipe_ingredients.reject(&:marked_for_destruction?) ].each do |rows|
+      rows.each_with_index
+          .sort_by { |row, index| [ row.position || Float::INFINITY, index ] }
+          .each.with_index(1) { |(row, _), position| row.position = position }
+    end
   end
 
   # Tag changes only write recipe_tags rows, so bump updated_at to keep recently edited recipes on top.
