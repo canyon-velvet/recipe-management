@@ -107,10 +107,22 @@ class Recipe < ApplicationRecord
     avoid_list.select { |item| names.any? { |name| name.include?(item.downcase) } }
   end
 
+  # The form's ingredient rows: after a failed save they come back in the order the user put them in, not the order
+  # they loaded in.
+  def recipe_ingredients_in_order = in_position_order(recipe_ingredients)
+
   private
 
-  # A row with nothing filled in is dropped. A draft's New row always carries an aisle choice, which doesn't count.
-  def blank_ingredient_row?(attributes) = attributes.except("new_aisle_id", "_destroy").values.all?(&:blank?)
+  # Rows by position; those without one (a new recipe's) last, keeping their order.
+  def in_position_order(rows)
+    rows.each_with_index.sort_by { |row, index| [ row.position || Float::INFINITY, index ] }.map(&:first)
+  end
+
+  # A row with nothing filled in is dropped. A draft's New row always carries an aisle choice, and every row its
+  # position, which don't count.
+  def blank_ingredient_row?(attributes)
+    attributes.except("new_aisle_id", "position", "_destroy").values.all?(&:blank?)
+  end
 
   def use_new_source
     self.source = user.sources.named(new_source_name).first || user.sources.build(name: new_source_name)
@@ -131,9 +143,7 @@ class Recipe < ApplicationRecord
 
   def renumber_rows
     [ kept_steps, recipe_ingredients.reject(&:marked_for_destruction?) ].each do |rows|
-      rows.each_with_index
-          .sort_by { |row, index| [ row.position || Float::INFINITY, index ] }
-          .each.with_index(1) { |(row, _), position| row.position = position }
+      in_position_order(rows).each.with_index(1) { |row, position| row.position = position }
     end
   end
 

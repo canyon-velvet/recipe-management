@@ -6,6 +6,7 @@ account menu; releasing is in [docs/deploy.md](docs/deploy.md#numbering-a-releas
 
 ## Unreleased
 
+- Put a recipe's ingredients in order: ⇅ Reorder in the form lets you drag them, as the steps already could.
 - Fixed: a recipe's ingredients keep their order. Before, changing an ingredient's amount could move it to the end
   of the list.
 - Security: Ruby is updated to 3.4.13, which fixes seven flaws, several of which could let an attacker run code on

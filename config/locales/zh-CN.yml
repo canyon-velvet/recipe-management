@@ -13,8 +13,10 @@ zh-CN:
     cancel: "取消"
     close: "关闭"
     delete: "删除"
+    done: "完成"
     edit: "编辑"
     more: "更多操作"
+    reorder: "排序"
     share: "分享"
     save: "保存"
 
@@ -246,9 +248,12 @@ zh-CN:
       hint: "均为选填。总时间留空时，会按准备时间和烹饪时间相加。"
     ingredient_fields:
       create: "创建食材"
+      move: "移动第 %{number} 个食材：拖动，或用上下方向键"
       quantity: "数量"
       search: "搜索食材..."
       unit: "单位"
+    ingredient_list_fields:
+      moved: "已移到第 %{number} 个，共 %{total} 个食材"
     index:
       count: "%{count} 道菜谱"
       empty: "没有找到符合条件的菜谱。"
@@ -288,9 +293,7 @@ zh-CN:
       move: "移动第 %{number} 步：拖动，或用上下方向键"
       placeholder: "描述这一步"
     step_list_fields:
-      done: "完成"
       moved: "已移到第 %{number} 步，共 %{total} 步"
-      reorder: "排序"
     picked_tags:
       clear_all: "全部清除"
       remove: "移除“%{tag}”"

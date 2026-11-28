@@ -1,0 +1,8 @@
+<%# The ⇅ Reorder / Done button over a reorder-list's rows, and where screen readers hear where a moved row went. %>
+<p class="sr-only" aria-live="polite" data-reorder-list-target="status"></p>
+<div class="reorder-toolbar">
+  <button type="button" class="btn-secondary btn-sm" aria-pressed="false" data-reorder-list-target="toggle"
+          data-action="reorder-list#toggleReorder">
+    <span aria-hidden="true">⇅</span> <span data-reorder-list-target="toggleLabel"><%= t("actions.reorder") %></span>
+  </button>
+</div>

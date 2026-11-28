@@ -9,14 +9,7 @@
 
   <%= form.text_area :body, rows: 3, class: "form-textarea flex-1", placeholder: t(".placeholder"),
                      data: { reorder_list_preview: true } %>
-  <p class="reorder-preview" data-reorder-list-target="preview" data-action="pointerdown->sortable#drag"
-     data-sortable-mouse-only-param="true"></p>
-  <button type="button" class="reorder-handle" aria-label="<%= t(".move", number: form.object.position) %>"
-          data-reorder-list-target="handle" data-action="pointerdown->sortable#drag keydown->sortable#moveWithKeys">
-    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-      <path stroke-linecap="round" stroke-width="2" d="M4 8h16M4 12h16M4 16h16"/>
-    </svg>
-  </button>
+  <%= render "shared/reorder_controls", label: t(".move", number: form.object.position) %>
 
   <div class="step-actions">
     <button type="button" class="step-action step-action--remove" data-action="nested-form#remove reorder-list#renumber"
