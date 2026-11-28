@@ -11,7 +11,7 @@ RSpec.describe "Reordering a recipe's steps", type: :system do
     end
   end
 
-  def previews = all(".reorder-preview").map(&:text)
+  def previews = all(".step-row .reorder-preview").map(&:text)
   def numbers = all(".step-number").map(&:text)
   def saved_steps = recipe.steps.reload.order(:position).map(&:body)
   def middle(element) = page.evaluate_script(<<~JS, element)
@@ -21,7 +21,7 @@ RSpec.describe "Reordering a recipe's steps", type: :system do
   before do
     log_in_as user
     visit edit_recipe_path(recipe)
-    click_button "Reorder"
+    within(".step-list") { click_button "Reorder" }
   end
 
   it "collapses the steps to one line each, which drag into order on a phone" do
@@ -29,8 +29,8 @@ RSpec.describe "Reordering a recipe's steps", type: :system do
     expect(page).to have_no_css(".step-row textarea", visible: true)
     expect(previews).to eq [ "Soak the beans", "Boil them", "Fry the garlic", "Mix and serve" ]
 
-    x, y = middle(find(".reorder-preview", text: "Soak the beans"))
-    _, below = middle(find(".reorder-preview", text: "Fry the garlic"))
+    x, y = middle(find(".step-row .reorder-preview", text: "Soak the beans"))
+    _, below = middle(find(".step-row .reorder-preview", text: "Fry the garlic"))
     page.driver.with_playwright_page do |pw|
       pw.mouse.move(x, y)
       pw.mouse.down
@@ -40,7 +40,7 @@ RSpec.describe "Reordering a recipe's steps", type: :system do
 
     expect(previews).to eq [ "Boil them", "Fry the garlic", "Soak the beans", "Mix and serve" ]
     expect(numbers).to eq %w[1 2 3 4]
-    click_button "Done"
+    within(".step-list") { click_button "Done" }
     expect(page).to have_css(".step-row textarea", count: 4, visible: true)
     click_button "Update recipe"
     expect(page).to have_text("Recipe updated.")
@@ -48,7 +48,7 @@ RSpec.describe "Reordering a recipe's steps", type: :system do
   end
 
   it "moves a step with the arrow keys on its handle" do
-    handle = all(".reorder-handle")[2]
+    handle = all(".step-row .reorder-handle")[2]
     handle.send_keys(:up, :up)
 
     expect(previews).to eq [ "Fry the garlic", "Soak the beans", "Boil them", "Mix and serve" ]
@@ -63,11 +63,11 @@ RSpec.describe "Reordering a recipe's steps", type: :system do
 
   it "lets a finger scroll the page over the steps' text, and drag only by the handle" do
     touch_action = ->(selector) { page.evaluate_script("getComputedStyle(document.querySelector('#{selector}')).touchAction") }
-    expect(touch_action.(".reorder-preview")).to eq "auto"
-    expect(touch_action.(".reorder-handle")).to eq "none"
+    expect(touch_action.(".step-row .reorder-preview")).to eq "auto"
+    expect(touch_action.(".step-row .reorder-handle")).to eq "none"
 
     page.execute_script(<<~JS)
-      document.querySelector(".reorder-preview").dispatchEvent(
+      document.querySelector(".step-row .reorder-preview").dispatchEvent(
         new PointerEvent("pointerdown", { bubbles: true, cancelable: true, pointerId: 1, pointerType: "touch" }))
     JS
     expect(page).to have_no_css(".reorder-row--lifted")
@@ -79,18 +79,18 @@ RSpec.describe "Reordering a recipe's steps", type: :system do
       const done = arguments[0], before = scrollY, y = innerHeight - 10
       const fire = (target, type) => target.dispatchEvent(
         new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 1, pointerType: "touch", clientY: y }))
-      fire([...document.querySelectorAll(".reorder-handle")].at(-1), "pointerdown")
+      fire([...document.querySelectorAll(".step-row .reorder-handle")].at(-1), "pointerdown")
       setTimeout(() => { fire(document, "pointerup"); done(scrollY - before) }, 300)
     JS
 
     expect(scrolled).to eq 0
     expect(previews).to eq [ "Soak the beans", "Boil them", "Fry the garlic", "Mix and serve" ]
-    expect(find("[data-reorder-list-target=status]", visible: :all).text(:all)).to be_empty
+    expect(find(".step-list [data-reorder-list-target=status]", visible: :all).text(:all)).to be_empty
   end
 
   it "ignores a second finger while one step is being dragged" do
     page.execute_script(<<~JS)
-      const [first, , third] = document.querySelectorAll(".reorder-handle")
+      const [first, , third] = document.querySelectorAll(".step-row .reorder-handle")
       const fire = (target, type, pointerId, y) => target.dispatchEvent(
         new PointerEvent(type, { bubbles: true, cancelable: true, pointerId, pointerType: "touch", clientY: y }))
       fire(first, "pointerdown", 1, 0)

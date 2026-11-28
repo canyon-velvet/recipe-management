@@ -175,6 +175,36 @@ RSpec.describe "Recipes", type: :request do
     expect(recipe.recipe_ingredients.reload.map { [ _1.ingredient, _1.quantity ] }).to eq [ [ egg, "3" ] ]
   end
 
+  it "saves the ingredients in the form's order, and skips a blank row though it has a position" do
+    recipe = create(:recipe, user: user)
+    egg, milk = %w[Egg Milk].map { |name| create(:ingredient, user: user, name: name) }
+    egg_row, milk_row = [ egg, milk ].map { |ingredient| recipe.recipe_ingredients.create!(ingredient: ingredient) }
+
+    patch recipe_path(recipe), params: { recipe: { recipe_ingredients_attributes: {
+      "0" => { id: egg_row.id, position: "2" }, "1" => { id: milk_row.id, position: "1" },
+      "2" => { ingredient_id: "", new_ingredient_name: "", quantity: "", unit: "", position: "3" }
+    } } }
+
+    expect(response).to redirect_to(recipe_path(recipe))
+    expect(recipe.recipe_ingredients.reload.map(&:ingredient)).to eq [ milk, egg ]
+  end
+
+  it "keeps the ingredients in the form's order when the save fails" do
+    recipe = create(:recipe, user: user)
+    egg, milk = %w[Egg Milk].map { |name| create(:ingredient, user: user, name: name) }
+    egg_row, milk_row = [ egg, milk ].map { |ingredient| recipe.recipe_ingredients.create!(ingredient: ingredient) }
+
+    patch recipe_path(recipe), params: { recipe: { name: "", recipe_ingredients_attributes: {
+      "0" => { id: egg_row.id, position: "3" }, "1" => { new_ingredient_name: "Salt", position: "1" },
+      "2" => { id: milk_row.id, position: "2" }
+    } } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    names = Nokogiri::HTML(response.body).css(".ingredient-list > [data-nested-form-target=container] " \
+                                               "input[name$='[new_ingredient_name]']").map { _1["value"] }
+    expect(names).to eq %w[Salt Milk Egg]
+  end
+
   it "still won't list an ingredient twice" do
     recipe = create(:recipe, user: user)
     egg = create(:ingredient, user: user, name: "Egg")

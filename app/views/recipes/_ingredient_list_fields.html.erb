@@ -1,10 +1,19 @@
 <%# locals: (form:, recipe:, aisles:) %>
-<%# The recipe's ingredient rows (one empty to start), + Add ingredient, and the pop-up that creates a new ingredient. %>
-<div data-controller="nested-form inline-create"
+<%# The recipe's ingredient rows (one empty to start), ⇅ Reorder to drag them into order, + Add ingredient, and the
+    pop-up that creates a new ingredient. The texts with %{…} are filled in by reorder-list as the rows move. %>
+<div class="ingredient-list" data-controller="nested-form inline-create reorder-list sortable"
+     data-action="sortable:moved->reorder-list#moved" data-sortable-lifted-class="reorder-row--lifted"
      data-inline-create-create-url-value="<%= ingredients_path %>"
-     data-inline-create-error-text-value="<%= t("recipes.form.save_failed") %>">
+     data-inline-create-error-text-value="<%= t("recipes.form.save_failed") %>"
+     data-reorder-list-reorder-text-value="<%= t("actions.reorder") %>"
+     data-reorder-list-done-text-value="<%= t("actions.done") %>"
+     data-reorder-list-move-text-value="<%= t("recipes.ingredient_fields.move", number: "%{number}") %>"
+     data-reorder-list-moved-text-value="<%= t(".moved", number: "%{number}", total: "%{total}") %>">
+  <%= render "shared/reorder_toolbar" %>
+
   <div data-nested-form-target="container" class="space-y-3">
-    <% ingredients = recipe.recipe_ingredients.any? ? recipe.recipe_ingredients : [ recipe.recipe_ingredients.build ] %>
+    <% ingredients = recipe.recipe_ingredients.any? ? recipe.recipe_ingredients_in_order
+                                                    : [ recipe.recipe_ingredients.build ] %>
     <%= form.fields_for :recipe_ingredients, ingredients do |ri_form| %>
       <%= render "recipes/ingredient_row", form: ri_form, aisles: aisles %>
     <% end %>
@@ -17,7 +26,7 @@
     <% end %>
   </template>
 
-  <button type="button" data-action="nested-form#add" class="btn-secondary btn-sm mt-3">
+  <button type="button" data-action="nested-form#add" class="ingredient-add btn-secondary btn-sm mt-3">
     <%= t("recipes.form.add_ingredient") %>
   </button>
 

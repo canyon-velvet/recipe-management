@@ -157,6 +157,13 @@
   }
   .recipe-form-card  { @apply space-y-4 rounded-3xl border border-gray-200 bg-white p-6; }
   .recipe-form-card-title { @apply text-lg font-bold text-gray-900; }
+  /* Ingredient rows in the form: the ingredient, quantity, unit and ×. In reorder mode (reorder.css) each shows a
+     one-line preview of them instead. */
+  .ingredient-row    { @apply grid grid-cols-12 items-start gap-3; }
+  .ingredient-remove { @apply col-span-1 flex items-center justify-center pt-2; }
+  .reorder-list--reordering .ingredient-row { @apply flex; }
+  .reorder-list--reordering .ingredient-row > div,
+  .reorder-list--reordering .ingredient-add { @apply hidden; }
   .recipe-form-details {
     @apply flex flex-col gap-5 rounded-3xl border border-gray-200 bg-white p-6;
   }

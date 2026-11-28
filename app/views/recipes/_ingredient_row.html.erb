@@ -1,6 +1,9 @@
 <%# locals: (form:, aisles: []) %>
 <% new_ingredient = form.object.new_ingredient? %>
-<div data-nested-form-row class="grid grid-cols-12 gap-3 items-start <%= "hidden" if form.object.marked_for_destruction? %>">
+<div data-nested-form-row data-reorder-list-target="item" data-sortable-target="item"
+     class="ingredient-row reorder-row <%= "hidden" if form.object.marked_for_destruction? %>">
+  <%= form.hidden_field :position, data: { reorder_list_target: "position" } %>
+
   <!-- Ingredient autocomplete -->
   <div class="col-span-5 relative"
        data-controller="autocomplete"
@@ -13,7 +16,7 @@
     <%= tag.input type: "text", name: "#{form.object_name}[new_ingredient_name]",
                   value: form.object.ingredient&.name || form.object.new_ingredient_name,
                   placeholder: t("recipes.ingredient_fields.search"), class: "form-input", autocomplete: "off",
-                  data: { autocomplete_target: "input",
+                  data: { autocomplete_target: "input", reorder_list_preview: true,
                           action: "input->autocomplete#onInput click@window->autocomplete#outside" } %>
     <ul data-autocomplete-target="list" class="autocomplete-list hidden"></ul>
 
@@ -30,25 +33,29 @@
 
   <!-- Quantity -->
   <div class="col-span-3">
-    <%= form.text_field :quantity, placeholder: t("recipes.ingredient_fields.quantity"), class: "form-input" %>
+    <%= form.text_field :quantity, placeholder: t("recipes.ingredient_fields.quantity"), class: "form-input",
+                                   data: { reorder_list_preview: true } %>
   </div>
 
   <!-- Unit -->
   <div class="col-span-3">
-    <%= form.text_field :unit, placeholder: t("recipes.ingredient_fields.unit"), class: "form-input" %>
+    <%= form.text_field :unit, placeholder: t("recipes.ingredient_fields.unit"), class: "form-input",
+                               data: { reorder_list_preview: true } %>
   </div>
 
   <!-- Remove button -->
-  <div class="col-span-1 flex items-center justify-center pt-2">
+  <div class="ingredient-remove">
     <% if form.object.persisted? %>
       <%= form.hidden_field :id %>
       <%= form.hidden_field :_destroy %>
     <% end %>
-    <button type="button" data-action="nested-form#remove"
+    <button type="button" data-action="nested-form#remove reorder-list#renumber"
             class="text-gray-400 hover:text-red-500" title="<%= t("actions.delete") %>">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
       </svg>
     </button>
   </div>
+
+  <%= render "shared/reorder_controls", label: t("recipes.ingredient_fields.move", number: form.object.position) %>
 </div>

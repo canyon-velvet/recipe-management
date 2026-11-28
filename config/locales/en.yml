@@ -14,8 +14,10 @@ en:
     cancel: "Cancel"
     close: "Close"
     delete: "Delete"
+    done: "Done"
     edit: "Edit"
     more: "More actions"
+    reorder: "Reorder"
     share: "Share"
     save: "Save"
 
@@ -251,9 +253,12 @@ en:
       hint: "All optional. Leave Total blank to add up prep and cook time."
     ingredient_fields:
       create: "Create ingredient"
+      move: "Move ingredient %{number}: drag it, or use the up and down arrow keys"
       quantity: "Quantity"
       search: "Search ingredients..."
       unit: "Unit"
+    ingredient_list_fields:
+      moved: "Ingredient moved to %{number} of %{total}"
     index:
       count:
         one: "%{count} recipe"
@@ -297,9 +302,7 @@ en:
       move: "Move step %{number}: drag it, or use the up and down arrow keys"
       placeholder: "Describe this step"
     step_list_fields:
-      done: "Done"
       moved: "Step moved to %{number} of %{total}"
-      reorder: "Reorder"
     picked_tags:
       clear_all: "Clear all"
       remove: "Remove %{tag}"
