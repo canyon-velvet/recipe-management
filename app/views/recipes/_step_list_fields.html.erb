@@ -1,16 +1,16 @@
 <%# locals: (form:, recipe:) %>
 <%# The recipe's step rows (one empty to start), ⇅ Reorder to drag them into order, and + Add step. %>
-<%# The texts with %{…} are filled in by step-list as the steps move. %>
-<div data-controller="nested-form step-list sortable" data-action="sortable:moved->step-list#moved"
-     data-sortable-lifted-class="step-row--lifted"
-     data-step-list-reorder-text-value="<%= t(".reorder") %>" data-step-list-done-text-value="<%= t(".done") %>"
-     data-step-list-move-text-value="<%= t("recipes.step_fields.move", number: "%{number}") %>"
-     data-step-list-moved-text-value="<%= t(".moved", number: "%{number}", total: "%{total}") %>">
-  <p class="sr-only" aria-live="polite" data-step-list-target="status"></p>
-  <div class="steps-toolbar">
-    <button type="button" class="btn-secondary btn-sm" aria-pressed="false" data-step-list-target="toggle"
-            data-action="step-list#toggleReorder">
-      <span aria-hidden="true">⇅</span> <span data-step-list-target="toggleLabel"><%= t(".reorder") %></span>
+<%# The texts with %{…} are filled in by reorder-list as the steps move. %>
+<div data-controller="nested-form reorder-list sortable" data-action="sortable:moved->reorder-list#moved"
+     data-sortable-lifted-class="reorder-row--lifted"
+     data-reorder-list-reorder-text-value="<%= t(".reorder") %>" data-reorder-list-done-text-value="<%= t(".done") %>"
+     data-reorder-list-move-text-value="<%= t("recipes.step_fields.move", number: "%{number}") %>"
+     data-reorder-list-moved-text-value="<%= t(".moved", number: "%{number}", total: "%{total}") %>">
+  <p class="sr-only" aria-live="polite" data-reorder-list-target="status"></p>
+  <div class="reorder-toolbar">
+    <button type="button" class="btn-secondary btn-sm" aria-pressed="false" data-reorder-list-target="toggle"
+            data-action="reorder-list#toggleReorder">
+      <span aria-hidden="true">⇅</span> <span data-reorder-list-target="toggleLabel"><%= t(".reorder") %></span>
     </button>
   </div>
 
